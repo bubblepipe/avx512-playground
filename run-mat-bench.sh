@@ -1,1 +1,0 @@
-g++ ./mat-bench/testbenchmark.cpp -std=c++11 -isystem benchmark/include  -L benchmark/build/src -l benchmark -lpthread -o x 
