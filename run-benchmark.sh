@@ -3,8 +3,10 @@ IFS=$'\n'
 bold=$(tput bold)
 normal=$(tput sgr0)
 
+# targets=('g++ -O0' 'g++ -O0 -march=nehalem' 'g++ -O0 -march=skylake')
 # targets=('g++ -O3' 'g++ -O3 -march=nehalem' 'g++ -O3 -march=skylake')
-targets=('clang++-15 -O3' 'clang++-15 -O3 -march=nehalem' 'clang++-15 -O3 -march=skylake')
+# targets=('clang++-15 -O0'  'clang++-15 -O0 -march=nehalem' 'clang++-15 -O0 -march=skylake')
+targets=('clang++-15 -O3'  'clang++-15 -O3 -march=nehalem' 'clang++-15 -O3 -march=skylake')
 
 # targets=('clang++-15 -O0' 'clang++-15 -O3')
 
