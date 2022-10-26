@@ -26,6 +26,15 @@ int vec_add(int src_size, int * src_ptr, int dst_size, int * dst_ptr, int group_
     return(dst_ptr[dst_size-1]);
 }
 
+
+int vec_add_shasha(int size, int * src1_ptr, int * src2_ptr, int * dst_ptr) {
+
+    for (int i = 0; i < size; i += 1 ){
+        dst_ptr[i] = src1_ptr[i] + src2_ptr[i];
+    }
+    return(dst_ptr[size-1]);
+}
+
 int nothing() {
     return 0;
 }
