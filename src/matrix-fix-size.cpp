@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <benchmark/benchmark.h>
 
 # define row 4
 # define col 7
@@ -29,14 +30,14 @@ void simplex_iterate(float arr[row][col]){
     int piv_row = std::distance(std::begin(ratios), piv_row_it);
 
     auto piv_elem = arr[piv_row][piv_col];
-    std::cout << piv_elem << std::endl << std::endl;
+    // std::cout << piv_elem << std::endl << std::endl;
 
     // step 0-2: div piv row by piv item:
     for (int i = 0; i < col; i += 1) {
         arr[piv_row][i] = arr[piv_row][i] / piv_elem;
     }
 
-    print_matrix(arr);
+    // print_matrix(arr);
 
     // step 0-3: row operations on remaining rows. 
     for (int i = 0; i < row; i += 1) {
@@ -48,23 +49,37 @@ void simplex_iterate(float arr[row][col]){
         }
     }
     
-    print_matrix(arr);
+    // print_matrix(arr);
 
 }
 
-int main()
-{
-    float arr[row][col] =
-    {
-        {1 , 2 , 1 , 0 , 0 , 0 , 16},
-        {1 , 1 , 0 , 1 , 0 , 0 ,  9},
-        {3 , 2 , 0 , 0 , 1 , 0 , 24},
-        {-40,-30,0 , 0 , 0 , 1 ,  0},
-    };
+static void bench(benchmark::State& state) {
+    // FILE* somefile = fopen("/dev/shm/1145141919810", "w");
 
+    for (auto _ : state) {
+  
+        float mat[row][col] =
+        {
+            {1 , 2 , 1 , 0 , 0 , 0 , 16},
+            {1 , 1 , 0 , 1 , 0 , 0 ,  9},
+            {3 , 2 , 0 , 0 , 1 , 0 , 24},
+            {-40,-30,0 , 0 , 0 , 1 ,  0},
+        };
 
-    simplex_iterate(arr);
-    simplex_iterate(arr);
-    
+        simplex_iterate(mat);
+        simplex_iterate(mat);
+
+        // for (int i = 0; i < row; i += 1) {
+            // for (int j = 0; j < col; j += 1) {
+                // fprintf(somefile, "%x",  mat[i][j]);
+            // }
+        // }
+
+    }  
+
 
 }
+
+
+BENCHMARK(bench);
+BENCHMARK_MAIN();
