@@ -148,6 +148,6 @@ void bench_x(benchmark::State &state) {
     }
 }
 
-BENCHMARK(bench_6_8);
+BENCHMARK(bench_x);
 // BENCHMARK(bench_x);
 BENCHMARK_MAIN();

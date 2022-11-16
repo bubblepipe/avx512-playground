@@ -13,8 +13,7 @@ params="-DBENCH"
 for cc in ${targets[@]}
 do
     echo ${bold}$cc${normal}
-    bash -c "$cc ./src/matrix-dynamic-size.cpp $params -std=c++11 -isystem benchmark/include  -L benchmark/build/src -l benchmark -lpthread -o /tmp/x" 
-    # bash -c "$cc ./bench.cpp -std=c++11 -isystem benchmark/include  -L benchmark/build/src -l benchmark -lpthread -o /tmp/x" 
+    bash -c "$cc ./src/matrix-dynamic-size.cpp $params -std=c++11 -I ./src/ -isystem benchmark/include  -L benchmark/build/src -l benchmark -lpthread -o /tmp/x" 
     echo ========================================================
     cc_t=`echo "$cc" | sed 's/ //g'`
     objdump -d /tmp/x > $cc_t".asm"
