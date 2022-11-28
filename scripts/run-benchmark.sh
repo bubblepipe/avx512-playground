@@ -16,7 +16,7 @@ do
     bash -c "$cc ./src/matrix-dynamic-size.cpp $params -std=c++11 -I ./src/ -isystem benchmark/include  -L benchmark/build/src -l benchmark -lpthread -o /tmp/x" 
     echo ========================================================
     cc_t=`echo "$cc" | sed 's/ //g'`
-    objdump -d /tmp/x > $cc_t".asm"
+    objdump -M no-aliases -d /tmp/x > $cc_t".asm"
     ./scripts/find-simd.sh $cc_t".asm"
     echo ========================================================
     /tmp/x 

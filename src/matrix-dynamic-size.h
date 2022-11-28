@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <benchmark/benchmark.h>
 #include <stdlib.h>
 
 void print_matrix(std::vector<std::vector<float>> mat ){
@@ -37,20 +36,20 @@ void simplex_iterate(std::vector<std::vector<float>> & mat) {
     auto piv_elem = mat[piv_row][piv_col];
     // std::cout << piv_elem << std::endl << std::endl;
 
-    // step 0-2: div piv row by piv item:
-    for (int i = 0; i < col; i += 1) {
-        mat[piv_row][i] = mat[piv_row][i] / piv_elem;
-    }
+    // // step 0-2: div piv row by piv item:
+    // for (int i = 0; i < col; i += 1) {
+    //     mat[piv_row][i] = mat[piv_row][i] / piv_elem;
+    // }
 
-    // step 0-3: row operations on remaining rows.
-    for (int i = 0; i < row; i += 1) {
-        if (i != piv_row) {
-            auto xxx = mat[i][piv_col];
-            for (int j = 0; j < col; j += 1) {
-                mat[i][j] = mat[i][j] - xxx * mat[piv_row][j];
-            }
-        }
-    }
+    // // step 0-3: row operations on remaining rows.
+    // for (int i = 0; i < row; i += 1) {
+    //     if (i != piv_row) {
+    //         auto xxx = mat[i][piv_col];
+    //         for (int j = 0; j < col; j += 1) {
+    //             mat[i][j] = mat[i][j] - xxx * mat[piv_row][j];
+    //         }
+    //     }
+    // }
 
     #ifndef BENCH
         print_matrix(mat);

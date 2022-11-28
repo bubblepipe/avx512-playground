@@ -1,3 +1,4 @@
+#include <benchmark/benchmark.h>
 #include <matrix-dynamic-size.h>
 // #include <"src/matrix-dynamic-size.h">
 
@@ -120,7 +121,7 @@ static void bench_8_13(benchmark::State &state) {
 
 void bench_x(benchmark::State &state) {
 
-    int variable_count = 1024;
+    int variable_count = 32;
     int constraints_count = variable_count;
     auto mat_ref= generate_random_matrix(variable_count, constraints_count);
     int row = mat_ref.size();
