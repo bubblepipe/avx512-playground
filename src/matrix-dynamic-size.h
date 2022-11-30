@@ -20,40 +20,42 @@ void simplex_iterate(std::vector<std::vector<float>> & mat) {
 
     int row = mat.size();
     int col = mat[0].size();
+    int piv_row = 0;
+    int piv_col = 0;
+    float piv_elem = 114514;
 
     // Step 0-1: Picking the Pivot Elem
     auto x = mat[row - 1];
     auto piv_col_it = std::min_element(std::begin(mat[row - 1]), std::end(mat[row - 1]));
-    int piv_col = std::distance(std::begin(mat[row - 1]), piv_col_it);
+    piv_col = std::distance(std::begin(mat[row - 1]), piv_col_it);
 
     std::vector<float> ratios(row - 1);
     for (int i = 0; i < row - 1; i += 1) {
         ratios[i] = mat[i][col - 1] / mat[i][piv_col];
     }
     auto piv_row_it = std::min_element(std::begin(ratios), std::end(ratios));
-    int piv_row = std::distance(std::begin(ratios), piv_row_it);
+    piv_row = std::distance(std::begin(ratios), piv_row_it);
 
-    auto piv_elem = mat[piv_row][piv_col];
-    // std::cout << piv_elem << std::endl << std::endl;
+    piv_elem = mat[piv_row][piv_col];
 
-    // // step 0-2: div piv row by piv item:
-    // for (int i = 0; i < col; i += 1) {
-    //     mat[piv_row][i] = mat[piv_row][i] / piv_elem;
-    // }
+    // step 0-2: div piv row by piv item:
+    for (int i = 0; i < col; i += 1) {
+        mat[piv_row][i] = mat[piv_row][i] / piv_elem;
+    }
 
-    // // step 0-3: row operations on remaining rows.
-    // for (int i = 0; i < row; i += 1) {
-    //     if (i != piv_row) {
-    //         auto xxx = mat[i][piv_col];
-    //         for (int j = 0; j < col; j += 1) {
-    //             mat[i][j] = mat[i][j] - xxx * mat[piv_row][j];
-    //         }
-    //     }
-    // }
+    // step 0-3: row operations on remaining rows.
+    for (int i = 0; i < row; i += 1) {
+        if (i != piv_row) {
+            auto xxx = mat[i][piv_col];
+            for (int j = 0; j < col; j += 1) {
+                mat[i][j] = mat[i][j] - xxx * mat[piv_row][j];
+            }
+        }
+    }
 
-    #ifndef BENCH
-        print_matrix(mat);
-    #endif 
+    // #ifndef BENCH
+    //     print_matrix(mat);
+    // #endif 
 }
 
 std::vector<std::vector<float>> generate_random_matrix(int variable_count, int constraints_count) {

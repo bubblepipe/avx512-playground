@@ -1,0 +1,12 @@
+vmovups (%rcx,%rbp,4),%ymm2                 // part 1
+vmovups 0x20(%rcx,%rbp,4),%ymm3             // compute (vmovups,vdivps,vmovups)*4 throughput
+vmovups 0x40(%rcx,%rbp,4),%ymm4             // instr    | latency | recip-throput | throughput 
+vmovups 0x60(%rcx,%rbp,4),%ymm5             // vmovups  | 3       | 0.5           | 2
+vdivps %ymm1,%ymm2,%ymm2                    // vdivps   | 11      | 5             | 1/5  
+vdivps %ymm1,%ymm3,%ymm3
+vdivps %ymm1,%ymm4,%ymm4
+vdivps %ymm1,%ymm5,%ymm5
+vmovups %ymm2,(%rcx,%rbp,4)
+vmovups %ymm3,0x20(%rcx,%rbp,4)
+vmovups %ymm4,0x40(%rcx,%rbp,4)
+vmovups %ymm5,0x60(%rcx,%rbp,4)

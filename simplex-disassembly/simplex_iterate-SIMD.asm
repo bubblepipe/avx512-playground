@@ -197,11 +197,11 @@
     a362:	c4 e2 7d 18 c8       	vbroadcastss %xmm0,%ymm1
     a367:	31 ed                	xor    %ebp,%ebp
     a369:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-    a370:	c5 fc 10 14 a9       	vmovups (%rcx,%rbp,4),%ymm2
-    a375:	c5 fc 10 5c a9 20    	vmovups 0x20(%rcx,%rbp,4),%ymm3
-    a37b:	c5 fc 10 64 a9 40    	vmovups 0x40(%rcx,%rbp,4),%ymm4
-    a381:	c5 fc 10 6c a9 60    	vmovups 0x60(%rcx,%rbp,4),%ymm5
-    a387:	c5 ec 5e d1          	vdivps %ymm1,%ymm2,%ymm2
+    a370:	c5 fc 10 14 a9       	vmovups (%rcx,%rbp,4),%ymm2                 // part 1
+    a375:	c5 fc 10 5c a9 20    	vmovups 0x20(%rcx,%rbp,4),%ymm3             // compute (vmovups,vdivps,vmovups)*4 throughput
+    a37b:	c5 fc 10 64 a9 40    	vmovups 0x40(%rcx,%rbp,4),%ymm4             // instr    | latency | recip-throput | throughput 
+    a381:	c5 fc 10 6c a9 60    	vmovups 0x60(%rcx,%rbp,4),%ymm5             // vmovups  | 3       | 0.5           | 2
+    a387:	c5 ec 5e d1          	vdivps %ymm1,%ymm2,%ymm2                    // vdivps   | 11      | 5             | 1/5  
     a38b:	c5 e4 5e d9          	vdivps %ymm1,%ymm3,%ymm3
     a38f:	c5 dc 5e e1          	vdivps %ymm1,%ymm4,%ymm4
     a393:	c5 d4 5e e9          	vdivps %ymm1,%ymm5,%ymm5
@@ -282,16 +282,16 @@
     a4af:	0f 82 7b ff ff ff    	jb     a430 <_Z15simplex_iterateRSt6vectorIS_IfSaIfEESaIS1_EE+0x3b0>
     a4b5:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
     a4bc:	00 00 00 00 
-    a4c0:	c5 fa 10 14 81       	vmovss (%rcx,%rax,4),%xmm2
+    a4c0:	c5 fa 10 14 81       	vmovss (%rcx,%rax,4),%xmm2              
     a4c5:	c4 e2 71 a9 14 87    	vfmadd213ss (%rdi,%rax,4),%xmm1,%xmm2
-    a4cb:	c5 fa 11 14 87       	vmovss %xmm2,(%rdi,%rax,4)
+    a4cb:	c5 fa 11 14 87       	vmovss %xmm2,(%rdi,%rax,4) 
     a4d0:	c5 fa 10 54 81 04    	vmovss 0x4(%rcx,%rax,4),%xmm2
     a4d6:	c4 e2 71 a9 54 87 04 	vfmadd213ss 0x4(%rdi,%rax,4),%xmm1,%xmm2
     a4dd:	c5 fa 11 54 87 04    	vmovss %xmm2,0x4(%rdi,%rax,4)
     a4e3:	c5 fa 10 54 81 08    	vmovss 0x8(%rcx,%rax,4),%xmm2
     a4e9:	c4 e2 71 a9 54 87 08 	vfmadd213ss 0x8(%rdi,%rax,4),%xmm1,%xmm2
     a4f0:	c5 fa 11 54 87 08    	vmovss %xmm2,0x8(%rdi,%rax,4)
-    a4f6:	c5 fa 10 54 81 0c    	vmovss 0xc(%rcx,%rax,4),%xmm2
+    a4f6:	c5 fa 10 54 81 0c    	vmovss 0xc(%rcx,%rax,4),%xmm2 
     a4fc:	c4 e2 71 a9 54 87 0c 	vfmadd213ss 0xc(%rdi,%rax,4),%xmm1,%xmm2
     a503:	c5 fa 11 54 87 0c    	vmovss %xmm2,0xc(%rdi,%rax,4)
     a509:	c5 fa 10 54 81 10    	vmovss 0x10(%rcx,%rax,4),%xmm2
@@ -313,12 +313,12 @@
     a567:	c4 e2 7d 18 d1       	vbroadcastss %xmm1,%ymm2
     a56c:	31 c0                	xor    %eax,%eax
     a56e:	66 90                	xchg   %ax,%ax
-    a570:	c5 fc 10 1c 81       	vmovups (%rcx,%rax,4),%ymm3
-    a575:	c5 fc 10 64 81 20    	vmovups 0x20(%rcx,%rax,4),%ymm4
-    a57b:	c5 fc 10 6c 81 40    	vmovups 0x40(%rcx,%rax,4),%ymm5
-    a581:	c5 fc 10 74 81 60    	vmovups 0x60(%rcx,%rax,4),%ymm6
-    a587:	c4 e2 6d a8 1c 87    	vfmadd213ps (%rdi,%rax,4),%ymm2,%ymm3
-    a58d:	c4 e2 6d a8 64 87 20 	vfmadd213ps 0x20(%rdi,%rax,4),%ymm2,%ymm4
+    a570:	c5 fc 10 1c 81       	vmovups (%rcx,%rax,4),%ymm3                 // part 2
+    a575:	c5 fc 10 64 81 20    	vmovups 0x20(%rcx,%rax,4),%ymm4             // compute (vmovups,vfmadd213ps,vmovups)*4 throughput   
+    a57b:	c5 fc 10 6c 81 40    	vmovups 0x40(%rcx,%rax,4),%ymm5             // instr    | latency | recip-throput | throughput          
+    a581:	c5 fc 10 74 81 60    	vmovups 0x60(%rcx,%rax,4),%ymm6             // vmovups  | 3       | 0.5           | 2  
+    a587:	c4 e2 6d a8 1c 87    	vfmadd213ps (%rdi,%rax,4),%ymm2,%ymm3       // vfma     | 4       | 0.5           | 2  
+    a58d:	c4 e2 6d a8 64 87 20 	vfmadd213ps 0x20(%rdi,%rax,4),%ymm2,%ymm4   // ymm, 256 bits <-> 8 floats
     a594:	c4 e2 6d a8 6c 87 40 	vfmadd213ps 0x40(%rdi,%rax,4),%ymm2,%ymm5
     a59b:	c4 e2 6d a8 74 87 60 	vfmadd213ps 0x60(%rdi,%rax,4),%ymm2,%ymm6
     a5a2:	c5 fc 11 1c 87       	vmovups %ymm3,(%rdi,%rax,4)

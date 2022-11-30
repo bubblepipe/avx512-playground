@@ -1,0 +1,12 @@
+vmovups	(%rcx,%rax,4), %ymm3
+vmovups	32(%rcx,%rax,4), %ymm4
+vmovups	64(%rcx,%rax,4), %ymm5
+vmovups	96(%rcx,%rax,4), %ymm6
+vfmadd213ps	(%rdi,%rax,4), %ymm2, %ymm3
+vfmadd213ps	32(%rdi,%rax,4), %ymm2, %ymm4
+vfmadd213ps	64(%rdi,%rax,4), %ymm2, %ymm5
+vfmadd213ps	96(%rdi,%rax,4), %ymm2, %ymm6
+vmovups	%ymm3, (%rdi,%rax,4)
+vmovups	%ymm4, 32(%rdi,%rax,4)
+vmovups	%ymm5, 64(%rdi,%rax,4)
+vmovups	%ymm6, 96(%rdi,%rax,4)

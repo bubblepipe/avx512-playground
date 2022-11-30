@@ -1,0 +1,16 @@
+fld    %st(0)                               // part 2
+fmuls  (%rcx,%rdi,4)                        // compute (fld,fmul,fadd,fstp)*4 throughput   
+fadds  0x0(%rbp,%rdi,4)                     // instr    | latency | recip-throput | throughput      
+fstps  0x0(%rbp,%rdi,4)                     // fld      | 1       | 0.5           | 2      
+fld    %st(0)                               // fmul     | 5       | 1             | 1          
+fmuls  0x4(%rcx,%rdi,4)                     // fadd     | 3       | 1             | 1          
+fadds  0x4(%rbp,%rdi,4)                     // fstp     | 4       | 5             | 1/5          
+fstps  0x4(%rbp,%rdi,4)                     
+fld    %st(0)
+fmuls  0x8(%rcx,%rdi,4)
+fadds  0x8(%rbp,%rdi,4)
+fstps  0x8(%rbp,%rdi,4)
+fld    %st(0)
+fmuls  0xc(%rcx,%rdi,4)
+fadds  0xc(%rbp,%rdi,4)
+fstps  0xc(%rbp,%rdi,4)

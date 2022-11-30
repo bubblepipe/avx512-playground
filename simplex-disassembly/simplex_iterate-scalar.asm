@@ -277,14 +277,14 @@
     a420:	72 4e                	jb     a470 <_Z15simplex_iterateRSt6vectorIS_IfSaIfEESaIS1_EE+0x3f0>
     a422:	66 66 66 66 66 2e 0f 	data16 data16 data16 data16 nopw %cs:0x0(%rax,%rax,1)
     a429:	1f 84 00 00 00 00 00 
-    a430:	d9 c0                	fld    %st(0)
-    a432:	d8 0c b9             	fmuls  (%rcx,%rdi,4)
-    a435:	d8 44 bd 00          	fadds  0x0(%rbp,%rdi,4)
-    a439:	d9 5c bd 00          	fstps  0x0(%rbp,%rdi,4)
-    a43d:	d9 c0                	fld    %st(0)
-    a43f:	d8 4c b9 04          	fmuls  0x4(%rcx,%rdi,4)
-    a443:	d8 44 bd 04          	fadds  0x4(%rbp,%rdi,4)
-    a447:	d9 5c bd 04          	fstps  0x4(%rbp,%rdi,4)
+    a430:	d9 c0                	fld    %st(0)                               // part 2
+    a432:	d8 0c b9             	fmuls  (%rcx,%rdi,4)                        // compute (fld,fmul,fadd,fstp)*4 throughput   
+    a435:	d8 44 bd 00          	fadds  0x0(%rbp,%rdi,4)                     // instr    | latency | recip-throput | throughput      
+    a439:	d9 5c bd 00          	fstps  0x0(%rbp,%rdi,4)                     // fld      | 1       | 0.5           | 2      
+    a43d:	d9 c0                	fld    %st(0)                               // fmul     | 5       | 1             | 1          
+    a43f:	d8 4c b9 04          	fmuls  0x4(%rcx,%rdi,4)                     // fadd     | 3       | 1             | 1          
+    a443:	d8 44 bd 04          	fadds  0x4(%rbp,%rdi,4)                     // fstp     | 4       | 5             | 1/5          
+    a447:	d9 5c bd 04          	fstps  0x4(%rbp,%rdi,4)                     
     a44b:	d9 c0                	fld    %st(0)
     a44d:	d8 4c b9 08          	fmuls  0x8(%rcx,%rdi,4)
     a451:	d8 44 bd 08          	fadds  0x8(%rbp,%rdi,4)
