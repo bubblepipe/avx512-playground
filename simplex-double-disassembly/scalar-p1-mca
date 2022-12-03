@@ -1,0 +1,29 @@
+fld    %st(0)
+fdivrs (%rcx,%rsi,4)
+fstps  (%rcx,%rsi,4)
+fld    %st(0)
+fdivrs 0x4(%rcx,%rsi,4)
+fstps  0x4(%rcx,%rsi,4)
+fld    %st(0)
+fdivrs 0x8(%rcx,%rsi,4)
+fstps  0x8(%rcx,%rsi,4)
+fld    %st(0)
+fdivrs 0xc(%rcx,%rsi,4)
+fstps  0xc(%rcx,%rsi,4)
+
+# mov    (%rdi),%rbp
+# flds   0x0(%rbp,%rax,4)
+# fdivs  0x0(%rbp,%rcx,4)
+# fstps  0x0(%r13,%r15,4)
+# mov    0x18(%rdi),%rbp
+# flds   0x0(%rbp,%rax,4)
+# fdivs  0x0(%rbp,%rcx,4)
+# fstps  0x4(%r13,%r15,4)
+# mov    0x30(%rdi),%rbp
+# flds   0x0(%rbp,%rax,4)
+# fdivs  0x0(%rbp,%rcx,4)
+# fstps  0x8(%r13,%r15,4)
+# mov    0x48(%rdi),%rbp
+# flds   0x0(%rbp,%rax,4)
+# fdivs  0x0(%rbp,%rcx,4)
+# fstps  0xc(%r13,%r15,4)

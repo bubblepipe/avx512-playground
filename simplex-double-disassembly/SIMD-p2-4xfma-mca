@@ -1,0 +1,12 @@
+vmovupd (%rcx,%rax,8),%ymm3
+vmovupd 0x20(%rcx,%rax,8),%ymm4
+vmovupd 0x40(%rcx,%rax,8),%ymm5
+vmovupd 0x60(%rcx,%rax,8),%ymm6
+vfmadd213pd (%rdi,%rax,8),%ymm2,%ymm3
+vfmadd213pd 0x20(%rdi,%rax,8),%ymm2,%ymm4
+vfmadd213pd 0x40(%rdi,%rax,8),%ymm2,%ymm5
+vfmadd213pd 0x60(%rdi,%rax,8),%ymm2,%ymm6
+vmovupd %ymm3,(%rdi,%rax,8)
+vmovupd %ymm4,0x20(%rdi,%rax,8)
+vmovupd %ymm5,0x40(%rdi,%rax,8)
+vmovupd %ymm6,0x60(%rdi,%rax,8)
