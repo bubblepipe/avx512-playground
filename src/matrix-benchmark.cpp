@@ -1,3 +1,10 @@
+/**
+ * This benchmark setup uses:
+ *    class matrix 
+ * not:
+ *    vector<vector<T>>
+ */
+
 #include <iostream>
 #include <benchmark/benchmark.h>
 #include <thread>
@@ -100,5 +107,4 @@ static void matrix_add(benchmark::State& state) {
 
 
 BENCHMARK(matrix_add);
-// BENCHMARK(fill_1);
 BENCHMARK_MAIN();
