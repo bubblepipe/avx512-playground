@@ -6,11 +6,13 @@ normal=$(tput sgr0)
 # note: must enable -O3 flag to have vectorization 
 # native -mno-avx
 
-ccs=('clang++-15 -O3 -march=native' 
-     'clang++-15 -O3 -march=native -mno-avx -mno-sse' )
+ccs=( 
+     'clang++-15 -O3 -march=native -mno-avx -mno-sse' 
+     'clang++-15 -O3 -march=native'
+    )
 
 # src=./src/vector_add.cpp
-src=./src/bench_matrix_add.cpp
+src=./src/bench_matrix_fma.cpp
 
 params="-DBENCH"cc
 for cc in ${ccs[@]}

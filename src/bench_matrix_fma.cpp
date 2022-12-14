@@ -6,7 +6,7 @@ void bench_matrix_add_malloc(benchmark::State &state) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
 
     int size = 128;
-    int row = 128/2;
+    int row = 128;
     int col = 128;
 
     float * * mat_src1 = (float * *) malloc(row * sizeof (float *));
@@ -48,7 +48,7 @@ void bench_matrix_add_vectorvector(benchmark::State &state) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
 
     int size = 128;
-    int row = 64;
+    int row = 128/2;
     int col = 128;
     std::vector<std::vector<float>> mat_src1;
     std::vector<std::vector<float>> mat_src2;
@@ -67,7 +67,8 @@ void bench_matrix_add_vectorvector(benchmark::State &state) {
     for (auto _ : state) {
         for (int i = 0; i < row; i += 1) {
             for (int j = 0; j < col; j += 1) {
-                mat_dst[i][j] = mat_src1[i][j] + mat_src2[i][j];
+                // mat_dst[i][j] = mat_src1[i][j] + mat_src2[i][j];
+                mat_dst[i][j] += mat_src1[i][j] * mat_src2[i][j];
             }
         }
     }
@@ -79,5 +80,5 @@ void bench_matrix_add_vectorvector(benchmark::State &state) {
     }
 }
 
-BENCHMARK(bench_matrix_add_malloc);
+BENCHMARK(bench_matrix_add_vectorvector);
 BENCHMARK_MAIN();
