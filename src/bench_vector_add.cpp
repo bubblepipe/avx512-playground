@@ -2,6 +2,12 @@
 #include <iostream>
 #include <vector>
 
+void vec_fma(uint32_t size, float * src1_ptr, float * src2_ptr, float * dst_ptr) {
+
+    for (uint32_t i = 0; i < size; i += 1 ){
+        dst_ptr[i] += src1_ptr[i] * src2_ptr[i];
+    }
+}
 
 void vec_add_莎莎(uint32_t size, float * src1_ptr, float * src2_ptr, float * dst_ptr) {
 
@@ -11,7 +17,7 @@ void vec_add_莎莎(uint32_t size, float * src1_ptr, float * src2_ptr, float * d
     // return(dst_ptr[size-1]);
 }
 
-static void vector_add(benchmark::State& state){
+static void vector(benchmark::State& state){
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
 
     uint32_t size = 128*128*128;
@@ -27,7 +33,9 @@ static void vector_add(benchmark::State& state){
     }
 
     for (auto _ : state) {
-        vec_add_莎莎(size, src1_ptr, src2_ptr, dst_ptr);
+        // vec_add_莎莎(size, src1_ptr, src2_ptr, dst_ptr);
+        vec_fma(size, src1_ptr, src2_ptr, dst_ptr);
+
     }
 
     for (uint32_t i = 0; i < size; i += 1 ){
@@ -39,6 +47,6 @@ static void vector_add(benchmark::State& state){
     free(dst_ptr);
 }
 
-BENCHMARK(vector_add);
+BENCHMARK(vector);
 // BENCHMARK(fill_1);
 BENCHMARK_MAIN();
