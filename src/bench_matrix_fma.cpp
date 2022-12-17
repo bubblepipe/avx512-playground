@@ -51,15 +51,14 @@ void xxxx(int row, int col,
         std::vector<std::vector<float>> & mat_dst){
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
-            // mat_dst[i][j] = mat_src1[i][j] + mat_src2[i][j];
-            mat_dst[i][j] += mat_src1[i][j] * mat_src2[i][j];
+            mat_dst[i][j] = mat_src1[i][j] + mat_src2[i][j];
+            // mat_dst[i][j] += mat_src1[i][j] * mat_src2[i][j];
         }
     }
 }
 void bench_matrix_add_vectorvector(benchmark::State &state) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
 
-    int size = 128;
     int row = 128;
     int col = 128;
     std::vector<std::vector<float>> mat_src1;
@@ -71,8 +70,8 @@ void bench_matrix_add_vectorvector(benchmark::State &state) {
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
             mat_dst[i][j] = i;
-            mat_src1[i][j] = rand();
-            mat_src2[i][j] = rand();
+            mat_src1[i][j] = (float(rand())/float((RAND_MAX)));
+            mat_src2[i][j] = (float(rand())/float((RAND_MAX)));
         }
     }
 
@@ -81,8 +80,8 @@ void bench_matrix_add_vectorvector(benchmark::State &state) {
     }
 
     for (int i = 0; i < row; i += 1) {
-        for (int j = 0; j < size; j += 1) {
-            fprintf(somefile, "%x",  mat_dst[i][j]);
+        for (int j = 0; j < col; j += 1) {
+            fprintf(somefile, "%f + %f = %f\n", mat_src1[i][j], mat_src2[i][j], mat_dst[i][j]);
         }
     }
     fclose(somefile);

@@ -7,19 +7,21 @@ normal=$(tput sgr0)
 # native -mno-avx
 
 ccs=( 
-     'clang++-15 -O3 -march=native -mno-avx -mno-sse' 
-     'clang++-15 -O3 -march=native'
+     'clang++-15 -g -O3 -march=native -mno-avx -mno-sse' 
+     'clang++-15 -g -O3 -march=native'
+    #  '/opt/llvm-project/llvm_install/bin/clang++ -O3 -march=native'
     )
 
 # src=./src/vector_add.cpp
-src=./src/bench_matrix_fma.cpp
+# src=./src/bench_matrix_fma.cpp
+src=./src/bench_flat_mat.cpp
 
-params="-DBENCH"cc
+params="-DBENCH"
 for cc in ${ccs[@]}
 do
     echo ${bold}$cc${normal}
+    echo "$cc $src -Wno-format $params -std=c++11 -I ./src/ -isystem benchmark/include  -L benchmark/build/src -l benchmark -lpthread -o /tmp/x" 
     bash -c "$cc $src -Wno-format $params -std=c++11 -I ./src/ -isystem benchmark/include  -L benchmark/build/src -l benchmark -lpthread -o /tmp/x" 
-    # bash -c "$cc ./simple_simd_example/x-gb.cpp $params -std=c++11 -I ./src/ -isystem benchmark/include  -L benchmark/build/src -l benchmark -lpthread -o /tmp/x" 
     echo ========================================================
     cc_t=`echo "$cc" | sed 's/ //g'`
     objdump -M no-aliases -d /tmp/x > $cc_t".asm"

@@ -45,6 +45,7 @@ static void vector(benchmark::State& state){
     free(src1_ptr);
     free(src2_ptr);
     free(dst_ptr);
+    fclose(somefile);
 }
 
 BENCHMARK(vector);
