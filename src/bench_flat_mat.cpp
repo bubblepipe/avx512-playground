@@ -1,13 +1,5 @@
-/**
- * This benchmark setup uses:
- *    class matrix 
- * not:
- *    vector<vector<T>>
- */
-
+#include "bench_header.h"
 #include <iostream>
-#include <benchmark/benchmark.h>
-#include <thread>
 #include <time.h>
 #include <stdlib.h>
 
@@ -36,7 +28,7 @@ public:
 };
 
 
-void xxxx (unsigned int row, unsigned int col, matrix mat_src1, matrix mat_src2, matrix mat_dst ) {
+void mat_add (unsigned int row, unsigned int col, matrix mat_src1, matrix mat_src2, matrix mat_dst ) {
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
             float src1 = mat_src1.get(i,j);
@@ -46,32 +38,21 @@ void xxxx (unsigned int row, unsigned int col, matrix mat_src1, matrix mat_src2,
         }
     }
 }
-
-// int main(){
-//     unsigned int row = 64;
-//     unsigned int col = 32;
-//     matrix mat(row,col);
-
-//     for (int i = 0; i < row; i += 1) {
-//         for (int j = 0; j < col; j += 1) {
-//             mat.set(i,j,float(rand()/3));
-//         }
-//     }
-
-//     for (int i = 0; i < row; i += 1) {
-//         for (int j = 0; j < col; j += 1) {
-//             printf("%f " , mat.get(i,j));
-//         }
-//         printf("\n");
-//     }
-//     return 0;
-// }
-
-static void mat_flat_add(benchmark::State& state) {
+void mat_fma (unsigned int row, unsigned int col, matrix mat_src1, matrix mat_src2, matrix mat_dst ) {
+    for (int i = 0; i < row; i += 1) {
+        for (int j = 0; j < col; j += 1) {
+            float src1 = mat_src1.get(i,j);
+            float src2 = mat_src1.get(i,j);
+            mat_dst.set(i,j,  src1 + src2) ;
+        }
+    }
+}
+static void bench_matrix_flatvector(benchmark::State& state, 
+        void (*func_ptr)(unsigned int, unsigned int, matrix, matrix, matrix )) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
 
     unsigned int row = state.range(0);
-    unsigned int col = 64;
+    unsigned int col = state.range(1);
     matrix mat_src1(row,col);
     matrix mat_src2(row,col);
     matrix mat_dst(row,col);
@@ -85,7 +66,7 @@ static void mat_flat_add(benchmark::State& state) {
     }
 
     for (auto _ : state) {
-        xxxx(row, col, mat_src1, mat_src2, mat_dst);
+        (*func_ptr)(row, col, mat_src1, mat_src2, mat_dst);
     }
 
     for (int i = 0; i < row; i += 1) {
@@ -97,9 +78,7 @@ static void mat_flat_add(benchmark::State& state) {
     fclose(somefile);
 }
 
-
-// 16 * 2 ^ step
-// BENCHMARK(mat_flat_add)->DenseRange(0,3,1);
-// BENCHMARK(mat_flat_add)->DenseRange(16,128,16);
+BENCHMARK_CAPTURE(bench_matrix_flatvector, add, &mat_add)->Apply(RowColSizeArgs);
+// BENCHMARK_CAPTURE(bench_matrix_flatvector, fma, &mat_fma)->Apply(RowColSizeArgs);
 
 BENCHMARK_MAIN();
