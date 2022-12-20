@@ -1,6 +1,6 @@
 [submodule "benchmark"]
 	path = benchmark
 	url = https://github.com/google/benchmark.git
-[submodule "libsimdpp"]
-	path = libsimdpp
+[submodule "include/libsimdpp"]
+	path = include/libsimdpp
 	url = https://github.com/p12tic/libsimdpp

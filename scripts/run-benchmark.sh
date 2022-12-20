@@ -22,7 +22,7 @@ do
 $cc $src -Wno-format $2 $params -std=c++11 -o /tmp/x  
 -I ./src/ 
 -isystem include/benchmark/include -L include/benchmark/build/src -l benchmark -lpthread 
--I ./libsimdpp
+-I ./include/libsimdpp
 END
 )
     cc_cmd=$(echo $cc_cmd |tr '\n' ' ')
