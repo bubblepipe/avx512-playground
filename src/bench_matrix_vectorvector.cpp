@@ -79,7 +79,7 @@ void bench_matrix_vectorvector(benchmark::State &state,
     mat_dst.resize(row, std::vector<float>(col, 0));
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
-            mat_dst[i][j] = i;
+            mat_dst[i][j] = (float(rand())/float((RAND_MAX)));
             mat_src1[i][j] = (float(rand())/float((RAND_MAX)));
             mat_src2[i][j] = (float(rand())/float((RAND_MAX)));
         }
@@ -97,7 +97,11 @@ void bench_matrix_vectorvector(benchmark::State &state,
     fclose(somefile);
 }
 
+#ifdef ADD
 BENCHMARK_CAPTURE(bench_matrix_vectorvector, add, &mat_add)->Apply(RowColSizeArgs);
-// BENCHMARK_CAPTURE(bench_matrix_vectorvector, fma, &mat_fma)->Apply(RowColSizeArgs);
+#endif
+#ifdef FMA
+BENCHMARK_CAPTURE(bench_matrix_vectorvector, fma, &mat_fma)->Apply(RowColSizeArgs);
+#endif
 
 BENCHMARK_MAIN();

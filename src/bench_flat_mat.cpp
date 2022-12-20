@@ -78,7 +78,7 @@ static void bench_matrix_flatvector(benchmark::State& state,
     fclose(somefile);
 }
 
-BENCHMARK_CAPTURE(bench_matrix_flatvector, add, &mat_add)->Apply(RowColSizeArgs);
+// BENCHMARK_CAPTURE(bench_matrix_flatvector, add, &mat_add)->Apply(RowColSizeArgs);
 // BENCHMARK_CAPTURE(bench_matrix_flatvector, fma, &mat_fma)->Apply(RowColSizeArgs);
 
-BENCHMARK_MAIN();
+// BENCHMARK_MAIN();

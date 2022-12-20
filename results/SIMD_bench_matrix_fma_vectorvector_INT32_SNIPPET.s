@@ -1,0 +1,16 @@
+vmovdqu -0x1e0(%r9,%r15,4),%ymm0
+vmovdqu -0x1c0(%r9,%r15,4),%ymm1
+vmovdqu -0x1a0(%r9,%r15,4),%ymm2
+vmovdqu -0x180(%r9,%r15,4),%ymm3
+vpmulld -0x1e0(%r8,%r15,4),%ymm0,%ymm0
+vpmulld -0x1c0(%r8,%r15,4),%ymm1,%ymm1
+vpmulld -0x1a0(%r8,%r15,4),%ymm2,%ymm2
+vpmulld -0x180(%r8,%r15,4),%ymm3,%ymm3
+vpaddd -0x1e0(%r10,%r15,4),%ymm0,%ymm0
+vpaddd -0x1c0(%r10,%r15,4),%ymm1,%ymm1
+vpaddd -0x1a0(%r10,%r15,4),%ymm2,%ymm2
+vpaddd -0x180(%r10,%r15,4),%ymm3,%ymm3
+vmovdqu %ymm0,-0x1e0(%r10,%r15,4)
+vmovdqu %ymm1,-0x1c0(%r10,%r15,4)
+vmovdqu %ymm2,-0x1a0(%r10,%r15,4)
+vmovdqu %ymm3,-0x180(%r10,%r15,4)

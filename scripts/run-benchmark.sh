@@ -18,11 +18,23 @@ params="-DBENCH"
 for cc in ${ccs[@]}
 do
     echo ${bold}$cc${normal} 1>&2
-    echo "$cc $src -Wno-format $params -std=c++11 -I ./src/ -isystem benchmark/include  -L benchmark/build/src -l benchmark -lpthread -o /tmp/x"  1>&2
-    bash -c "$cc $src -Wno-format $params -std=c++11 -I ./src/ -isystem benchmark/include  -L benchmark/build/src -l benchmark -lpthread -o /tmp/x" && /tmp/x
+    cc_cmd=$(cat <<-END
+$cc $src -Wno-format $2 $params -std=c++11 -o /tmp/x  
+-I ./src/ 
+-isystem include/benchmark/include -L include/benchmark/build/src -l benchmark -lpthread 
+-I ./libsimdpp
+END
+)
+    cc_cmd=$(echo $cc_cmd |tr '\n' ' ')
+    echo $cc_cmd 1>&2
+    sh -c $cc_cmd && /tmp/x
     echo ======================================================== 1>&2
     # cc_t=`echo "$cc" | sed 's/ //g'`
     # objdump -M no-aliases -d /tmp/x > $cc_t".asm"
      
     echo
 done
+
+
+
+# -I ~/Documents/avx-512/libsimdpp

@@ -17,6 +17,15 @@ void vec_add_莎莎(uint32_t size, float * src1_ptr, float * src2_ptr, float * d
     // return(dst_ptr[size-1]);
 }
 
+void vec_add_流云(uint32_t size, float * src1_ptr, float * src2_ptr, float * dst_ptr) {
+
+    for (uint32_t i = 0; i < size; i += 1 ){
+        dst_ptr[i] = src1_ptr[i] + src2_ptr[i];
+    }
+    // return(dst_ptr[size-1]);
+}
+
+
 static void vector(benchmark::State& state, 
                    void (*func_ptr)(uint32_t, float *, float *, float * ) ){
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
@@ -30,9 +39,9 @@ static void vector(benchmark::State& state,
 
     // fill src with rand, bring dst in cache
     for (uint32_t i = 0; i < size; i += 1 ){
-      src1_ptr[i] = rand();
-      src2_ptr[i] = rand();
-      dst_ptr[i] = 0;
+      src1_ptr[i] = (float(rand())/float((RAND_MAX)));
+      src2_ptr[i] = (float(rand())/float((RAND_MAX)));
+      dst_ptr[i] = (float(rand())/float((RAND_MAX)));
     }
 
     for (auto _ : state) {
@@ -49,10 +58,11 @@ static void vector(benchmark::State& state,
     fclose(somefile);
 }
 
-
-// BENCHMARK_CAPTURE(vector, add,  &vec_add_莎莎)->Apply(RowColSizeArgs);
+#ifdef ADD
+BENCHMARK_CAPTURE(vector, add,  &vec_add_莎莎)->Apply(RowColSizeArgs);
+#endif
+#ifdef FMA
 BENCHMARK_CAPTURE(vector, fma,  &vec_fma)->Apply(RowColSizeArgs);
+#endif
 
-// BENCHMARK(vector);
-// BENCHMARK(fill_1);
 BENCHMARK_MAIN();
