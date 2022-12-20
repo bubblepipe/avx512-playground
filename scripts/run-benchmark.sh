@@ -34,7 +34,3 @@ END
      
     echo
 done
-
-
-
-# -I ~/Documents/avx-512/libsimdpp
