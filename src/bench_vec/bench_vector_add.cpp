@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "bench_header.h"
+#include <utils/bench_utils.cpp>
 #include <simdpp/simd.h>
 
 void vec_fma(uint32_t size, float * src1_ptr, float * src2_ptr, float * dst_ptr) {

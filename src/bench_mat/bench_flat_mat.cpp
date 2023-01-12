@@ -1,4 +1,4 @@
-#include "bench_header.h"
+#include <utils/bench_utils.cpp>
 #include <iostream>
 #include <time.h>
 #include <stdlib.h>
@@ -110,10 +110,14 @@ static void bench_matrix_flatvector(benchmark::State& state,
 
 #ifdef ADD
 BENCHMARK_CAPTURE(bench_matrix_flatvector, add, &mat_add)->Apply(RowColSizeArgs);
+#endif
+#ifdef ADDM
 BENCHMARK_CAPTURE(bench_matrix_flatvector, add_manual, &mat_add_manual)->Apply(RowColSizeArgs);
 #endif
 #ifdef FMA
-// BENCHMARK_CAPTURE(bench_matrix_flatvector, fma, &mat_fma)->Apply(RowColSizeArgs);
+BENCHMARK_CAPTURE(bench_matrix_flatvector, fma, &mat_fma)->Apply(RowColSizeArgs);
+#endif
+#ifdef FMAM
 BENCHMARK_CAPTURE(bench_matrix_flatvector, fma_manual, &mat_fma_manual)->Apply(RowColSizeArgs);
 #endif
 
