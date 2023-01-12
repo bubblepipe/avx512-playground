@@ -15,6 +15,7 @@ static void RowColSizeArgs(benchmark::internal::Benchmark* b) {
 // bench_matrix_flatvector/fma/32/48          866 ns 
 // bench_matrix_flatvector/fma/32/56          956 ns 
 // bench_matrix_flatvector/fma/32/64          888 ns 
+    // b->Args({32, 48}); 
     // b->Args({32, 56}); 
     // b->Args({32, 64}); 
 
@@ -22,4 +23,9 @@ static void RowColSizeArgs(benchmark::internal::Benchmark* b) {
     // b->Args({128, 24});
     // b->Args({128, 32});
     // b->Args({128, 33});
+
+    // b->Args({88,72});
+    // b->Args({88,80});
+    // b->Args({88,88});
+
 }

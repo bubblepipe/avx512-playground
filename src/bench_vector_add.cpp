@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "bench_header.h"
+#include <simdpp/simd.h>
 
 void vec_fma(uint32_t size, float * src1_ptr, float * src2_ptr, float * dst_ptr) {
 
@@ -14,15 +15,21 @@ void vec_add_莎莎(uint32_t size, float * src1_ptr, float * src2_ptr, float * d
     for (uint32_t i = 0; i < size; i += 1 ){
         dst_ptr[i] = src1_ptr[i] + src2_ptr[i];
     }
-    // return(dst_ptr[size-1]);
 }
 
-void vec_add_流云(uint32_t size, float * src1_ptr, float * src2_ptr, float * dst_ptr) {
+void vec_add_manual(uint32_t size, float * src1_ptr, float * src2_ptr, float * dst_ptr) {
 
-    for (uint32_t i = 0; i < size; i += 1 ){
-        dst_ptr[i] = src1_ptr[i] + src2_ptr[i];
+    if (size % 8 != 0) {
+        throw std::runtime_error(std::string("size not div by 8"));
     }
-    // return(dst_ptr[size-1]);
+
+    for (uint32_t i = 0; i < size; i += 8 ){
+        simdpp::float32<8> src1_ymm = simdpp::load(src1_ptr + i);
+        simdpp::float32<8> src2_ymm = simdpp::load(src2_ptr + i);
+        auto dst_ymm = simdpp::add(src1_ymm, src2_ymm);
+        simdpp::store(dst_ptr + i, dst_ymm);
+                                                        
+    }
 }
 
 
@@ -60,9 +67,12 @@ static void vector(benchmark::State& state,
 
 #ifdef ADD
 BENCHMARK_CAPTURE(vector, add,  &vec_add_莎莎)->Apply(RowColSizeArgs);
+BENCHMARK_CAPTURE(vector, add_manual,  &vec_add_manual)->Apply(RowColSizeArgs);
 #endif
 #ifdef FMA
 BENCHMARK_CAPTURE(vector, fma,  &vec_fma)->Apply(RowColSizeArgs);
 #endif
-
+#ifdef ADDM
+BENCHMARK_CAPTURE(vector, add_manual,  &vec_add_manual)->Apply(RowColSizeArgs);
+#endif
 BENCHMARK_MAIN();

@@ -1,5 +1,6 @@
 // #include <matrix-dynamic-size.h>
 #include "bench_header.h"
+#include <simdpp/simd.h>
 
 void bench_matrix_add_malloc(benchmark::State &state) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
@@ -54,6 +55,27 @@ void mat_add(int row, int col,
         }
     }
 }
+
+void mat_add_manual(int row, int col, 
+        std::vector<std::vector<float>> & mat_src1, 
+        std::vector<std::vector<float>> & mat_src2,
+        std::vector<std::vector<float>> & mat_dst){
+
+
+    for (int i = 0; i < row; i += 1) {
+        auto size = mat_src1[i].size();
+        float * src1_ptr = (float *) mat_src1[i].data();
+        float * src2_ptr = (float *) mat_src2[i].data();
+        float * dst_ptr = (float *) mat_dst[i].data();
+        for (uint32_t i = 0; i < size; i += 8 ){
+            simdpp::float32<8> src1_ymm = simdpp::load(src1_ptr + i);
+            simdpp::float32<8> src2_ymm = simdpp::load(src2_ptr + i);
+            auto dst_ymm = simdpp::add(src1_ymm, src2_ymm);
+            simdpp::store(dst_ptr + i, dst_ymm);                                         
+        }
+    }
+}
+
 void mat_fma(int row, int col, 
         std::vector<std::vector<float>> & mat_src1, 
         std::vector<std::vector<float>> & mat_src2,
@@ -61,6 +83,25 @@ void mat_fma(int row, int col,
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
             mat_dst[i][j] += mat_src1[i][j] * mat_src2[i][j];
+        }
+    }
+}
+
+void mat_fma_manual(int row, int col, 
+        std::vector<std::vector<float>> & mat_src1, 
+        std::vector<std::vector<float>> & mat_src2,
+        std::vector<std::vector<float>> & mat_dst){
+    for (int i = 0; i < row; i += 1) {
+        auto size = mat_src1[i].size();
+        float * src1_ptr = (float *) mat_src1[i].data();
+        float * src2_ptr = (float *) mat_src2[i].data();
+        float * dst_ptr = (float *) mat_dst[i].data();
+        for (uint32_t i = 0; i < size; i += 8 ){
+            simdpp::float32<8> src1_ymm = simdpp::load(src1_ptr + i);
+            simdpp::float32<8> src2_ymm = simdpp::load(src2_ptr + i);
+            simdpp::float32<8> dst_ymm = simdpp::load(src2_ptr + i);
+            auto dst_new_ymm = simdpp::fmadd(src1_ymm, src2_ymm, dst_ymm);
+            simdpp::store(dst_ptr + i, dst_new_ymm);                                         
         }
     }
 }
@@ -99,9 +140,11 @@ void bench_matrix_vectorvector(benchmark::State &state,
 
 #ifdef ADD
 BENCHMARK_CAPTURE(bench_matrix_vectorvector, add, &mat_add)->Apply(RowColSizeArgs);
+BENCHMARK_CAPTURE(bench_matrix_vectorvector, add_manual, &mat_add_manual)->Apply(RowColSizeArgs);
 #endif
 #ifdef FMA
-BENCHMARK_CAPTURE(bench_matrix_vectorvector, fma, &mat_fma)->Apply(RowColSizeArgs);
+// BENCHMARK_CAPTURE(bench_matrix_vectorvector, fma, &mat_fma)->Apply(RowColSizeArgs);
+BENCHMARK_CAPTURE(bench_matrix_vectorvector, fma_manual, &mat_fma_manual)->Apply(RowColSizeArgs);
 #endif
 
 BENCHMARK_MAIN();

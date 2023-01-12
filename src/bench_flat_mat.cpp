@@ -2,6 +2,7 @@
 #include <iostream>
 #include <time.h>
 #include <stdlib.h>
+#include <simdpp/simd.h>
 
 class matrix {
 
@@ -38,6 +39,35 @@ void mat_add (unsigned int row, unsigned int col, matrix mat_src1, matrix mat_sr
         }
     }
 }
+
+void mat_add_manual (unsigned int row, unsigned int col, matrix mat_src1, matrix mat_src2, matrix mat_dst ) {
+    auto size = mat_src1.m.size();
+    float * src1_ptr = (float *) mat_src1.m.data();
+    float * src2_ptr = (float *) mat_src2.m.data();
+    float * dst_ptr = (float *) mat_dst.m.data();
+
+    for (uint32_t i = 0; i < size; i += 8 ){
+        simdpp::float32<8> src1_ymm = simdpp::load(src1_ptr + i);
+        simdpp::float32<8> src2_ymm = simdpp::load(src2_ptr + i);
+        auto dst_ymm = simdpp::add(src1_ymm, src2_ymm);
+        simdpp::store(dst_ptr + i, dst_ymm);                                         
+    }
+}
+void mat_fma_manual (unsigned int row, unsigned int col, matrix mat_src1, matrix mat_src2, matrix mat_dst ) {
+    auto size = mat_src1.m.size();
+    float * src1_ptr = (float *) mat_src1.m.data();
+    float * src2_ptr = (float *) mat_src2.m.data();
+    float * dst_ptr = (float *) mat_dst.m.data();
+
+    for (uint32_t i = 0; i < size; i += 8 ){
+        simdpp::float32<8> src1_ymm = simdpp::load(src1_ptr + i);
+        simdpp::float32<8> src2_ymm = simdpp::load(src2_ptr + i);
+        simdpp::float32<8> dst_ymm = simdpp::load(src2_ptr + i);
+        auto dst_new_ymm = simdpp::fmadd(src1_ymm, src2_ymm, dst_ymm);
+        simdpp::store(dst_ptr + i, dst_new_ymm );                                         
+    }
+}
+
 void mat_fma (unsigned int row, unsigned int col, matrix mat_src1, matrix mat_src2, matrix mat_dst ) {
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
@@ -78,7 +108,13 @@ static void bench_matrix_flatvector(benchmark::State& state,
     fclose(somefile);
 }
 
-// BENCHMARK_CAPTURE(bench_matrix_flatvector, add, &mat_add)->Apply(RowColSizeArgs);
+#ifdef ADD
+BENCHMARK_CAPTURE(bench_matrix_flatvector, add, &mat_add)->Apply(RowColSizeArgs);
+BENCHMARK_CAPTURE(bench_matrix_flatvector, add_manual, &mat_add_manual)->Apply(RowColSizeArgs);
+#endif
+#ifdef FMA
 // BENCHMARK_CAPTURE(bench_matrix_flatvector, fma, &mat_fma)->Apply(RowColSizeArgs);
+BENCHMARK_CAPTURE(bench_matrix_flatvector, fma_manual, &mat_fma_manual)->Apply(RowColSizeArgs);
+#endif
 
-// BENCHMARK_MAIN();
+BENCHMARK_MAIN();

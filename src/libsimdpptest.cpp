@@ -23,15 +23,39 @@ void x()
     printf("%f\n", simdpp::extract<1>(vec2));
     printf("%f\n", simdpp::extract<2>(vec2));
     printf("%f\n", simdpp::extract<3>(vec2));
-    
 }
  
 } // namespace SIMDPP_ARCH_NAMESPACE
  
 SIMDPP_MAKE_DISPATCHER((void)(x)());
 
+float * floatmalloctest() {
+    int size = 16;
+    int i = 8;
+    float * src1_ptr = (float *) malloc(size * sizeof (float));
+    float * src2_ptr = (float *) malloc(size * sizeof (float));
+    float * dst_ptr =  (float *) malloc(size * sizeof (float));
+    for (uint32_t i = 0; i < size; i += 8 ){
+      src1_ptr[i] = (float(rand())/float((RAND_MAX)));
+      src2_ptr[i] = (float(rand())/float((RAND_MAX)));
+      dst_ptr[i] = 0;
+    }
+    simdpp::float32<8> src1_ymm = simdpp::load(src1_ptr + i);
+    simdpp::float32<8> src2_ymm = simdpp::load(src2_ptr + i);
+    auto dst_ymm = simdpp::add(src1_ymm, src2_ymm);
+    simdpp::store(dst_ptr + i, dst_ymm);
+    return dst_ptr;
+}
+SIMDPP_MAKE_DISPATCHER((void)(floatmalloctest)());
+
 int main()
 {
 
-    arch_avx2::x();
+    // arch_avx2::x();
+
+    auto dst_ptr = floatmalloctest();
+
+    for (uint32_t i = 0; i < 16; i += 1 ){
+        printf("%f\n",  dst_ptr[i]);
+    }
 }
