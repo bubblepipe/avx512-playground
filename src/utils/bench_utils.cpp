@@ -1,9 +1,11 @@
 #include <benchmark/benchmark.h>
 
 // #define SIZE 4
-#define SIZE 15
+// #define SIZE 15
+#define SIZE 9
 static void RowColSizeArgs(benchmark::internal::Benchmark* b) {
-    int sizes[SIZE] = {16,24,32,40,48,56,64,72,80,88,96,104,112,120,128};
+    int sizes[SIZE] = {4,8,16,24,32,40,48,56,64};
+    // int sizes[SIZE] = {16,24,32,40,48,56,64,72,80,88,96,104,112,120,128};
     // int sizes[SIZE] = {16,24,32,40,48,56,64,128};
     // int sizes[SIZE] = {16,32,64,128};
     for (int i = 0; i < SIZE; ++i)
