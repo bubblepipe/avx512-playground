@@ -29,7 +29,14 @@ END
 )
     cc_cmd=$(echo $cc_cmd |tr '\n' ' ')
     echo $cc_cmd 1>&2
-    sh -c $cc_cmd && /tmp/bench
+
+    if [ -z "$3" ]
+    then
+        sh -c $cc_cmd && /tmp/bench
+    else
+        sh -c $cc_cmd 
+        echo no exe
+    fi
     echo ======================================================== 1>&2
     # cc_t=`echo "$cc" | sed 's/ //g'`
     # objdump -M no-aliases -d /tmp/bench > $cc_t".asm"

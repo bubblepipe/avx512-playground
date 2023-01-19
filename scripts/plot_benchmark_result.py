@@ -5,7 +5,8 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import sys
 
-filename,size = sys.argv[1],15
+filename = sys.argv[1]
+size = int(sys.argv[2])
 
 f = open(filename, "r")
 xs = f.readlines()
