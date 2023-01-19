@@ -62,7 +62,7 @@ void mat_fma_manual(int row, int col,
     }
 }
 
-void bench_matrix_vectorvector(benchmark::State &state,
+void bench_mat_vecvec(benchmark::State &state,
         void (*func_ptr)( int, int, 
             std::vector<std::vector<float>> &, 
             std::vector<std::vector<float>> &, 
@@ -107,22 +107,13 @@ void bench_matrix_vectorvector(benchmark::State &state,
     fclose(somefile);
 }
 
-#ifdef ADD
-BENCHMARK_CAPTURE(bench_matrix_vectorvector, add, &mat_add)->Apply(RowColSizeArgs);
-#endif
-
-#ifdef ADDM
-BENCHMARK_CAPTURE(bench_matrix_vectorvector, add_manual, &mat_add_manual)->Apply(RowColSizeArgs);
-#endif
-
-#ifdef FMA
-BENCHMARK_CAPTURE(bench_matrix_vectorvector, fma, &mat_fma)->Apply(RowColSizeArgs);
-// BENCHMARK_CAPTURE(bench_matrix_vectorvector, fma, &mat_fma)->Apply(RowColSizeArgs)->Iterations(1);
-#endif
-
-#ifdef FMAM
-BENCHMARK_CAPTURE(bench_matrix_vectorvector, fma_manual, &mat_fma_manual)
+BENCHMARK_CAPTURE(bench_mat_vecvec, add, &mat_add)
     ->Apply(RowColSizeArgs);
-#endif
+BENCHMARK_CAPTURE(bench_mat_vecvec, add_manual, &mat_add_manual)
+    ->Apply(RowColSizeArgs);
+BENCHMARK_CAPTURE(bench_mat_vecvec, fma, &mat_fma)
+    ->Apply(RowColSizeArgs);
+BENCHMARK_CAPTURE(bench_mat_vecvec, fma_manual, &mat_fma_manual)
+    ->Apply(RowColSizeArgs);
 
 BENCHMARK_MAIN();

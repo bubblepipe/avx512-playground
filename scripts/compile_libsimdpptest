@@ -1,1 +1,0 @@
-clang++-15 ./src/libsimdpptest.cpp  -I ~/Documents/avx-512/include/libsimdpp -DSIMDPP_ARCH_X86_AVX2 -O3  -march=native

@@ -34,7 +34,6 @@ void mat_add ( unsigned int row, unsigned int col,
         for (int j = 0; j < col; j += 1) {
             float src1 = mat_src1.get(i,j);
             float src2 = mat_src1.get(i,j);
-
             mat_dst.set(i,j,  src1 + src2) ;
         }
     }
@@ -54,6 +53,7 @@ void mat_add_manual ( unsigned int row, unsigned int col,
         simdpp::store(dst_ptr + i, dst_ymm);                                         
     }
 }
+
 void mat_fma_manual ( unsigned int row, unsigned int col, 
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
     auto size = mat_src1.m.size();
@@ -75,14 +75,14 @@ void mat_fma ( unsigned int row, unsigned int col,
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
             float src1 = mat_src1.get(i,j);
-            float src2 = mat_src1.get(i,j);
+            float src2 = mat_src2.get(i,j);
             float src3 = mat_dst.get(i,j);
-            mat_dst.set(i,j,  src1 * src2 + src3);
+            mat_dst.set(i,j,  (src1 * src2) + src3);
         }
     }
 }
 
-static void bench_matrix_flatvector(benchmark::State& state, 
+static void bench_mat_flat(benchmark::State& state, 
         void (*func_ptr)(unsigned int, unsigned int, matrix &, matrix &, matrix & )) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
     srand(1);
@@ -118,7 +118,7 @@ static void bench_matrix_flatvector(benchmark::State& state,
     fclose(somefile);
 }
 
-static void bench_matrix_flatvector_other_sequence(benchmark::State& state, 
+static void bench_mat_flat_other_sequence(benchmark::State& state, 
         void (*func_ptr)(unsigned int, unsigned int, matrix, matrix, matrix )) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
 
@@ -138,6 +138,7 @@ static void bench_matrix_flatvector_other_sequence(benchmark::State& state,
         }
     }
 
+
     for (auto _ : state) {
         (*func_ptr)(row, col, mat_src1, mat_src2, mat_dst);
     }
@@ -152,20 +153,15 @@ static void bench_matrix_flatvector_other_sequence(benchmark::State& state,
 
     fclose(somefile);
 }
-#ifdef ADD
-BENCHMARK_CAPTURE(bench_matrix_flatvector, add, &mat_add)->Apply(RowColSizeArgs);
-#endif
-#ifdef ADDM
-BENCHMARK_CAPTURE(bench_matrix_flatvector, add_manual, &mat_add_manual)->Apply(RowColSizeArgs);
-#endif
-#ifdef FMA
-BENCHMARK_CAPTURE(bench_matrix_flatvector, fma, &mat_fma)->Apply(RowColSizeArgs);
-#endif
-#ifdef FMAM
-BENCHMARK_CAPTURE(bench_matrix_flatvector, fma_manual, &mat_fma_manual)->Apply(RowColSizeArgs);
-#endif
-#ifdef FMAM2
-BENCHMARK_CAPTURE(bench_matrix_flatvector_other_sequence, fma_manual, &mat_fma_manual)->Apply(RowColSizeArgs);
-#endif
+
+#ifdef TEST
+#define BMarg Apply(RowColSizeArgs)->Iterations(1)
+#else
+#define BMarg Apply(RowColSizeArgs)
+#endif	
+BENCHMARK_CAPTURE(bench_mat_flat, add_auto, &mat_add)->BMarg;
+BENCHMARK_CAPTURE(bench_mat_flat, add_manual, &mat_add_manual)->BMarg;
+BENCHMARK_CAPTURE(bench_mat_flat, fma_auto, &mat_fma)->BMarg;
+BENCHMARK_CAPTURE(bench_mat_flat, fma_manual, &mat_fma_manual)->BMarg;
 
 BENCHMARK_MAIN();
