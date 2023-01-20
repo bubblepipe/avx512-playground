@@ -45,7 +45,7 @@ ax.set_xlabel("row")
 ax.set_ylabel("col")
 ax.set_zlabel("time (ns)")
 
-color_iter = iter(['slateblue', 'crimson'])
+color_iter = iter(['slateblue', 'crimson', 'lightseagreen', 'darkred'])
 
 for bench_name, bench_vals in d.items():
     color = next(color_iter)
