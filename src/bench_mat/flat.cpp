@@ -2,7 +2,6 @@
 #include <iostream>
 #include <time.h>
 #include <stdlib.h>
-#include <simdpp/simd.h>
 
 // #define DATA_TYPE double
 

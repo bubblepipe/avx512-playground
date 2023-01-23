@@ -4,3 +4,6 @@
 [submodule "include/libsimdpp"]
 	path = include/libsimdpp
 	url = https://github.com/p12tic/libsimdpp
+[submodule "FlameGraph"]
+	path = FlameGraph
+	url = https://github.com/brendangregg/FlameGraph

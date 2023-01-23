@@ -4,7 +4,21 @@
 ./setup.sh
 ./run-benchmark.sh
 ```
+# IFMA
 
+[AVX-512-IFMA extension ](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#:~:text=BW-,IFMA,-VBMI)
+
+[vpmadd52luq](https://www.felixcloutier.com/x86/vpmadd52luq)
+
+```
+Intel Cannon Lake (2018)
+Intel Ice Lake (2019)
+Intel Tiger Lake (2020)
+Intel Rocket Lake (2021)
+Intel Alder Lake (2021)
+AMD Zen 4 (2022)
+Intel Sapphire Rapids (2023)
+```
 # Repo Structure
 
 ```

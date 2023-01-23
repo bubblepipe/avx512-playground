@@ -1,5 +1,4 @@
 #include <utils/bench_utils.cpp>
-#include <simdpp/simd.h>
 #include <chrono>
 
 #include <iostream>

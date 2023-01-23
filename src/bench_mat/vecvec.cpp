@@ -1,6 +1,5 @@
 // #include <matrix-dynamic-size.h>
 #include <utils/bench_utils.cpp>
-#include <simdpp/simd.h>
 
 void mat_add(int row, int col, 
         std::vector<std::vector<float>> & mat_src1, 

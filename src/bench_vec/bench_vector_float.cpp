@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <utils/bench_utils.cpp>
-#include <simdpp/simd.h>
 
 void vec_fma(uint32_t size, float * src1_ptr, float * src2_ptr, float * dst_ptr) {
 
@@ -65,14 +64,8 @@ static void vector(benchmark::State& state,
     fclose(somefile);
 }
 
-#ifdef ADD
 BENCHMARK_CAPTURE(vector, add,  &vec_add_莎莎)->Apply(RowColSizeArgs);
 BENCHMARK_CAPTURE(vector, add_manual,  &vec_add_manual)->Apply(RowColSizeArgs);
-#endif
-#ifdef FMA
 BENCHMARK_CAPTURE(vector, fma,  &vec_fma)->Apply(RowColSizeArgs);
-#endif
-#ifdef ADDM
 BENCHMARK_CAPTURE(vector, add_manual,  &vec_add_manual)->Apply(RowColSizeArgs);
-#endif
 BENCHMARK_MAIN();
