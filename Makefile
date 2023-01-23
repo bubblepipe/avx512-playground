@@ -11,7 +11,7 @@ INC += $(INC_GBENCH)
 
 OUT=build/
 
-TARGET=flat vecvec flat-int52 flat-int flat-float flat-double
+TARGET=flat vecvec flat-int52  flat-float flat-double
 TEST-TARGET=flat-test vecvec-test
 
 rand_int_float_int:
@@ -21,9 +21,19 @@ doubledouble:
 floatexample:
 	$(CC) $(CFLAGS) src/float/example2.cpp -o $(OUT)$@ 
 
-vector:
-	$(CC) $(CFLAGS) src/bench_vec/bench_vector_float.cpp -o $(OUT)$@_float $(INC) 
-	$(CC) $(CFLAGS) src/bench_vec/bench_vector_int.cpp -o $(OUT)$@_int $(INC) 
+vector_float: 
+	$(CC) $(CFLAGS) src/bench_vec/bench_vector_float.cpp -o $(OUT)$@ $(INC) 
+
+vector_int.o: 
+	$(CC) $(CFLAGS) -c src/bench_vec/bench_vector_int.cpp -o $(OUT)$@ $(INC) 
+vector_int_main.o:
+	$(CC) $(CFLAGS) -c src/bench_vec/bench_vector_int_main.cpp -o $(OUT)$@ $(INC) 
+vector_int: vector_int_main.o vector_int.o
+	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_vec/bench_vector_int_main.cpp -o $(OUT)$@ $(INC) 
+
+flat_int: vector_int.o
+	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int.cpp -o $(OUT)$@ $(INC) 
+
 
 $(TARGET):
 	$(CC) $(CFLAGS) src/bench_mat/$@.cpp -o $(OUT)$@ $(INC) -D DATA_TYPE=double

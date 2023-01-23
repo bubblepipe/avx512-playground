@@ -2,7 +2,7 @@
 #include <iostream>
 #include <time.h>
 #include <stdlib.h>
-#include <bench_vec/bench_vector_int.h>
+#include <bench_vec/bench_vector_int.hpp>
 
 class matrix {
 
@@ -40,13 +40,20 @@ void mat_fma ( unsigned int row, unsigned int col,
 }
 void mat_add ( unsigned int row, unsigned int col, 
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
-    for (int i = 0; i < row; i += 1) {
-        for (int j = 0; j < col; j += 1) {
-            int32_t src1 = mat_src1.get(i,j);
-            int32_t src2 = mat_src2.get(i,j);
-            mat_dst.set(i,j,  src1 + src2);
-        }
-    }
+
+    auto size = mat_src1.m.size();
+    int32_t * src1_ptr = (int32_t *) mat_src1.m.data();
+    int32_t * src2_ptr = (int32_t *) mat_src2.m.data();
+    int32_t * dst_ptr  = (int32_t *) mat_dst.m.data();
+    vec_add_莎莎(size, src1_ptr, src2_ptr, dst_ptr);
+
+    // for (int i = 0; i < row; i += 1) {
+    //     for (int j = 0; j < col; j += 1) {
+    //         int32_t src1 = mat_src1.get(i,j);
+    //         int32_t src2 = mat_src2.get(i,j);
+    //         mat_dst.set(i,j,  src1 + src2);
+    //     }
+    // }
 }
 void mat_add_manual ( unsigned int row, unsigned int col, 
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
