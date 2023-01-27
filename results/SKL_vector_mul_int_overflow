@@ -1,0 +1,38 @@
+--------------------------------------------------------------------------
+Benchmark                                Time             CPU   Iterations
+--------------------------------------------------------------------------
+int_vector/mul_overflow/4/4           7.91 ns         7.91 ns     91584643
+int_vector/mul_overflow/4/8           13.3 ns         13.3 ns     52604651
+int_vector/mul_overflow/4/12          20.5 ns         20.5 ns     35010450
+int_vector/mul_overflow/4/128          274 ns          274 ns      2513710
+int_vector/mul_overflow/8/4           13.3 ns         13.3 ns     39927496
+int_vector/mul_overflow/8/8           25.9 ns         25.9 ns     27607546
+int_vector/mul_overflow/8/12          39.6 ns         39.6 ns     15929144
+int_vector/mul_overflow/8/128          543 ns          542 ns      1276897
+int_vector/mul_overflow/12/4          20.0 ns         20.0 ns     34291536
+int_vector/mul_overflow/12/8          38.4 ns         38.4 ns     18344420
+int_vector/mul_overflow/12/12         63.4 ns         63.4 ns     11250056
+int_vector/mul_overflow/12/128         836 ns          836 ns       841380
+int_vector/mul_overflow/128/4          278 ns          278 ns      2544537
+int_vector/mul_overflow/128/8          551 ns          551 ns      1160055
+int_vector/mul_overflow/128/12         854 ns          854 ns       831355
+int_vector/mul_overflow/128/128       9715 ns         9715 ns        71571
+-----------------------------------------------------------------
+Benchmark                       Time             CPU   Iterations
+-----------------------------------------------------------------
+int_vector/mul/4/4           6.67 ns         6.67 ns     97135320
+int_vector/mul/4/8           4.36 ns         4.36 ns    155273956
+int_vector/mul/4/12          8.52 ns         8.52 ns     64790087
+int_vector/mul/4/128         27.9 ns         27.9 ns     25482779
+int_vector/mul/8/4           4.27 ns         4.27 ns    164651148
+int_vector/mul/8/8           7.05 ns         7.05 ns     98819738
+int_vector/mul/8/12          8.07 ns         8.07 ns     86675687
+int_vector/mul/8/128         63.0 ns         63.0 ns     11105458
+int_vector/mul/12/4          8.52 ns         8.52 ns     81485634
+int_vector/mul/12/8          8.32 ns         8.32 ns     65195981
+int_vector/mul/12/12         13.7 ns         13.7 ns     49476066
+int_vector/mul/12/128        84.8 ns         84.8 ns      8534472
+int_vector/mul/128/4         28.3 ns         28.3 ns     25015020
+int_vector/mul/128/8         56.9 ns         56.9 ns     12438350
+int_vector/mul/128/12        82.2 ns         82.2 ns      8536908
+int_vector/mul/128/128       2106 ns         2106 ns       344209

@@ -5,7 +5,7 @@
 void vec_fma(uint32_t size, float * src1_ptr, float * src2_ptr, float * dst_ptr) {
 
     for (uint32_t i = 0; i < size; i += 1 ){
-        dst_ptr[i] += src1_ptr[i] * src2_ptr[i];
+        dst_ptr[i] = src1_ptr[i] * src2_ptr[i] + src1_ptr[i];
     }
 }
 
@@ -16,7 +16,7 @@ void vec_add_莎莎(uint32_t size, float * src1_ptr, float * src2_ptr, float * d
     }
 }
 
-void vec_add_manual(uint32_t size, float * src1_ptr, float * src2_ptr, float * dst_ptr) {
+void vec_add_simdpp(uint32_t size, float * src1_ptr, float * src2_ptr, float * dst_ptr) {
 
     if (size % 8 != 0) {
         throw std::runtime_error(std::string("size not div by 8"));
@@ -65,7 +65,7 @@ static void vector(benchmark::State& state,
 }
 
 BENCHMARK_CAPTURE(vector, add,  &vec_add_莎莎)->Apply(RowColSizeArgs);
-BENCHMARK_CAPTURE(vector, add_manual,  &vec_add_manual)->Apply(RowColSizeArgs);
+BENCHMARK_CAPTURE(vector, add_manual,  &vec_add_simdpp)->Apply(RowColSizeArgs);
 BENCHMARK_CAPTURE(vector, fma,  &vec_fma)->Apply(RowColSizeArgs);
-BENCHMARK_CAPTURE(vector, add_manual,  &vec_add_manual)->Apply(RowColSizeArgs);
+BENCHMARK_CAPTURE(vector, add_manual,  &vec_add_simdpp)->Apply(RowColSizeArgs);
 BENCHMARK_MAIN();

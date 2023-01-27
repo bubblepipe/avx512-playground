@@ -68,7 +68,7 @@ void mat_add_manual ( unsigned int row, unsigned int col,
     int32_t * src2_ptr = (int32_t *) mat_src2.m.data();
     int32_t * dst_ptr  = (int32_t *) mat_dst.m.data();
 
-    vec_add_manual(size, src1_ptr, src2_ptr, dst_ptr);
+    vec_add_simdpp(size, src1_ptr, src2_ptr, dst_ptr);
     
     // for (int32_t i = 0; i < size; i += 8 ){
         // simdpp::int32<8> src1_ymm = simdpp::load(src1_ptr + i);

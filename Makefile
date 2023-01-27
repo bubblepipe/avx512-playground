@@ -3,11 +3,13 @@ CC=clang++-15
 CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 
 # CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -Wno-format 
 
-INC_GBENCH=-isystem include/benchmark/include -L include/benchmark/build/src -lbenchmark -lpthread 
+INC_GBENCH=-isystem include/benchmark/include
 INC_LIBSIMDPP=-I ./include/libsimdpp
 
 INC += $(INC_LIBSIMDPP)
 INC += $(INC_GBENCH)
+
+LINK=-L include/benchmark/build/src -lbenchmark -lpthread 
 
 OUT=build/
 
@@ -22,35 +24,41 @@ floatexample:
 	$(CC) $(CFLAGS) src/float/example2.cpp -o $(OUT)$@ 
 
 vector_float: 
-	$(CC) $(CFLAGS) src/bench_vec/bench_vector_float.cpp -o $(OUT)$@ $(INC) 
+	$(CC) $(CFLAGS) src/bench_vec/bench_vector_float.cpp -o $(OUT)$@ $(INC) $(LINK)
 
-vector_int.o: 
-	$(CC) $(CFLAGS) -c src/bench_vec/bench_vector_int.cpp -o $(OUT)$@ $(INC) 
-vector_int_main.o:
-	$(CC) $(CFLAGS) -c src/bench_vec/bench_vector_int_main.cpp -o $(OUT)$@ $(INC) 
-vector_int: vector_int_main.o vector_int.o
-	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_vec/bench_vector_int_main.cpp -o $(OUT)$@ $(INC) 
+
+vector_int.o:
+	$(CC) $(CFLAGS) -c src/bench_vec/bench_vector_int.cpp -o $(OUT)vector_int.o $(INC) 
+vector_int: vector_int.o
+	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_vec/bench_vector_int_main.cpp -o $(OUT)$@ $(INC) $(LINK)
+
+vector_int_overflow.o:
+	$(CC) $(CFLAGS) -c src/bench_vec/bench_vector_int_overflow.cpp -o $(OUT)vector_int.o $(INC) 
+vector_int_overflow: vector_int_overflow.o
+	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_vec/bench_vector_int_main.cpp -o $(OUT)$@ $(INC) $(LINK) -DOVERFLOW
+
 
 flat_int: vector_int.o
-	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int.cpp -o $(OUT)$@ $(INC) 
+	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int.cpp -o $(OUT)$@ $(INC) $(LINK)
+
 
 
 $(TARGET):
-	$(CC) $(CFLAGS) src/bench_mat/$@.cpp -o $(OUT)$@ $(INC) -D DATA_TYPE=double
+	$(CC) $(CFLAGS) src/bench_mat/$@.cpp -o $(OUT)$@ $(INC) -D DATA_TYPE=double $(LINK)
 
-flat-bench-fmam: flat
-	./build/flat --benchmark_filter=bench_mat_flat/float_fma_m/
-vecvec-bench-fmam: vecvec
-	./build/vecvec --benchmark_filter=bench_mat_vecvec/fma_manual/8/8
+# flat-bench-fmam: flat
+# 	./build/flat --benchmark_filter=bench_mat_flat/float_fma_m/
+# vecvec-bench-fmam: vecvec
+# 	./build/vecvec --benchmark_filter=bench_mat_vecvec/fma_manual/8/8
 
-flat-float-test:
-	$(CC) $(CFLAGS) src/bench_mat/flat-float.cpp -o $(OUT)$@ $(INC) -DTEST
-flat-int-test:
-	$(CC) $(CFLAGS) src/bench_mat/flat-int.cpp -o $(OUT)$@ $(INC) -DTEST
-flat-test:
-	$(CC) $(CFLAGS) src/bench_mat/flat.cpp -o $(OUT)$@ $(INC) -DTEST
-vecvec-test:
-	$(CC) $(CFLAGS) src/bench_mat/vecvec.cpp -o $(OUT)$@ $(INC) -DTEST
+# flat-float-test:
+# 	$(CC) $(CFLAGS) src/bench_mat/flat-float.cpp -o $(OUT)$@ $(INC) -DTEST 
+# flat-int-test:
+# 	$(CC) $(CFLAGS) src/bench_mat/flat-int.cpp -o $(OUT)$@ $(INC) -DTEST
+# flat-test:
+# 	$(CC) $(CFLAGS) src/bench_mat/flat.cpp -o $(OUT)$@ $(INC) -DTEST
+# vecvec-test:
+# 	$(CC) $(CFLAGS) src/bench_mat/vecvec.cpp -o $(OUT)$@ $(INC) -DTEST
 
 
 bold=`tput bold`

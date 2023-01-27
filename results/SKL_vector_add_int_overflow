@@ -1,0 +1,38 @@
+------------------------------------------------------------------------
+Benchmark                              Time             CPU   Iterations
+------------------------------------------------------------------------
+int_vector/add/4/4                  6.88 ns         6.88 ns     81844040
+int_vector/add/4/8                  3.93 ns         3.93 ns    161737410
+int_vector/add/4/12                 13.5 ns         13.5 ns     64594078
+int_vector/add/4/128                34.0 ns         33.9 ns     20624376
+int_vector/add/8/4                  3.89 ns         3.89 ns    175158015
+int_vector/add/8/8                  5.03 ns         5.03 ns    130941303
+int_vector/add/8/12                 6.22 ns         6.22 ns    107791109
+int_vector/add/8/128                67.9 ns         67.9 ns      9020419
+int_vector/add/12/4                 13.5 ns         13.5 ns     77263847
+int_vector/add/12/8                 6.60 ns         6.60 ns    105048943
+int_vector/add/12/12                13.5 ns         13.5 ns     51464859
+int_vector/add/12/128               86.5 ns         86.5 ns      8226952
+int_vector/add/128/4                35.3 ns         35.3 ns     19830714
+int_vector/add/128/8                69.1 ns         69.1 ns     10013398
+int_vector/add/128/12               87.3 ns         87.3 ns      6562039
+int_vector/add/128/128              2186 ns         2186 ns       307346
+--------------------------------------------------------------------------
+Benchmark                                Time             CPU   Iterations
+--------------------------------------------------------------------------
+int_vector/add_overflow/4/4           7.81 ns         7.81 ns     79705053
+int_vector/add_overflow/4/8           13.1 ns         13.1 ns     46859421
+int_vector/add_overflow/4/12          19.6 ns         19.6 ns     35343000
+int_vector/add_overflow/4/128          291 ns          291 ns      2388357
+int_vector/add_overflow/8/4           13.3 ns         13.3 ns     52098421
+int_vector/add_overflow/8/8           25.8 ns         25.8 ns     27200972
+int_vector/add_overflow/8/12          41.6 ns         41.6 ns     18239671
+int_vector/add_overflow/8/128          603 ns          603 ns      1199609
+int_vector/add_overflow/12/4          20.6 ns         20.6 ns     35935235
+int_vector/add_overflow/12/8          39.5 ns         39.5 ns     17057828
+int_vector/add_overflow/12/12         63.7 ns         63.7 ns     10421642
+int_vector/add_overflow/12/128         899 ns          899 ns       784250
+int_vector/add_overflow/128/4          306 ns          306 ns      2366315
+int_vector/add_overflow/128/8          598 ns          598 ns      1191584
+int_vector/add_overflow/128/12         901 ns          901 ns       783653
+int_vector/add_overflow/128/128       9917 ns         9917 ns        71019
