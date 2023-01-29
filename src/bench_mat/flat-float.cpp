@@ -2,6 +2,7 @@
 #include <iostream>
 #include <time.h>
 #include <stdlib.h>
+#include <simdpp/simd.h>
 
 // #define DATA_TYPE double
 
@@ -47,7 +48,7 @@ void mat_fma ( unsigned int row, unsigned int col,
 Important: use dedicated function for double and float
 rather than generic, to reduce runtime overhead?
 */
-void flat ( unsigned int row, unsigned int col, 
+void mat_fma_manual ( unsigned int row, unsigned int col, 
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
     auto size = mat_src1.m.size();
     float * src1_ptr = (float *) mat_src1.m.data();
@@ -63,7 +64,7 @@ void flat ( unsigned int row, unsigned int col,
     }
 }
 
-static void bench_mat_flat(benchmark::State& state, 
+static void flat(benchmark::State& state, 
         void (*func_ptr)(unsigned int, unsigned int, matrix &, matrix &, matrix & )) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
     srand(1);

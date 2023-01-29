@@ -17,8 +17,8 @@ TARGET=flat vecvec flat-int52  flat-float flat-double
 TEST-TARGET=flat-test vecvec-test
 
 rand_int_float_int:
-	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@ 
-doubledouble:
+	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@  -lpthread 
+doubledouble fe_inexact:
 	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@ 
 floatexample:
 	$(CC) $(CFLAGS) src/float/example2.cpp -o $(OUT)$@ 
@@ -38,27 +38,23 @@ vector_int_overflow: vector_int_overflow.o
 	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_vec/bench_vector_int_main.cpp -o $(OUT)$@ $(INC) $(LINK) -DOVERFLOW
 
 
-flat_int: vector_int.o
+flat-int: vector_int.o
 	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int.cpp -o $(OUT)$@ $(INC) $(LINK)
 
 
 
 $(TARGET):
-	$(CC) $(CFLAGS) src/bench_mat/$@.cpp -o $(OUT)$@ $(INC) -D DATA_TYPE=double $(LINK)
+	$(CC) $(CFLAGS) src/bench_mat/$@.cpp -o $(OUT)$@ $(INC) $(LINK)
 
 # flat-bench-fmam: flat
 # 	./build/flat --benchmark_filter=bench_mat_flat/float_fma_m/
 # vecvec-bench-fmam: vecvec
 # 	./build/vecvec --benchmark_filter=bench_mat_vecvec/fma_manual/8/8
 
-# flat-float-test:
-# 	$(CC) $(CFLAGS) src/bench_mat/flat-float.cpp -o $(OUT)$@ $(INC) -DTEST 
-# flat-int-test:
-# 	$(CC) $(CFLAGS) src/bench_mat/flat-int.cpp -o $(OUT)$@ $(INC) -DTEST
-# flat-test:
-# 	$(CC) $(CFLAGS) src/bench_mat/flat.cpp -o $(OUT)$@ $(INC) -DTEST
-# vecvec-test:
-# 	$(CC) $(CFLAGS) src/bench_mat/vecvec.cpp -o $(OUT)$@ $(INC) -DTEST
+flat-double-test:
+	$(CC) $(CFLAGS) src/bench_mat/flat-double.cpp -o $(OUT)$@ $(INC) -DTEST $(LINK)
+flat-int52-test:
+	$(CC) $(CFLAGS) src/bench_mat/flat-int52.cpp -o $(OUT)$@ $(INC) -DTEST $(LINK)
 
 
 bold=`tput bold`
