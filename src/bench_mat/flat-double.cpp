@@ -77,20 +77,17 @@ void mat_fma_manual_inacurate_check ( unsigned int row, unsigned int col,
     double * src2_ptr = (double *) mat_src2.m.data();
     double * dst_ptr  = (double *) mat_dst.m.data();
     std::feclearexcept (FE_ALL_EXCEPT);
+    feenableexcept (FE_INEXACT | FE_INVALID);
 
     for (int i = 0; i < size; i += 4 ){
-        simdpp::float64<4> src1_ymm = simdpp::load(src1_ptr + i);
-        simdpp::float64<4> src2_ymm = simdpp::load(src2_ptr + i);
-        simdpp::float64<4> src3_ymm = simdpp::load(dst_ptr + i);
-        auto dst_new_ymm = simdpp::fmadd(src1_ymm, src2_ymm, src3_ymm);
-        simdpp::store(dst_ptr + i, dst_new_ymm );                
+            simdpp::float64<4> src1_ymm = simdpp::load(src1_ptr + i);
+            simdpp::float64<4> src2_ymm = simdpp::load(src2_ptr + i);
+            simdpp::float64<4> src3_ymm = simdpp::load(dst_ptr + i);
+            auto dst_new_ymm = simdpp::fmadd(src1_ymm, src2_ymm, src3_ymm);
+            simdpp::store(dst_ptr + i, dst_new_ymm );                
     }
-    if (std::fetestexcept(FE_INEXACT)){
-        std::feclearexcept (FE_ALL_EXCEPT);
-        printf("FE_INEXACT");
-        exit(0);
-    }  
- 
+
+    fedisableexcept (FE_INEXACT | FE_INVALID);
 }
 
 void mat_fma_manual ( unsigned int row, unsigned int col, 
@@ -123,19 +120,19 @@ static void flat(benchmark::State& state,
 
     for (int r = 0; r < row; r += 1) {
         for (int c = 0; c < col; c += 1) {
-            mat_src1.set(r,c, rand()/100 );
-            mat_src2.set(r,c, rand()/100 );
-            mat_dst. set(r,c, rand()/100 );
+            mat_src1.set(r,c, rand()/1 );//r  );
+            mat_src2.set(r,c, rand()/1 );//r+c);
+            mat_dst. set(r,c, rand()/1 );//c  );
             mat_dst_ref.set(r,c, mat_dst.get(r,c));
         }
     }
     
     for (auto _ : state) {
-        for (int r = 0; r < row; r += 1) {
-            for (int c = 0; c < col; c += 1) {
-                mat_dst. set(r,c, mat_dst_ref.get(r,c) );
-            }
-        }
+        // for (int r = 0; r < row; r += 1) {
+        //     for (int c = 0; c < col; c += 1) {
+        //         mat_dst. set(r,c, mat_dst_ref.get(r,c) );
+        //     }
+        // }
         (*func_ptr)(row, col, mat_src1, mat_src2, mat_dst);
     }
 

@@ -92,6 +92,26 @@ void mat_fma_manual ( unsigned int row, unsigned int col,
     }
 }
 
+void mat_fma_manual_half_width ( unsigned int row, unsigned int col, 
+    matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
+    auto size = mat_src1.m.size();
+    int32_t * src1_ptr = (int32_t *) mat_src1.m.data();
+    int32_t * src2_ptr = (int32_t *) mat_src2.m.data();
+    int32_t * dst_ptr  = (int32_t *) mat_dst.m.data();
+
+    for (int32_t i = 0; i < size; i += 4 ){
+        __m256 src1 = _mm256_loadu_si256 ((__m256i_u*) (src1_ptr + i));
+        __m256 src2 = _mm256_loadu_si256 ((__m256i_u*) (src2_ptr + i));
+        __m256 mul_res_lo = _mm256_mullo_epi32(src1, src2);
+        __m256 mul_res_hi = _mm256_mulhi_epi32(src1, src2);
+        
+        __m256 src3 = _mm256_loadu_si256 ((__m256i_u*) (dst_ptr + i));
+
+        __m256 r2 = _mm256_add_epi32(r1, src3);
+        _mm256_storeu_si256((__m256i_u*) (dst_ptr + i), r2);
+    }
+}
+
 static void flat(benchmark::State& state, 
         void (*func_ptr)(unsigned int, unsigned int, matrix &, matrix &, matrix & )) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");

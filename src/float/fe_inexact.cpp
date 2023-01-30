@@ -17,10 +17,10 @@ int main() {
         srand(1);
         
         uintd A , B; 
-        // A.u = rand()/1000;
-        // B.u = rand()/1000;
-        A.d = 0;
-        B.d = 0;
+        A.u = rand()/1000;
+        B.u = rand()/1000;
+        // A.d = 0;
+        // B.d = 0;
 
         std::feclearexcept (FE_ALL_EXCEPT);
 

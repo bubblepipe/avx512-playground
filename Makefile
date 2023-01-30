@@ -1,7 +1,8 @@
 CC=clang++-15
 
-CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 
 # CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -Wno-format 
+CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17
+# CFLAGS=-O0 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g
 
 INC_GBENCH=-isystem include/benchmark/include
 INC_LIBSIMDPP=-I ./include/libsimdpp
@@ -13,7 +14,7 @@ LINK=-L include/benchmark/build/src -lbenchmark -lpthread
 
 OUT=build/
 
-TARGET=flat vecvec flat-int52  flat-float flat-double
+TARGET=flat vecvec flat-int52 flat-int64 flat-float flat-double
 TEST-TARGET=flat-test vecvec-test
 
 rand_int_float_int:
@@ -41,15 +42,13 @@ vector_int_overflow: vector_int_overflow.o
 flat-int: vector_int.o
 	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int.cpp -o $(OUT)$@ $(INC) $(LINK)
 
+flat-int-test: vector_int.o
+	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int.cpp -o $(OUT)$@ $(INC) $(LINK) -DTEST 
 
 
 $(TARGET):
 	$(CC) $(CFLAGS) src/bench_mat/$@.cpp -o $(OUT)$@ $(INC) $(LINK)
 
-# flat-bench-fmam: flat
-# 	./build/flat --benchmark_filter=bench_mat_flat/float_fma_m/
-# vecvec-bench-fmam: vecvec
-# 	./build/vecvec --benchmark_filter=bench_mat_vecvec/fma_manual/8/8
 
 flat-double-test:
 	$(CC) $(CFLAGS) src/bench_mat/flat-double.cpp -o $(OUT)$@ $(INC) -DTEST $(LINK)
