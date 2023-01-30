@@ -83,13 +83,14 @@ void mat_fma_manual_inacurate_check ( unsigned int row, unsigned int col,
         simdpp::float64<4> src2_ymm = simdpp::load(src2_ptr + i);
         simdpp::float64<4> src3_ymm = simdpp::load(dst_ptr + i);
         auto dst_new_ymm = simdpp::fmadd(src1_ymm, src2_ymm, src3_ymm);
-        if (std::fetestexcept(FE_INEXACT)){
-            std::feclearexcept (FE_ALL_EXCEPT);
-            printf("FE_INEXACT");
-            exit(0);
-        }                         
         simdpp::store(dst_ptr + i, dst_new_ymm );                
     }
+    if (std::fetestexcept(FE_INEXACT)){
+        std::feclearexcept (FE_ALL_EXCEPT);
+        printf("FE_INEXACT");
+        exit(0);
+    }  
+ 
 }
 
 void mat_fma_manual ( unsigned int row, unsigned int col, 
@@ -122,9 +123,9 @@ static void flat(benchmark::State& state,
 
     for (int r = 0; r < row; r += 1) {
         for (int c = 0; c < col; c += 1) {
-            mat_src1.set(r,c, rand()/1 );
-            mat_src2.set(r,c, rand()/1 );
-            mat_dst. set(r,c, rand()/1 );
+            mat_src1.set(r,c, rand()/100 );
+            mat_src2.set(r,c, rand()/100 );
+            mat_dst. set(r,c, rand()/100 );
             mat_dst_ref.set(r,c, mat_dst.get(r,c));
         }
     }

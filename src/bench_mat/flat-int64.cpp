@@ -9,7 +9,7 @@ class matrix {
 
 public:
 
-    std::vector<int32_t> m;
+    std::vector<int64_t> m;
     unsigned int row;
     unsigned int col;
 
@@ -20,10 +20,10 @@ public:
     }
   
     public:
-        int32_t get(unsigned int x, unsigned int y) {
+        int64_t get(unsigned int x, unsigned int y) {
             return m[col * x + y];
         }
-        void set(unsigned int x, unsigned int y, int32_t val) {
+        void set(unsigned int x, unsigned int y, int64_t val) {
             m[col * x + y] = val;
         }
 };
@@ -32,9 +32,9 @@ void mat_fma ( unsigned int row, unsigned int col,
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
-            int32_t src1 = mat_src1.get(i,j);
-            int32_t src2 = mat_src2.get(i,j);
-            int32_t src3 = mat_dst.get(i,j);
+            int64_t src1 = mat_src1.get(i,j);
+            int64_t src2 = mat_src2.get(i,j);
+            int64_t src3 = mat_dst.get(i,j);
             mat_dst.set(i,j,  (src1 * src2) + src3);
         }
     }
@@ -43,11 +43,10 @@ void mat_add ( unsigned int row, unsigned int col,
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
 
     auto size = mat_src1.m.size();
-    int32_t * src1_ptr = (int32_t *) mat_src1.m.data();
-    int32_t * src2_ptr = (int32_t *) mat_src2.m.data();
-    int32_t * dst_ptr  = (int32_t *) mat_dst.m.data();
-    vec_add_莎莎(size, src1_ptr, src2_ptr, dst_ptr);
-
+    int64_t * src1_ptr = (int64_t *) mat_src1.m.data();
+    int64_t * src2_ptr = (int64_t *) mat_src2.m.data();
+    int64_t * dst_ptr  = (int64_t *) mat_dst.m.data();
+    exit(0);
 }
 
 void mat_add_manual ( unsigned int row, unsigned int col, 
@@ -59,14 +58,14 @@ void mat_add_manual ( unsigned int row, unsigned int col,
         throw std::runtime_error(std::string("size not div by 8"));
     }
 
-    int32_t * src1_ptr = (int32_t *) mat_src1.m.data();
-    int32_t * src2_ptr = (int32_t *) mat_src2.m.data();
-    int32_t * dst_ptr  = (int32_t *) mat_dst.m.data();
+    int64_t * src1_ptr = (int64_t *) mat_src1.m.data();
+    int64_t * src2_ptr = (int64_t *) mat_src2.m.data();
+    int64_t * dst_ptr  = (int64_t *) mat_dst.m.data();
 
-    for (int32_t i = 0; i < size; i += 8 ){
+    for (int64_t i = 0; i < size; i += 8 ){
         __m256 src1 = _mm256_loadu_si256 ((__m256i_u*) (src1_ptr + i));
         __m256 src2 = _mm256_loadu_si256 ((__m256i_u*) (src2_ptr + i));
-        __m256 result = _mm256_add_epi32(src1, src2);
+        __m256 result = _mm256_add_epi64(src1, src2);
         _mm256_storeu_si256((__m256i_u*) (dst_ptr + i), result);
     }
 
@@ -76,11 +75,11 @@ void mat_add_manual ( unsigned int row, unsigned int col,
 void mat_fma_manual ( unsigned int row, unsigned int col, 
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
     auto size = mat_src1.m.size();
-    int32_t * src1_ptr = (int32_t *) mat_src1.m.data();
-    int32_t * src2_ptr = (int32_t *) mat_src2.m.data();
-    int32_t * dst_ptr  = (int32_t *) mat_dst.m.data();
+    int64_t * src1_ptr = (int64_t *) mat_src1.m.data();
+    int64_t * src2_ptr = (int64_t *) mat_src2.m.data();
+    int64_t * dst_ptr  = (int64_t *) mat_dst.m.data();
 
-    for (int32_t i = 0; i < size; i += 8 ){
+    for (int64_t i = 0; i < size; i += 8 ){
         __m256 src1 = _mm256_loadu_si256 ((__m256i_u*) (src1_ptr + i));
         __m256 src2 = _mm256_loadu_si256 ((__m256i_u*) (src2_ptr + i));
         __m256 r1 = _mm256_mullo_epi32(src1, src2);
@@ -124,7 +123,7 @@ static void flat(benchmark::State& state,
 
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
-            fprintf(somefile, "%d, %d, %d -> %d\n", 
+            fprintf(somefile, "%ld, %ld, %ld -> %ld\n", 
                 mat_src1.get(i,j), mat_src2.get(i,j), 
                 mat_dst_ref.get(i,j), mat_dst.get(i,j));
         }
