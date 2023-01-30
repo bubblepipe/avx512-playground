@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <simdpp/simd.h>
 #include <cfenv>
+#include <csignal>
 
 // #define DATA_TYPE double
 
@@ -106,10 +107,17 @@ void mat_fma_manual ( unsigned int row, unsigned int col,
     }
 }
 
+void signal_handler(int signal)
+{
+    printf("signal handler\n");
+    exit(0);
+}
+ 
 static void flat(benchmark::State& state, 
         void (*func_ptr)(unsigned int, unsigned int, matrix &, matrix &, matrix & )) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
     srand(1);
+    std::signal(SIGFPE, signal_handler);
 
     unsigned int row = state.range(0);
     unsigned int col = state.range(1);
@@ -120,9 +128,9 @@ static void flat(benchmark::State& state,
 
     for (int r = 0; r < row; r += 1) {
         for (int c = 0; c < col; c += 1) {
-            mat_src1.set(r,c, rand()/1 );//r  );
-            mat_src2.set(r,c, rand()/1 );//r+c);
-            mat_dst. set(r,c, rand()/1 );//c  );
+            mat_src1.set(r,c, r  ); // rand()/1 );
+            mat_src2.set(r,c, r+c); // rand()/1 );
+            mat_dst. set(r,c, c  ); // rand()/1 );
             mat_dst_ref.set(r,c, mat_dst.get(r,c));
         }
     }
