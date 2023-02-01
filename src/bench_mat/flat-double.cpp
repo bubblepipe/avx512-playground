@@ -43,7 +43,7 @@ void mat_fma ( unsigned int row, unsigned int col,
     }
 }
 
-void mat_fma_inacurate_check ( unsigned int row, unsigned int col, 
+void mat_fma_check ( unsigned int row, unsigned int col, 
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
 
     std::feclearexcept (FE_ALL_EXCEPT);
@@ -70,15 +70,14 @@ void mat_fma_inacurate_check ( unsigned int row, unsigned int col,
     }
 }
 
-
-void mat_fma_manual_inacurate_check ( unsigned int row, unsigned int col, 
+void mat_fma_manual_check ( unsigned int row, unsigned int col, 
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
     auto size = mat_src1.m.size();
     double * src1_ptr = (double *) mat_src1.m.data();
     double * src2_ptr = (double *) mat_src2.m.data();
     double * dst_ptr  = (double *) mat_dst.m.data();
-    // std::feclearexcept (FE_ALL_EXCEPT);
-    // feenableexcept (FE_INEXACT | FE_INVALID);
+    std::feclearexcept (FE_ALL_EXCEPT);
+    feenableexcept (FE_INEXACT | FE_INVALID);
 
     for (int i = 0; i < size; i += 4 ){
             simdpp::float64<4> src1_ymm = simdpp::load(src1_ptr + i);
@@ -88,7 +87,67 @@ void mat_fma_manual_inacurate_check ( unsigned int row, unsigned int col,
             simdpp::store(dst_ptr + i, dst_new_ymm );                
     }
 
-    // fedisableexcept (FE_INEXACT | FE_INVALID);
+    fedisableexcept (FE_INEXACT | FE_INVALID);
+}
+
+void mat_2m1a_manual_check ( unsigned int row, unsigned int col, 
+    matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
+    auto size = mat_src1.m.size();
+    double * src1_ptr = (double *) mat_src1.m.data();
+    double * src2_ptr = (double *) mat_src2.m.data();
+    double * dst_ptr  = (double *) mat_dst.m.data();
+    std::feclearexcept (FE_ALL_EXCEPT);
+    feenableexcept (FE_INEXACT | FE_INVALID);
+
+    for (int i = 0; i < size; i += 4 ){
+        simdpp::float64<4> src1_ymm = simdpp::load(src1_ptr + i);
+        simdpp::float64<4> src2_ymm = simdpp::load(src2_ptr + i);
+        simdpp::float64<4> src3_ymm = simdpp::load(dst_ptr + i);
+        // (src1 * src3) + (src2 * src3)
+        auto src2xsrc3 = simdpp::mul(src2_ymm, src3_ymm);
+        auto dst_new_ymm = simdpp::fmadd(src1_ymm, src3_ymm, src2xsrc3);
+        simdpp::store(dst_ptr + i, dst_new_ymm );                
+    }
+
+    fedisableexcept (FE_INEXACT | FE_INVALID);
+}
+
+
+void mat_2m1a_manual_check_REALISTIC ( unsigned int row, unsigned int col, 
+    matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
+    auto size = mat_src1.m.size();
+    auto colsize = mat_src1.row;
+    auto rowsize = mat_src1.col;
+
+    // vec <- mat_src1[*]
+    // BaseInt(c) <- mat_src2[*] 
+    // pivotRowVecTerm <- src2[0] 
+    // aVector <- src2[1] 
+
+    // (vec * aVector) + (baseC * PivRowVecTerm)
+
+    double * pivRow = (double *) mat_src2.m.data();
+    double * aVec = (double *) mat_src2.m.data() + rowsize;
+    double * baseC = (double *) mat_src2.m.data();
+    double * vec = (double *) mat_src1.m.data();
+    double * dst_ptr = (double *) mat_dst.m.data();
+    
+    std::feclearexcept (FE_ALL_EXCEPT);
+    feenableexcept (FE_INEXACT | FE_INVALID);
+
+    for (int i = 0; i < colsize; i += 1 ){
+        for (int j = 0; j < rowsize; j += 4 ){
+            simdpp::float64<4> vec_ymm = simdpp::load(vec + i * rowsize + j);
+            simdpp::float64<4> baseC_ymm = simdpp::load(baseC + i * rowsize + j);
+            simdpp::float64<4> pivRow_ymm = simdpp::load(pivRow + j);
+            simdpp::float64<4> aVec_ymm = simdpp::load(aVec + j);
+            auto tmp = simdpp::mul(baseC_ymm, pivRow_ymm);
+            auto result = simdpp::fmadd(vec_ymm, aVec_ymm, tmp);
+            simdpp::store(dst_ptr + i, result );
+        }
+    }
+
+    fedisableexcept (FE_INEXACT | FE_INVALID);
 }
 
 void mat_fma_manual ( unsigned int row, unsigned int col, 
@@ -128,15 +187,13 @@ static void flat(benchmark::State& state,
 
     for (int r = 0; r < row; r += 1) {
         for (int c = 0; c < col; c += 1) {
-            mat_src1.set(r,c, r  ); // rand()/1 );
-            mat_src2.set(r,c, r+c); // rand()/1 );
-            mat_dst. set(r,c, c  ); // rand()/1 );
+            mat_src1.set(r,c, r + 1 ); // rand()/1 );
+            mat_src2.set(r,c, c + 1 ); // rand()/1 );
+            mat_dst. set(r,c, c + 1 ); // rand()/1 );
             mat_dst_ref.set(r,c, mat_dst.get(r,c));
         }
     }
 
-    std::feclearexcept (FE_ALL_EXCEPT);
-    feenableexcept (FE_INEXACT | FE_INVALID); 
     for (auto _ : state) {
         for (int r = 0; r < row; r += 1) {
             for (int c = 0; c < col; c += 1) {
@@ -145,8 +202,6 @@ static void flat(benchmark::State& state,
         }
         (*func_ptr)(row, col, mat_src1, mat_src2, mat_dst);
     }
-    fedisableexcept (FE_INEXACT | FE_INVALID);
-
 
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
@@ -167,7 +222,9 @@ static void flat(benchmark::State& state,
 #endif	
 BENCHMARK_CAPTURE(flat, fma_m, &mat_fma_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
-BENCHMARK_CAPTURE(flat, fma_acurate, &mat_fma_inacurate_check)->BMarg;
-BENCHMARK_CAPTURE(flat, fma_m_acurate, &mat_fma_manual_inacurate_check)->BMarg;
+BENCHMARK_CAPTURE(flat, fma_check, &mat_fma_check)->BMarg;
+BENCHMARK_CAPTURE(flat, fma_m_check, &mat_fma_manual_check)->BMarg;
+
+BENCHMARK_CAPTURE(flat, 2m1a_m_check, &mat_2m1a_manual_check_REALISTIC)->BMarg;
 
 BENCHMARK_MAIN();
