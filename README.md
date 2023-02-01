@@ -1,3 +1,25 @@
+### Update
+`feenableexcept` has almost no overhead
+```
+./scripts/flame.sh ./build/flat-double "flat/fma_m_acurate/128/128"
+./scripts/flame.sh ./build/flat-double "flat/fma_m/128/128"
+```
+
+
+`int32` `mat_fma_manual_half_width`
+```
+make flat-int
+./scripts/flame.sh ./build/flat-int "flat/fma_m_hw/128/128"
+./scripts/flame.sh ./build/flat-int "flat/fma_m/128/128"
+```
+
+`mat_fma_scalar_inacurate_check`
+```
+make flat-int64
+./scripts/flame.sh ./build/flat-int64 "flat/fma_s_acurate/4/4"
+```
+
+
 # Getting Started
 
 ```
@@ -61,4 +83,17 @@ Intel Sapphire Rapids (2023)
 
 9 directories, 26 files
 
+```
+
+# Versions
+
+### `3064fe5`
+```
+git checkout 3064fe5
+make flat_int  
+./scripts/flame.sh ./build/flat_int flat/add/128/128 # about 1500 ns
+./scripts/flame.sh ./build/flat_int flat/add_m/128/128 # 30000 ns, pure scalar
+# goto src/bench_mat/flat-int.cpp, uncomnent for loop, delete vec_add_莎莎
+make flat_int  
+./scripts/flame.sh ./build/flat_int flat/add/128/128 # about 15000 ns, no vectorized int add instruction issued 
 ```

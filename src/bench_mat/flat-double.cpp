@@ -77,8 +77,8 @@ void mat_fma_manual_inacurate_check ( unsigned int row, unsigned int col,
     double * src1_ptr = (double *) mat_src1.m.data();
     double * src2_ptr = (double *) mat_src2.m.data();
     double * dst_ptr  = (double *) mat_dst.m.data();
-    std::feclearexcept (FE_ALL_EXCEPT);
-    feenableexcept (FE_INEXACT | FE_INVALID);
+    // std::feclearexcept (FE_ALL_EXCEPT);
+    // feenableexcept (FE_INEXACT | FE_INVALID);
 
     for (int i = 0; i < size; i += 4 ){
             simdpp::float64<4> src1_ymm = simdpp::load(src1_ptr + i);
@@ -88,7 +88,7 @@ void mat_fma_manual_inacurate_check ( unsigned int row, unsigned int col,
             simdpp::store(dst_ptr + i, dst_new_ymm );                
     }
 
-    fedisableexcept (FE_INEXACT | FE_INVALID);
+    // fedisableexcept (FE_INEXACT | FE_INVALID);
 }
 
 void mat_fma_manual ( unsigned int row, unsigned int col, 
@@ -134,15 +134,19 @@ static void flat(benchmark::State& state,
             mat_dst_ref.set(r,c, mat_dst.get(r,c));
         }
     }
-    
+
+    std::feclearexcept (FE_ALL_EXCEPT);
+    feenableexcept (FE_INEXACT | FE_INVALID); 
     for (auto _ : state) {
-        // for (int r = 0; r < row; r += 1) {
-        //     for (int c = 0; c < col; c += 1) {
-        //         mat_dst. set(r,c, mat_dst_ref.get(r,c) );
-        //     }
-        // }
+        for (int r = 0; r < row; r += 1) {
+            for (int c = 0; c < col; c += 1) {
+                mat_dst.set(r,c, mat_dst_ref.get(r,c) );
+            }
+        }
         (*func_ptr)(row, col, mat_src1, mat_src2, mat_dst);
     }
+    fedisableexcept (FE_INEXACT | FE_INVALID);
+
 
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {

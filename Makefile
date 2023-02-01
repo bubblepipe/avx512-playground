@@ -19,7 +19,7 @@ TEST-TARGET=flat-test vecvec-test
 
 rand_int_float_int:
 	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@  -lpthread 
-doubledouble fe_inexact:
+doubledouble fe_inexact clang-overflow:
 	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@ 
 floatexample:
 	$(CC) $(CFLAGS) src/float/example2.cpp -o $(OUT)$@ 
@@ -44,6 +44,8 @@ flat-int: vector_int.o
 
 flat-int-test: vector_int.o
 	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int.cpp -o $(OUT)$@ $(INC) $(LINK) -DTEST 
+flat-int64-test: vector_int.o
+	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int64.cpp -o $(OUT)$@ $(INC) $(LINK) -DTEST 
 
 
 $(TARGET):

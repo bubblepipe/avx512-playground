@@ -98,17 +98,54 @@ void mat_fma_manual_half_width ( unsigned int row, unsigned int col,
     int32_t * src1_ptr = (int32_t *) mat_src1.m.data();
     int32_t * src2_ptr = (int32_t *) mat_src2.m.data();
     int32_t * dst_ptr  = (int32_t *) mat_dst.m.data();
+    
+    auto shiftleft = _mm256_setr_epi32(1,2,3,4,5,6,7,0);
+    auto shiftright = _mm256_setr_epi32(7,0,1,2,3,4,5,6);
+    auto zero = _mm256_setr_epi32(0,0,0,0,0,0,0,0);
+    auto one = _mm256_setr_epi32(0xffffffff,0xffffffff,0xffffffff,0xffffffff,
+                                 0xffffffff,0xffffffff,0xffffffff,0xffffffff);
 
-    for (int32_t i = 0; i < size; i += 4 ){
+    for (int32_t i = 0; i < size; i += 8 ){
+
         __m256 src1 = _mm256_loadu_si256 ((__m256i_u*) (src1_ptr + i));
         __m256 src2 = _mm256_loadu_si256 ((__m256i_u*) (src2_ptr + i));
-        __m256 mul_res_lo = _mm256_mullo_epi32(src1, src2);
-        __m256 mul_res_hi = _mm256_mulhi_epi32(src1, src2);
-        
-        __m256 src3 = _mm256_loadu_si256 ((__m256i_u*) (dst_ptr + i));
 
-        __m256 r2 = _mm256_add_epi32(r1, src3);
+        // src1[0,2,4,6] * src2[0,2,4,6];
+        __m256 mul_res_1 = _mm256_mul_epi32(src1, src2);
+
+        // srcx[0,2,4,6] <= srcx[1,3,5,7] 
+        src1 = _mm256_permutevar8x32_epi32(src1, shiftleft);
+        src2 = _mm256_permutevar8x32_epi32(src2, shiftleft);
+
+        // src1 * src2
+        __m256 mul_res_2 = _mm256_mul_epi32(src1, src2);
+
+        // mul_res_x[1,3,5,7] should be 0. >0 indicates overflow. 
+        __m256 mul_res_hi_sum = _mm256_add_epi32(mul_res_1, mul_res_2);
+        __m256 mul_res_hi_shuf = _mm256_shuffle_epi32(mul_res_hi_sum, 0b11110101);
+        int mul_overflow = _mm256_testz_si256(mul_res_hi_shuf, one);
+
+        if (!mul_overflow) {
+            int32_t * f; 
+            // f = (int32_t *)&src1;
+            // printf("%d %d %d %d %d %d %d %d\n", f[0], f[1], f[2], f[3], f[4], f[5], f[6], f[7]);
+            f = (int32_t *)&mul_res_hi_shuf;
+            printf("%x %x %x %x %x %x %x %x\n", f[0], f[1], f[2], f[3], f[4], f[5], f[6], f[7]);
+            printf("result %d\n", mul_overflow );
+            exit(0);
+        }
+
+        // merge mul lo result
+        __m256 mul_res_lo_shuf = _mm256_permutevar8x32_epi32(mul_res_2, shiftright);
+        __m256 mul_res_lo_shuf2 = _mm256_add_epi32(mul_res_1, mul_res_lo_shuf);
+
+        // add src3
+        __m256 src3 = _mm256_loadu_si256 ((__m256i_u*) (dst_ptr + i));
+        __m256 r2 = _mm256_add_epi32(mul_res_lo_shuf2, src3);
+
+        // write back
         _mm256_storeu_si256((__m256i_u*) (dst_ptr + i), r2);
+
     }
 }
 
@@ -126,19 +163,19 @@ static void flat(benchmark::State& state,
 
     for (int r = 0; r < row; r += 1) {
         for (int c = 0; c < col; c += 1) {
-            mat_src1.set(r,c, r); // rand() );
-            mat_src2.set(r,c, c); // rand() );
-            mat_dst. set(r,c, r); // rand() );
+            mat_src1.set(r,c, c+1 );
+            mat_src2.set(r,c, c+1 );
+            mat_dst. set(r,c, 2 );
             mat_dst_ref.set(r,c, mat_dst.get(r,c));
         }
     }
     
     for (auto _ : state) {
-        for (int r = 0; r < row; r += 1) {
-            for (int c = 0; c < col; c += 1) {
-                mat_dst. set(r,c, mat_dst_ref.get(r,c) );
-            }
-        }
+        // for (int r = 0; r < row; r += 1) {
+            // for (int c = 0; c < col; c += 1) {
+                // mat_dst. set(r,c, mat_dst_ref.get(r,c) );
+            // }
+        // }
         (*func_ptr)(row, col, mat_src1, mat_src2, mat_dst);
     }
 
@@ -163,5 +200,6 @@ BENCHMARK_CAPTURE(flat, add, &mat_add)->BMarg;
 BENCHMARK_CAPTURE(flat, add_m, &mat_add_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_m, &mat_fma_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
+BENCHMARK_CAPTURE(flat, fma_m_hw, &mat_fma_manual_half_width)->BMarg;
 
 BENCHMARK_MAIN();
