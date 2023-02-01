@@ -5,8 +5,7 @@
 #include <simdpp/simd.h>
 #include <cfenv>
 #include <csignal>
-
-// #define DATA_TYPE double
+#include <utils/cfenv_local.cpp>
 
 class matrix {
 
@@ -112,7 +111,6 @@ void mat_2m1a_manual_check ( unsigned int row, unsigned int col,
     fedisableexcept (FE_INEXACT | FE_INVALID);
 }
 
-
 void mat_2m1a_manual_check_REALISTIC ( unsigned int row, unsigned int col, 
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
     auto size = mat_src1.m.size();
@@ -149,6 +147,44 @@ void mat_2m1a_manual_check_REALISTIC ( unsigned int row, unsigned int col,
 
     fedisableexcept (FE_INEXACT | FE_INVALID);
 }
+
+void mat_2m1a_manual_local_check_REALISTIC ( unsigned int row, unsigned int col, 
+    matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
+    auto size = mat_src1.m.size();
+    auto colsize = mat_src1.row;
+    auto rowsize = mat_src1.col;
+
+    // vec <- mat_src1[*]
+    // BaseInt(c) <- mat_src2[*] 
+    // pivotRowVecTerm <- src2[0] 
+    // aVector <- src2[1] 
+
+    // (vec * aVector) + (baseC * PivRowVecTerm)
+
+    double * pivRow = (double *) mat_src2.m.data();
+    double * aVec = (double *) mat_src2.m.data() + rowsize;
+    double * baseC = (double *) mat_src2.m.data();
+    double * vec = (double *) mat_src1.m.data();
+    double * dst_ptr = (double *) mat_dst.m.data();
+    
+    std::feclearexcept (FE_ALL_EXCEPT);
+    feenableexcept_local (FE_INEXACT | FE_INVALID);
+
+    for (int i = 0; i < colsize; i += 1 ){
+        for (int j = 0; j < rowsize; j += 4 ){
+            simdpp::float64<4> vec_ymm = simdpp::load(vec + i * rowsize + j);
+            simdpp::float64<4> baseC_ymm = simdpp::load(baseC + i * rowsize + j);
+            simdpp::float64<4> pivRow_ymm = simdpp::load(pivRow + j);
+            simdpp::float64<4> aVec_ymm = simdpp::load(aVec + j);
+            auto tmp = simdpp::mul(baseC_ymm, pivRow_ymm);
+            auto result = simdpp::fmadd(vec_ymm, aVec_ymm, tmp);
+            simdpp::store(dst_ptr + i, result );
+        }
+    }
+
+    fedisableexcept (FE_INEXACT | FE_INVALID);
+}
+
 
 void mat_fma_manual ( unsigned int row, unsigned int col, 
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
@@ -226,5 +262,6 @@ BENCHMARK_CAPTURE(flat, fma_check, &mat_fma_check)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_m_check, &mat_fma_manual_check)->BMarg;
 
 BENCHMARK_CAPTURE(flat, 2m1a_m_check, &mat_2m1a_manual_check_REALISTIC)->BMarg;
+BENCHMARK_CAPTURE(flat, 2m1a_m_local_check, &mat_2m1a_manual_local_check_REALISTIC)->BMarg;
 
 BENCHMARK_MAIN();

@@ -1,4 +1,9 @@
-### Update
+### Update 0201
+```
+./build/flat-double --benchmark_filter=flat/2m1a_m_local_check/4/4
+./build/flat-double --benchmark_filter=flat/2m1a_m_check/4/4
+```
+### Update 0130
 `feenableexcept` has almost no overhead
 ```
 ./scripts/flame.sh ./build/flat-double "flat/fma_m_acurate/128/128"
