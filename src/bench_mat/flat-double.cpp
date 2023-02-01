@@ -46,6 +46,7 @@ void mat_fma_check ( unsigned int row, unsigned int col,
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
 
     std::feclearexcept (FE_ALL_EXCEPT);
+    feenableexcept (FE_INEXACT | FE_INVALID);
 
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
@@ -53,15 +54,6 @@ void mat_fma_check ( unsigned int row, unsigned int col,
             double src2 = mat_src2.get(i,j);
             double src3 = mat_dst.get(i,j);
             double result = (src1 * src2) + src3;
-
-            if (std::fetestexcept(FE_INEXACT)){
-                std::feclearexcept (FE_ALL_EXCEPT);
-                printf("[%d][%d]: %f, %f, %f -> %f\n", i, j, src1, src2, src3, result);
-                uint64_t src1_int = mat_src1.get(i,j);
-                uint64_t src2_int = mat_src2.get(i,j);
-                uint64_t src3_int = mat_dst.get(i,j);
-                result = (src1_int * src2_int) + src3_int;
-            }
 
             mat_dst.set(i,j, result );
 
@@ -110,6 +102,41 @@ void mat_2m1a_manual_check ( unsigned int row, unsigned int col,
 
     fedisableexcept (FE_INEXACT | FE_INVALID);
 }
+
+
+void mat_2m1a_manual ( unsigned int row, unsigned int col, 
+    matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
+    auto size = mat_src1.m.size();
+    auto colsize = mat_src1.row;
+    auto rowsize = mat_src1.col;
+
+    // vec <- mat_src1[*]
+    // BaseInt(c) <- mat_src2[*] 
+    // pivotRowVecTerm <- src2[0] 
+    // aVector <- src2[1] 
+
+    // (vec * aVector) + (baseC * PivRowVecTerm)
+
+    double * pivRow = (double *) mat_src2.m.data();
+    double * aVec = (double *) mat_src2.m.data() + rowsize;
+    double * baseC = (double *) mat_src2.m.data();
+    double * vec = (double *) mat_src1.m.data();
+    double * dst_ptr = (double *) mat_dst.m.data();
+    
+    for (int i = 0; i < colsize; i += 1 ){
+        for (int j = 0; j < rowsize; j += 4 ){
+            simdpp::float64<4> vec_ymm = simdpp::load(vec + i * rowsize + j);
+            simdpp::float64<4> baseC_ymm = simdpp::load(baseC + i * rowsize + j);
+            simdpp::float64<4> pivRow_ymm = simdpp::load(pivRow + j);
+            simdpp::float64<4> aVec_ymm = simdpp::load(aVec + j);
+            auto tmp = simdpp::mul(baseC_ymm, pivRow_ymm);
+            auto result = simdpp::fmadd(vec_ymm, aVec_ymm, tmp);
+            simdpp::store(dst_ptr + i, result );
+        }
+    }
+
+}
+
 
 void mat_2m1a_manual_check_REALISTIC ( unsigned int row, unsigned int col, 
     matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
@@ -261,6 +288,7 @@ BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_check, &mat_fma_check)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_m_check, &mat_fma_manual_check)->BMarg;
 
+BENCHMARK_CAPTURE(flat, 2m1a_m, &mat_2m1a_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, 2m1a_m_check, &mat_2m1a_manual_check_REALISTIC)->BMarg;
 BENCHMARK_CAPTURE(flat, 2m1a_m_local_check, &mat_2m1a_manual_local_check_REALISTIC)->BMarg;
 
