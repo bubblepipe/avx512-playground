@@ -17,7 +17,7 @@ OUT=build/
 TARGET=flat vecvec flat-int52 flat-int64 flat-float flat-double
 TEST-TARGET=flat-test vecvec-test
 
-rand_int_float_int:
+rand_int_float_int test_all_int52:
 	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@  -lpthread 
 doubledouble fe_inexact clang-overflow:
 	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@ 
