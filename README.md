@@ -1,3 +1,10 @@
+### Update 0204
+```
+make bench_except 
+./scripts/flame.sh ./build/bench_except except_on_off_local
+sudo perf report
+```
+
 ### Update 0201
 ```
 ./build/flat-double --benchmark_filter=flat/2m1a_m_local_check/4/4

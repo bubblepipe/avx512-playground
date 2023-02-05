@@ -1,0 +1,23 @@
+[
+    {
+        "arguments": [
+            "clang++-15",
+            "-c",
+            "-O3",
+            "-march=native",
+            "-I",
+            "src/",
+            "-fno-omit-frame-pointer",
+            "-std=c++17",
+            "-I",
+            "./include/libsimdpp",
+            "-isystem",
+            "include/benchmark/include",
+            "-o",
+            "build/flat-double",
+            "src/bench_mat/flat-double.cpp"
+        ],
+        "directory": "/home/aoiduo/Documents/avx-512",
+        "file": "src/bench_mat/flat-double.cpp"
+    }
+]

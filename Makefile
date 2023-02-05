@@ -17,10 +17,11 @@ OUT=build/
 TARGET=flat vecvec flat-int52 flat-int64 flat-float flat-double
 TEST-TARGET=flat-test vecvec-test
 
-rand_int_float_int test_all_int52:
+rand_int_float_int test_all_int52 i16u32 doubledouble fe_inexact clang-overflow:
 	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@  -lpthread 
-doubledouble fe_inexact clang-overflow:
-	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@ 
+bench_except:
+	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@ $(INC)  $(LINK)
+
 floatexample:
 	$(CC) $(CFLAGS) src/float/example2.cpp -o $(OUT)$@ 
 
@@ -50,6 +51,11 @@ flat-int64-test: vector_int.o
 
 $(TARGET):
 	$(CC) $(CFLAGS) src/bench_mat/$@.cpp -o $(OUT)$@ $(INC) $(LINK)
+
+int16.o:
+	$(CC) $(CFLAGS) -c src/bench_mat/int16.cpp -o $(OUT)vector_int.o $(INC) 
+int16_main: int16.o
+	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/int16_main.cpp -o $(OUT)$@ $(INC) $(LINK)
 
 
 flat-double-test:

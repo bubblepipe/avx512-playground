@@ -1,34 +1,33 @@
-#include <stdlib.h>
-#include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
+
 #include <cfenv>
+#include <iostream>
 #include <limits>
 
 #pragma STDC FENV_ACCESS ON
 
-union uintd
-{
-    uint64_t u;     
-    double d; 
-}; 
+union uintd {
+    uint64_t u;
+    double d;
+};
 
 int main() {
 
-        srand(1);
-        
-        uintd A , B; 
-        A.u = rand()/1000;
-        B.u = rand()/1000;
-        // A.d = 0;
-        // B.d = 0;
+    srand(1);
 
-        std::feclearexcept (FE_ALL_EXCEPT);
+    uintd A, B;
+    A.u = rand() / 1000;
+    B.u = rand() / 1000;
+    // A.d = 0;
+    // B.d = 0;
 
-        // feenableexcept (FE_INEXACT | FE_INVALID);
+    std::feclearexcept(FE_ALL_EXCEPT);
 
-        double x = A.d * B.d;
-        if (std::fetestexcept(FE_INEXACT)){
-                std::cout << "inexact result reported\n";
-        }
+    // feenableexcept (FE_INEXACT | FE_INVALID);
 
+    double x = A.d * B.d;
+    if (std::fetestexcept(FE_INEXACT)) {
+        std::cout << "inexact result reported\n";
+    }
 }
