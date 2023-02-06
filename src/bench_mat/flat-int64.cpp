@@ -98,8 +98,6 @@ void mat_fma_scalar_inacurate_check ( unsigned int row, unsigned int col,
             mat_dst.set(i,j,  r2);
         }
     }
-
-
 }
 
 void mat_fma_manual ( unsigned int row, unsigned int col, 

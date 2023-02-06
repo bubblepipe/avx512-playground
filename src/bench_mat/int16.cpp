@@ -3,6 +3,7 @@
 #include <immintrin.h>
 #include <stdexcept>
 #include <vector>
+#include <utils/matrix.cpp>
 
 typedef int32_t Vector32x16 __attribute__((ext_vector_type(16)));
 
@@ -40,30 +41,9 @@ inline Vector32x16 mul(Vector32x16 x, Vector32x16 y) {
     return lo;
 }
 
-class matrix {
-
-  public:
-    std::vector<int64_t> m;
-    unsigned int row;
-    unsigned int col;
-
-    matrix(unsigned int r, unsigned int c) {
-        row = r;
-        col = c;
-        m.resize(r * c);
-    }
-
-  public:
-    int64_t get(unsigned int x, unsigned int y) {
-        return m[col * x + y];
-    }
-    void set(unsigned int x, unsigned int y, int64_t val) {
-        m[col * x + y] = val;
-    }
-};
 
 void mat_add_manual(unsigned int row, unsigned int col,
-                    matrix &mat_src1, matrix &mat_src2, matrix &mat_dst) {
+                    matrix<int32_t> &mat_src1, matrix<int32_t> &mat_src2, matrix<int32_t> &mat_dst) {
 
     auto size = mat_src1.m.size();
 
