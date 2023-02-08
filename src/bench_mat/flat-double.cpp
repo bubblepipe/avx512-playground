@@ -6,6 +6,7 @@
 #include <utils/cfenv_local.cpp>
 #include <utils/matrix.cpp>
 #include <utils/bench_utils.cpp>
+#include <x86intrin.h>
 
 void mat_fma ( unsigned int row, unsigned int col, 
     matrix<double> & mat_src1, matrix<double> & mat_src2, matrix<double> & mat_dst ) {
@@ -208,4 +209,21 @@ void mat_fma_manual ( unsigned int row, unsigned int col,
         simdpp::store(dst_ptr + i, dst_new_ymm );                                         
     }
 }
+
+
+void mat_fma_manual_rdtscp ( unsigned int row, unsigned int col, 
+    matrix<double> & mat_src1, matrix<double> & mat_src2, matrix<double> & mat_dst ) {
+
+    unsigned int dummy;
+    unsigned long long t1 = __rdtscp(&dummy);
+
+    mat_fma_manual(row, col, mat_src1, mat_src2, mat_dst);
+
+    unsigned long long t2 = __rdtscp(&dummy);
+    std::cout << "Time: " << t2 - t1 << std::endl;
+
+    exit(0);
+}
+
+
 

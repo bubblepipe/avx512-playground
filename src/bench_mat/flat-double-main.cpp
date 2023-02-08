@@ -31,19 +31,19 @@ static void flat(benchmark::State& state,
 
     for (int r = 0; r < row; r += 1) {
         for (int c = 0; c < col; c += 1) {
-            mat_src1.set(r,c, r + 1 ); // rand()/1 );
-            mat_src2.set(r,c, c + 1 ); // rand()/1 );
-            mat_dst. set(r,c, c + 1 ); // rand()/1 );
+            mat_src1.set(r,c, rand() ); // rand()/1 );
+            mat_src2.set(r,c, rand() ); // rand()/1 );
+            mat_dst. set(r,c, rand() ); // rand()/1 );
             mat_dst_ref.set(r,c, mat_dst.get(r,c));
         }
     }
 
     for (auto _ : state) {
-        for (int r = 0; r < row; r += 1) {
-            for (int c = 0; c < col; c += 1) {
-                mat_dst.set(r,c, mat_dst_ref.get(r,c) );
-            }
-        }
+        // for (int r = 0; r < row; r += 1) {
+            // for (int c = 0; c < col; c += 1) {
+                // mat_dst.set(r,c, mat_dst_ref.get(r,c) );
+            // }
+        // }
         (*func_ptr)(row, col, mat_src1, mat_src2, mat_dst);
     }
 
@@ -66,5 +66,7 @@ BENCHMARK_CAPTURE(flat, fma_m_check, &mat_fma_manual_check)->BMarg;
 BENCHMARK_CAPTURE(flat, 2m1a_m, &mat_2m1a_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, 2m1a_m_check, &mat_2m1a_manual_check_REALISTIC)->BMarg;
 BENCHMARK_CAPTURE(flat, 2m1a_m_local_check, &mat_2m1a_manual_local_check_REALISTIC)->BMarg;
+
+// BENCHMARK_CAPTURE(flat, fma_m_rdtscp, &mat_fma_manual_rdtscp)->BMarg;
 
 BENCHMARK_MAIN();

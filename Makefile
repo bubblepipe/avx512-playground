@@ -14,25 +14,28 @@ INC += $(INC_GBENCH)
 LINK=-L include/benchmark/build/src -lbenchmark -lpthread 
 
 BENCH_SIZE=-D SIZE_BIG
-# CFLAGS+=$BENCH_SIZE
+# CFLAGS+=$(BENCH_SIZE)
 
 OUT=build/
 
-TARGET=flat vecvec flat-int52 flat-int64 flat-float flat-double
-TEST-TARGET=flat-test vecvec-test
 
+# float toys
 ################################################################################
+
 rand_int_float_int test_all_int52 i16u32 doubledouble fe_inexact clang-overflow:
 	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@  -lpthread 
 bench_except:
 	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@ $(INC)  $(LINK)
-
 floatexample:
 	$(CC) $(CFLAGS) src/float/example2.cpp -o $(OUT)$@ 
 
+
+
+# vector
+################################################################################
+
 vector_float: 
 	$(CC) $(CFLAGS) src/bench_vec/bench_vector_float.cpp -o $(OUT)$@ $(INC) $(LINK)
-
 
 vector_int.o:
 	$(CC) $(CFLAGS) -c src/bench_vec/bench_vector_int.cpp -o $(OUT)vector_int.o $(INC) 
@@ -45,23 +48,25 @@ vector_int_overflow: vector_int_overflow.o
 	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_vec/bench_vector_int_main.cpp -o $(OUT)$@ $(INC) $(LINK) -DOVERFLOW
 
 
-flat-int: vector_int.o
-	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int-main.cpp -o $(OUT)$@ $(INC) $(LINK)
 
-# flat-int-test: vector_int.o
-# 	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int.cpp -o $(OUT)$@ $(INC) $(LINK) -DTEST 
-# flat-int64-test: vector_int.o
-# 	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int64.cpp -o $(OUT)$@ $(INC) $(LINK) -DTEST 
-
-
+# matrix
+################################################################################
+TARGET=flat vecvec flat-int52 flat-int64 flat-float flat-double
+TEST-TARGET=flat-test vecvec-test
 $(TARGET):
 	$(CC) $(CFLAGS) src/bench_mat/$@-main.cpp -o $(OUT)$@ $(INC) $(LINK)
 
-int16.o:
-	$(CC) $(CFLAGS) -c src/bench_mat/int16.cpp -o $(OUT)vector_int.o $(INC) 
-int16_main: int16.o
-	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/int16_main.cpp -o $(OUT)$@ $(INC) $(LINK)
+flat-int: vector_int.o
+	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int-main.cpp -o $(OUT)$@ $(INC) $(LINK)
 
+# int-SafeInteger.o:
+# 	$(CC) $(CFLAGS) -c src/bench_mat/int-SafeInteger.cpp -o $(OUT)vector_int.o $(INC) 
+int-SafeInteger: 
+	$(CC) $(CFLAGS) src/bench_mat/int-SafeInteger-main.cpp -o $(OUT)$@ $(INC) $(LINK)
+
+
+
+# plot
 ################################################################################
 
 plot-auto-vectorize-bad-float: flat-float
@@ -84,6 +89,18 @@ plot-scalar-bad:  flat-int-scalar
 	./build/flat-int-scalar --benchmark_filter="flat/fma/" | tee $@
 	./scripts/plot_benchmark_result.py $@ 15
 
+
+
+# PHONY
+################################################################################
+.PHONY: all
+all: $(TARGET)
+
+.PHONY: clean
+clean:
+	rm -rf build/*
+
+# TESTS (may not work)
 ################################################################################
 
 flat-double-test:
@@ -107,9 +124,3 @@ flat-test-fma: flat-test
 # 	./build/flat-test --benchmark_filter=bench_mat_vecvec/fma_manual/8/16 > /dev/null 2>&1
 # 	diff /dev/shm/1145141919810 ./tests/fma_8_16_iter1 & echo $(bold)PASS$(normal)
 
-.PHONY: all
-all: $(TARGET)
-
-.PHONY: clean
-clean:
-	rm -rf build/*
