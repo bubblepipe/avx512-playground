@@ -14,7 +14,7 @@ INC += $(INC_GBENCH)
 LINK=-L include/benchmark/build/src -lbenchmark -lpthread 
 
 BENCH_SIZE=-D SIZE_BIG
-# CFLAGS+=$(BENCH_SIZE)
+CFLAGS+=$(BENCH_SIZE)
 
 OUT=build/
 
@@ -70,6 +70,8 @@ int-SafeInteger:
 ################################################################################
 
 plot-auto-vectorize-bad-float: flat-float
+	python3 --version
+	exit
 	rm $@ &
 	./build/flat-float --benchmark_filter="flat/fma_m/" | tee -a $@
 	./build/flat-float --benchmark_filter="flat/fma/" | tee -a $@
