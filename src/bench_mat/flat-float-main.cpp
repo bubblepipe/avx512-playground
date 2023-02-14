@@ -39,5 +39,6 @@ static void flat(benchmark::State& state,
 
 BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_m, &mat_fma_manual)->BMarg;
+BENCHMARK_CAPTURE(flat, fma_i, &mat_fma_intrinsic)->BMarg;
 
 BENCHMARK_MAIN();

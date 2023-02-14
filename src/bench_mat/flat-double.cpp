@@ -7,6 +7,7 @@
 #include <utils/matrix.cpp>
 #include <utils/bench_utils.cpp>
 #include <x86intrin.h>
+#include <immintrin.h>
 
 void mat_fma ( unsigned int row, unsigned int col, 
     matrix<double> & mat_src1, matrix<double> & mat_src2, matrix<double> & mat_dst ) {
@@ -210,6 +211,21 @@ void mat_fma_manual ( unsigned int row, unsigned int col,
     }
 }
 
+void mat_fma_intrinsic ( unsigned int row, unsigned int col, 
+    matrix<double> & mat_src1, matrix<double> & mat_src2, matrix<double> & mat_dst ) {
+    auto size = mat_src1.m.size();
+    double * src1_ptr = (double *) mat_src1.m.data();
+    double * src2_ptr = (double *) mat_src2.m.data();
+    double * dst_ptr  = (double *) mat_dst.m.data();
+
+    for (int i = 0; i < size; i += 4 ){
+        __m256 src1 = _mm256_loadu_pd ((const double *) (src1_ptr + i));
+        __m256 src2 = _mm256_loadu_pd ((const double *) (src2_ptr + i));
+        __m256 src3 = _mm256_loadu_pd ((const double *) (dst_ptr + i));
+        __m256 result = _mm256_fmadd_pd(src1, src2, src3);
+        _mm256_storeu_pd((double *) (dst_ptr + i), result);
+    }
+}
 
 void mat_fma_manual_rdtscp ( unsigned int row, unsigned int col, 
     matrix<double> & mat_src1, matrix<double> & mat_src2, matrix<double> & mat_dst ) {
