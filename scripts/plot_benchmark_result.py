@@ -82,6 +82,7 @@ for bench_name, bench_vals in d.items():
             line = z[i::size]
             ax.plot(rows[i::size],cols[i::size],line,  color=color)
 
-ax.legend()
+ax.legend(fontsize="x-large")
 ax.set_title(filename)
 plt.show()
+# plt.savefig(f'{filename}.png', dpi=300)

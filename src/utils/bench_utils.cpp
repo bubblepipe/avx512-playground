@@ -14,7 +14,7 @@ static void RowColSizeArgs(benchmark::internal::Benchmark* b) {
     #ifdef SIZE_BIG
     #define SIZE 15
     int sizes[SIZE] = {16,24,32,40,48,56,64,72,80,88,96,104,112,120,128};
-    #elseifdef SIZE_MODERATE
+    #elif SIZE_MODERATE
     #define SIZE 4
     int sizes[SIZE] = {8,16,24,32};
     #else
