@@ -14,7 +14,7 @@ INC += $(INC_GBENCH)
 LINK=-L include/benchmark/build/src -lbenchmark -lpthread 
 
 # BENCH_SIZE=-D SIZE_BIG
-BENCH_SIZE=-D SIZE_MODERATE
+# BENCH_SIZE=-D SIZE_MODERATE
 CFLAGS+=$(BENCH_SIZE)
 
 OUT=build/
