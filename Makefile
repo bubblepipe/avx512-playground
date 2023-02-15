@@ -13,7 +13,8 @@ INC += $(INC_GBENCH)
 
 LINK=-L include/benchmark/build/src -lbenchmark -lpthread 
 
-BENCH_SIZE=-D SIZE_BIG
+# BENCH_SIZE=-D SIZE_BIG
+BENCH_SIZE=-D SIZE_MODERATE
 CFLAGS+=$(BENCH_SIZE)
 
 OUT=build/
@@ -66,7 +67,35 @@ int-SafeInteger:
 
 
 
-# plot
+# plot-verified
+################################################################################
+
+# require manual renaming 
+plot-scalar-bad:  flat-int-scalar flat-int
+	./build/flat-int-scalar --benchmark_filter="flat/add/" | tee $@
+	./build/flat-int --benchmark_filter="flat/add/" | tee -a $@
+	code $@ 
+
+# use 15 to show clang is inconsistent
+plot-vectorizer-diff: flat-float
+	./build/flat-float --benchmark_filter="flat/fma/"  | tee $@
+	./build/flat-float --benchmark_filter="flat/fma_m/" | tee -a $@
+	./build/flat-float --benchmark_filter="flat/fma_i/" | tee -a $@
+# ./scripts/plot_benchmark_result.py $@ 4
+
+
+
+# plot-testing
+################################################################################
+
+# turn on BENCH_SIZE=-D SIZE_MODERATE
+plot-flat-vecvec: flat-float vecvec
+	./build/vecvec --benchmark_filter="bench_mat_vecvec/fma_manual/" | tee $@
+	./build/flat-float --benchmark_filter="flat/fma_m/" | tee -a $@
+	./scripts/plot_benchmark_result.py $@ 4
+
+
+
 ################################################################################
 
 plot-auto-vectorize-bad-float: flat-float
@@ -85,11 +114,6 @@ plot-auto-vectorize-bad-int: flat-int
 flat-int-scalar: 
 	$(CC) $(CFLAGS_no_vec) -c src/bench_vec/bench_vector_int.cpp -o $(OUT)vector_int.o $(INC) -D SCALAR_ONLY
 	$(CC) $(CFLAGS_no_vec) $(OUT)vector_int.o $(CFLAGS) src/bench_mat/flat-int-main.cpp -o $(OUT)$@ $(INC) $(LINK) -D SCALAR_ONLY
-
-plot-scalar-bad:  flat-int-scalar
-	rm $@
-	./build/flat-int-scalar --benchmark_filter="flat/fma/" | tee $@
-	./scripts/plot_benchmark_result.py $@ 15
 
 
 

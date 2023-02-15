@@ -3,6 +3,9 @@
 #include <bench_vec/bench_vector_int.hpp>
 #include <immintrin.h>
 
+/*
+thia does not vectorize
+*/
 void vec_fma(uint32_t size, int32_t * src1_ptr, int32_t * src2_ptr, int32_t * dst_ptr) {
 
     for (uint32_t i = 0; i < size; i += 1 ){
