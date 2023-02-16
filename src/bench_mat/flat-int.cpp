@@ -82,7 +82,7 @@ void mat_fma_scalar_inacurate_check ( unsigned int row, unsigned int col,
     }
 }
 
-void mat_fma_manual ( unsigned int row, unsigned int col, 
+void mat_fma_intrinsic ( unsigned int row, unsigned int col, 
     matrix<int32_t> & mat_src1, matrix<int32_t> & mat_src2, matrix<int32_t> & mat_dst ) {
     auto size = mat_src1.m.size();
     int32_t * src1_ptr = (int32_t *) mat_src1.m.data();
