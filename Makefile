@@ -14,7 +14,7 @@ INC += $(INC_GBENCH)
 LINK=-L include/benchmark/build/src -lbenchmark -lpthread 
 
 # BENCH_SIZE=-D SIZE_BIG
-# BENCH_SIZE=-D SIZE_MODERATE
+BENCH_SIZE=-D SIZE_MODERATE
 CFLAGS+=$(BENCH_SIZE)
 
 OUT=build/
@@ -23,7 +23,7 @@ OUT=build/
 # float toys
 ################################################################################
 
-rand_int_float_int test_all_int52 i16u32 doubledouble fe_inexact clang-overflow:
+rand_int_float_int test_all_int52 i16u32 doubledouble fe_inexact clang-overflow ifma:
 	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@  -lpthread 
 bench_except:
 	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@ $(INC)  $(LINK)
@@ -52,7 +52,7 @@ vector_int_overflow: vector_int_overflow.o
 
 # matrix
 ################################################################################
-TARGET=flat vecvec flat-int52 flat-int64 flat-float flat-double
+TARGET=flat vecvec flat-int52 flat-int64 flat-int16 flat-float flat-double
 TEST-TARGET=flat-test vecvec-test
 $(TARGET):
 	$(CC) $(CFLAGS) src/bench_mat/$@-main.cpp -o $(OUT)$@ $(INC) $(LINK)
@@ -74,7 +74,7 @@ int-SafeInteger:
 plot-scalar-bad:  flat-int-scalar flat-int
 	./build/flat-int-scalar --benchmark_filter="flat/add/" | tee $@
 	./build/flat-int --benchmark_filter="flat/add/" | tee -a $@
-	code $@ 
+	codium $@ 
 
 # use 15 to show clang is inconsistent
 plot-vectorizer-diff: flat-float
@@ -88,12 +88,17 @@ plot-flat-vecvec: flat-float vecvec
 	./build/vecvec --benchmark_filter="bench_mat_vecvec/fma_manual/" | tee $@
 	./build/flat-float --benchmark_filter="flat/fma_m/" | tee -a $@
 	./scripts/plot_benchmark_result.py $@ 4
-	
+
 plot-data-type-float-int: flat-float flat-int
 	./build/flat-int --benchmark_filter="flat/fma_i/" | tee $@
 	./build/flat-float --benchmark_filter="flat/fma_i/" | tee -a $@
-	code $@ 
+	codium $@ 
 
+plot-data-type-int-16-32-64: flat-int flat-int64 flat-int16
+	./build/flat-int16 --benchmark_filter="flat/fma_i/" | tee $@
+	./build/flat-int --benchmark_filter="flat/fma_i/" | tee -a $@
+	./build/flat-int64 --benchmark_filter="flat/fma_i/" | tee -a $@
+	codium $@ 
 
 # plot-testing
 ################################################################################

@@ -107,7 +107,7 @@ void mat_fma_manual ( unsigned int row, unsigned int col,
     int64_t * src2_ptr = (int64_t *) mat_src2.m.data();
     int64_t * dst_ptr  = (int64_t *) mat_dst.m.data();
 
-    for (int64_t i = 0; i < size; i += 8 ){
+    for (int64_t i = 0; i < size; i += 4 ){
         __m256 src1 = _mm256_loadu_si256 ((__m256i_u*) (src1_ptr + i));
         __m256 src2 = _mm256_loadu_si256 ((__m256i_u*) (src2_ptr + i));
         __m256 r1 = _mm256_mullo_epi32(src1, src2);
@@ -165,11 +165,11 @@ static void flat(benchmark::State& state,
     }
     
     for (auto _ : state) {
-        for (int r = 0; r < row; r += 1) {
-            for (int c = 0; c < col; c += 1) {
-                mat_dst. set(r,c, mat_dst_ref.get(r,c) );
-            }
-        }
+        // for (int r = 0; r < row; r += 1) {
+        //     for (int c = 0; c < col; c += 1) {
+        //         mat_dst. set(r,c, mat_dst_ref.get(r,c) );
+        //     }
+        // }
         (*func_ptr)(row, col, mat_src1, mat_src2, mat_dst);
     }
 
@@ -192,7 +192,7 @@ static void flat(benchmark::State& state,
 #endif	
 BENCHMARK_CAPTURE(flat, add, &mat_add)->BMarg;
 BENCHMARK_CAPTURE(flat, add_m, &mat_add_manual)->BMarg;
-BENCHMARK_CAPTURE(flat, fma_m, &mat_fma_manual)->BMarg;
+BENCHMARK_CAPTURE(flat, fma_i, &mat_fma_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_s_acurate, &mat_fma_scalar_inacurate_check)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_m_acurate, &mat_fma_manual_inacurate_check)->BMarg;
