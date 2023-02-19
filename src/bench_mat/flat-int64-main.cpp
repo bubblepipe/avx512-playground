@@ -4,32 +4,10 @@
 #include <stdlib.h>
 #include <bench_vec/bench_vector_int.hpp>
 #include <immintrin.h>
-
-class matrix {
-
-public:
-
-    std::vector<int64_t> m;
-    unsigned int row;
-    unsigned int col;
-
-    matrix(unsigned int r, unsigned int c) {
-        row = r;
-        col = c;
-        m.resize(r * c);
-    }
-  
-    public:
-        int64_t get(unsigned int x, unsigned int y) {
-            return m[col * x + y];
-        }
-        void set(unsigned int x, unsigned int y, int64_t val) {
-            m[col * x + y] = val;
-        }
-};
+#include <utils/matrix.cpp>
 
 void mat_fma ( unsigned int row, unsigned int col, 
-    matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_dst ) {
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
             int64_t src1 = mat_src1.get(i,j);
@@ -40,7 +18,7 @@ void mat_fma ( unsigned int row, unsigned int col,
     }
 }
 void mat_add ( unsigned int row, unsigned int col, 
-    matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_dst ) {
 
     auto size = mat_src1.m.size();
     int64_t * src1_ptr = (int64_t *) mat_src1.m.data();
@@ -50,7 +28,7 @@ void mat_add ( unsigned int row, unsigned int col,
 }
 
 void mat_add_manual ( unsigned int row, unsigned int col, 
-    matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_dst ) {
     
     auto size = mat_src1.m.size();
     
@@ -80,7 +58,7 @@ void overflow_handler()
 
 
 void mat_fma_scalar_inacurate_check ( unsigned int row, unsigned int col, 
-    matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_dst ) {
     auto overflow = 0;
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
@@ -101,7 +79,7 @@ void mat_fma_scalar_inacurate_check ( unsigned int row, unsigned int col,
 }
 
 void mat_fma_manual ( unsigned int row, unsigned int col, 
-    matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_dst ) {
     auto size = mat_src1.m.size();
     int64_t * src1_ptr = (int64_t *) mat_src1.m.data();
     int64_t * src2_ptr = (int64_t *) mat_src2.m.data();
@@ -120,7 +98,7 @@ void mat_fma_manual ( unsigned int row, unsigned int col,
 }
 
 void mat_fma_manual_inacurate_check ( unsigned int row, unsigned int col, 
-    matrix & mat_src1, matrix & mat_src2, matrix & mat_dst ) {
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_dst ) {
     auto size = mat_src1.m.size();
     int64_t * src1_ptr = (int64_t *) mat_src1.m.data();
     int64_t * src2_ptr = (int64_t *) mat_src2.m.data();
@@ -143,16 +121,16 @@ void mat_fma_manual_inacurate_check ( unsigned int row, unsigned int col,
 }
 
 static void flat(benchmark::State& state, 
-        void (*func_ptr)(unsigned int, unsigned int, matrix &, matrix &, matrix & )) {
+        void (*func_ptr)(unsigned int, unsigned int, matrix<int64_t> &, matrix<int64_t> &, matrix<int64_t> & )) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
     srand(1);
 
     unsigned int row = state.range(0);
     unsigned int col = state.range(1);
-    matrix mat_src1(row,col);
-    matrix mat_src2(row,col);
-    matrix mat_dst(row,col);
-    matrix mat_dst_ref(row,col);
+    matrix<int64_t> mat_src1(row,col);
+    matrix<int64_t> mat_src2(row,col);
+    matrix<int64_t> mat_dst(row,col);
+    matrix<int64_t> mat_dst_ref(row,col);
 
     for (int r = 0; r < row; r += 1) {
         for (int c = 0; c < col; c += 1) {
