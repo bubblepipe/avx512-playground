@@ -58,7 +58,7 @@ vector_int_overflow: vector_int_overflow.o
 
 # matrix
 ################################################################################
-TARGET=flat vecvec flat-int52 flat-int64 flat-int16 flat-float flat-double
+TARGET=vecvec flat-int flat-int64 flat-int16 flat-float flat-double
 TEST-TARGET=flat-test vecvec-test
 $(TARGET):
 	$(CC) $(CFLAGS) src/bench_mat/$@-main.cpp -o $(OUT)$@ $(INC) $(LINK)
@@ -144,6 +144,7 @@ all: $(TARGET)
 .PHONY: clean
 clean:
 	rm -rf build/*
+	rm -rf plot-*
 
 # TESTS (may not work)
 ################################################################################

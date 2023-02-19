@@ -7,18 +7,18 @@
 #include <utils/matrix.cpp>
 
 void mat_fma ( unsigned int row, unsigned int col, 
-    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_dst ) {
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_src3, matrix<int64_t> & mat_dst ) {
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
             int64_t src1 = mat_src1.get(i,j);
             int64_t src2 = mat_src2.get(i,j);
-            int64_t src3 = mat_dst.get(i,j);
+            int64_t src3 = mat_src3.get(i,j);
             mat_dst.set(i,j,  (src1 * src2) + src3);
         }
     }
 }
 void mat_add ( unsigned int row, unsigned int col, 
-    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_dst ) {
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_src3, matrix<int64_t> & mat_dst ) {
 
     auto size = mat_src1.m.size();
     int64_t * src1_ptr = (int64_t *) mat_src1.m.data();
@@ -28,7 +28,7 @@ void mat_add ( unsigned int row, unsigned int col,
 }
 
 void mat_add_manual ( unsigned int row, unsigned int col, 
-    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_dst ) {
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_src3, matrix<int64_t> & mat_dst ) {
     
     auto size = mat_src1.m.size();
     
@@ -58,14 +58,14 @@ void overflow_handler()
 
 
 void mat_fma_scalar_inacurate_check ( unsigned int row, unsigned int col, 
-    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_dst ) {
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_src3, matrix<int64_t> & mat_dst ) {
     auto overflow = 0;
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
             int64_t r1, r2;
             int64_t src1 = mat_src1.get(i,j);
             int64_t src2 = mat_src2.get(i,j);
-            int64_t src3 = mat_dst.get(i,j);
+            int64_t src3 = mat_src3.get(i,j);
 
             overflow += __builtin_mul_overflow(src1, src2, &r1);
             overflow += __builtin_add_overflow(r1, src3, &r2);
@@ -79,10 +79,11 @@ void mat_fma_scalar_inacurate_check ( unsigned int row, unsigned int col,
 }
 
 void mat_fma_manual ( unsigned int row, unsigned int col, 
-    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_dst ) {
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_src3, matrix<int64_t> & mat_dst ) {
     auto size = mat_src1.m.size();
     int64_t * src1_ptr = (int64_t *) mat_src1.m.data();
     int64_t * src2_ptr = (int64_t *) mat_src2.m.data();
+    int64_t * src3_ptr = (int64_t *) mat_src3.m.data();
     int64_t * dst_ptr  = (int64_t *) mat_dst.m.data();
 
     for (int64_t i = 0; i < size; i += 4 ){
@@ -90,7 +91,7 @@ void mat_fma_manual ( unsigned int row, unsigned int col,
         __m256 src2 = _mm256_loadu_si256 ((__m256i_u*) (src2_ptr + i));
         __m256 r1 = _mm256_mullo_epi32(src1, src2);
         
-        __m256 src3 = _mm256_loadu_si256 ((__m256i_u*) (dst_ptr + i));
+        __m256 src3 = _mm256_loadu_si256 ((__m256i_u*) (src3_ptr + i));
 
         __m256 r2 = _mm256_add_epi32(r1, src3);
         _mm256_storeu_si256((__m256i_u*) (dst_ptr + i), r2);
@@ -98,10 +99,11 @@ void mat_fma_manual ( unsigned int row, unsigned int col,
 }
 
 void mat_fma_manual_inacurate_check ( unsigned int row, unsigned int col, 
-    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_dst ) {
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_src3, matrix<int64_t> & mat_dst ) {
     auto size = mat_src1.m.size();
     int64_t * src1_ptr = (int64_t *) mat_src1.m.data();
     int64_t * src2_ptr = (int64_t *) mat_src2.m.data();
+    int64_t * src3_ptr = (int64_t *) mat_src3.m.data();
     int64_t * dst_ptr  = (int64_t *) mat_dst.m.data();
 
     for (int64_t i = 0; i < size; i += 8 ){
@@ -109,7 +111,7 @@ void mat_fma_manual_inacurate_check ( unsigned int row, unsigned int col,
         __m256 src2 = _mm256_loadu_si256 ((__m256i_u*) (src2_ptr + i));
         __m256 r1 = _mm256_mullo_epi32(src1, src2);
         
-        __m256 src3 = _mm256_loadu_si256 ((__m256i_u*) (dst_ptr + i));
+        __m256 src3 = _mm256_loadu_si256 ((__m256i_u*) (src3_ptr + i));
 
         __m256 r2 = _mm256_add_epi32(r1, src3);
         _mm256_storeu_si256((__m256i_u*) (dst_ptr + i), r2);
@@ -121,7 +123,7 @@ void mat_fma_manual_inacurate_check ( unsigned int row, unsigned int col,
 }
 
 static void flat(benchmark::State& state, 
-        void (*func_ptr)(unsigned int, unsigned int, matrix<int64_t> &, matrix<int64_t> &, matrix<int64_t> & )) {
+        void (*func_ptr)(unsigned int, unsigned int, matrix<int64_t> &, matrix<int64_t> &, matrix<int64_t> &, matrix<int64_t> & )) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
     srand(1);
 
@@ -129,45 +131,34 @@ static void flat(benchmark::State& state,
     unsigned int col = state.range(1);
     matrix<int64_t> mat_src1(row,col);
     matrix<int64_t> mat_src2(row,col);
+    matrix<int64_t> mat_src3(row,col);
     matrix<int64_t> mat_dst(row,col);
-    matrix<int64_t> mat_dst_ref(row,col);
 
     for (int r = 0; r < row; r += 1) {
         for (int c = 0; c < col; c += 1) {
             // mat_src1.set(r,c, 0x7ffffffffffffff0); // rand() );
             mat_src1.set(r,c, r); // rand() );
             mat_src2.set(r,c, c); // rand() );
+            mat_src3.set(r,c, c); // rand() );
             mat_dst. set(r,c, r); // rand() );
-            mat_dst_ref.set(r,c, mat_dst.get(r,c));
         }
     }
     
     for (auto _ : state) {
-        // for (int r = 0; r < row; r += 1) {
-        //     for (int c = 0; c < col; c += 1) {
-        //         mat_dst. set(r,c, mat_dst_ref.get(r,c) );
-        //     }
-        // }
-        (*func_ptr)(row, col, mat_src1, mat_src2, mat_dst);
+        (*func_ptr)(row, col, mat_src1, mat_src2, mat_src3, mat_dst);
     }
 
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
             fprintf(somefile, "%ld, %ld, %ld -> %ld\n", 
                 mat_src1.get(i,j), mat_src2.get(i,j), 
-                mat_dst_ref.get(i,j), mat_dst.get(i,j));
+                mat_src3.get(i,j), mat_dst.get(i,j));
         }
     }
 
     fclose(somefile);
 }
 
-
-#ifdef TEST
-#define BMarg Apply(RowColSizeArgs)->Iterations(1)
-#else
-#define BMarg Apply(RowColSizeArgs)
-#endif	
 BENCHMARK_CAPTURE(flat, add, &mat_add)->BMarg;
 BENCHMARK_CAPTURE(flat, add_m, &mat_add_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_i, &mat_fma_manual)->BMarg;

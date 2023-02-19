@@ -41,11 +41,6 @@ static void flat(benchmark::State& state,
 }
 
 
-#ifdef TEST
-#define BMarg Apply(RowColSizeArgs)->Iterations(1)
-#else
-#define BMarg Apply(RowColSizeArgs)
-#endif	
 BENCHMARK_CAPTURE(flat, fma_i, &mat_fma_intrinsic)->BMarg;
 
 #ifdef AVX512_ENABLED
