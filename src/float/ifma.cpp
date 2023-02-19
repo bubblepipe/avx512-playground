@@ -9,7 +9,7 @@ typedef double VectorD __attribute__((ext_vector_type(8)));
 
 int64_t * ifma(VectorI veca, VectorI vecb, VectorI vecc){
                                                 // b * c + a
-    __m512 result_ifma = _mm512_madd52lo_epu64(veca, vecb, vecc);
+    __m512 result_ifma = (veca, vecb, vecc);
     auto result_ifma_arr = ((int64_t*)&result_ifma);
     printf("%ld\n", result_ifma_arr[0]);
     return result_ifma_arr;
