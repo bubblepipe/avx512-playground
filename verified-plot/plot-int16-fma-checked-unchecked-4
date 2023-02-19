@@ -1,0 +1,38 @@
+-----------------------------------------------------------
+Benchmark                 Time             CPU   Iterations
+-----------------------------------------------------------
+flat/fma_i/8/8         2.60 ns         2.60 ns    259308246
+flat/fma_i/8/16        4.09 ns         4.09 ns    166892877
+flat/fma_i/8/24        5.95 ns         5.95 ns    117507896
+flat/fma_i/8/32        9.17 ns         9.17 ns     76236354
+flat/fma_i/16/8        4.07 ns         4.07 ns    168781556
+flat/fma_i/16/16       9.21 ns         9.21 ns     76023200
+flat/fma_i/16/24       11.3 ns         11.3 ns     61329702
+flat/fma_i/16/32       14.7 ns         14.7 ns     47633945
+flat/fma_i/24/8        5.81 ns         5.81 ns    118021677
+flat/fma_i/24/16       11.4 ns         11.4 ns     60105910
+flat/fma_i/24/24       16.5 ns         16.5 ns     42544512
+flat/fma_i/24/32       21.8 ns         21.8 ns     32043114
+flat/fma_i/32/8        9.18 ns         9.18 ns     76000963
+flat/fma_i/32/16       14.7 ns         14.7 ns     47074542
+flat/fma_i/32/24       21.9 ns         21.9 ns     31660916
+flat/fma_i/32/32       28.1 ns         28.1 ns     25022344
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+flat/fma_ic/8/8         7.06 ns         7.06 ns     98123386
+flat/fma_ic/8/16        5.69 ns         5.69 ns    124408075
+flat/fma_ic/8/24        7.84 ns         7.84 ns     90519762
+flat/fma_ic/8/32        11.6 ns         11.6 ns     60354578
+flat/fma_ic/16/8        5.69 ns         5.69 ns    121247305
+flat/fma_ic/16/16       11.6 ns         11.6 ns     60080481
+flat/fma_ic/16/24       14.6 ns         14.6 ns     49689902
+flat/fma_ic/16/32       19.8 ns         19.8 ns     35749378
+flat/fma_ic/24/8        7.92 ns         7.92 ns     87539151
+flat/fma_ic/24/16       14.9 ns         14.9 ns     44775827
+flat/fma_ic/24/24       23.0 ns         23.0 ns     30478612
+flat/fma_ic/24/32       32.0 ns         32.0 ns     21654366
+flat/fma_ic/32/8        11.7 ns         11.7 ns     58916438
+flat/fma_ic/32/16       19.7 ns         19.7 ns     35073221
+flat/fma_ic/32/24       31.8 ns         31.8 ns     21973852
+flat/fma_ic/32/32       38.8 ns         38.8 ns     17845364
