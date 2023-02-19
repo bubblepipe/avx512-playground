@@ -10,3 +10,6 @@
 [submodule "include/benchmark"]
 	path = include/benchmark
 	url = https://github.com/google/benchmark.git
+[submodule "fpl_report"]
+	path = report
+	url = git@github.com:AOIDUO/fpl_report.git
