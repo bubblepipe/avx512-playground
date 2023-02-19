@@ -89,7 +89,7 @@ plot-vectorizer-diff: flat-float
 	./build/flat-float --benchmark_filter="flat/fma_i/" | tee -a $@
 # ./scripts/plot_benchmark_result.py $@ 4
 
-# turn on BENCH_SIZE=-D SIZE_MODERATE
+# turn on export BENCH_SIZE="-D SIZE_MODERATE"
 plot-flat-vecvec: flat-float vecvec
 	./build/vecvec --benchmark_filter="bench_mat_vecvec/fma_manual/" | tee $@
 	./build/flat-float --benchmark_filter="flat/fma_m/" | tee -a $@
@@ -109,7 +109,11 @@ plot-data-type-int-16-32-64: flat-int flat-int64 flat-int16
 # plot-testing
 ################################################################################
 
-
+# turn on export BENCH_SIZE="-D SIZE_MODERATE"
+plot-int16-fma-checked-unchecked: flat-int16
+	./build/flat-int16 --benchmark_filter="flat/fma_i/" | tee $@
+	./build/flat-int16 --benchmark_filter="flat/fma_ic/" | tee $@
+	codium $@ 
 
 ################################################################################
 
