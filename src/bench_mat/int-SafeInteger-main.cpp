@@ -1,4 +1,4 @@
-#include <bench_mat/int-SafeInteger.cpp>
+#include <bench_mat/int-SafeInteger-512.cpp>
 #include <cstdint>
 
 

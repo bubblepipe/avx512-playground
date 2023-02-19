@@ -1,4 +1,4 @@
-CC=clang++-15
+CC=clang++-17
 
 # CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -Wno-format 
 CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 
@@ -13,9 +13,15 @@ INC += $(INC_GBENCH)
 
 LINK=-L include/benchmark/build/src -lbenchmark -lpthread 
 
-# BENCH_SIZE=-D SIZE_BIG
-BENCH_SIZE=-D SIZE_MODERATE
-CFLAGS+=$(BENCH_SIZE)
+# export BENCH_SIZE="-D SIZE_BIG"
+# export BENCH_SIZE="-D SIZE_MODERATE"
+# export BENCH_SIZE=""
+CFLAGS+=${BENCH_SIZE}
+
+
+# export AVX512_ENABLED="-D AVX512_ENABLED"
+# export AVX512_ENABLED=""
+CFLAGS+=${AVX512_ENABLED}
 
 OUT=build/
 

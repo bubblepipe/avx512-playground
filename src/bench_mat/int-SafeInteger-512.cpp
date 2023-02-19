@@ -9,6 +9,7 @@
 // mlir/include/mlir/Analysis/Presburger/SafeInteger.h
 
 typedef int32_t Vector32x16 __attribute__((ext_vector_type(16)));
+typedef int16_t Vector16x32 __attribute__((ext_vector_type(32)));
 
 inline __mmask32 equalMask(Vector32x16 x, Vector32x16 y) {
     return _mm512_cmp_epi16_mask(x, y, _MM_CMPINT_EQ);
