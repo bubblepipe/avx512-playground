@@ -1,4 +1,4 @@
-#include <bench_mat/flat-int.cpp>
+#include <bench_mat/flat-int32.cpp>
 
 static void flat(benchmark::State& state, 
         void (*func_ptr)(unsigned int, unsigned int, matrix<int32_t> &, matrix<int32_t> &, matrix<int32_t> &, matrix<int32_t> & )) {

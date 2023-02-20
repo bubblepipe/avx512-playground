@@ -15,6 +15,7 @@ LINK=-L include/benchmark/build/src -lbenchmark -lpthread
 
 # export BENCH_SIZE="-D SIZE_BIG"
 # export BENCH_SIZE="-D SIZE_MODERATE"
+# export BENCH_SIZE="-D SIZE_8_16_32"
 # export BENCH_SIZE=""
 CFLAGS+=${BENCH_SIZE}
 
@@ -79,7 +80,7 @@ int-SafeInteger:
 # require manual renaming 
 plot-scalar-bad:  flat-int-scalar flat-int
 	./build/flat-int-scalar --benchmark_filter="flat/add/" | tee $@
-	./build/flat-int --benchmark_filter="flat/add/" | tee -a $@
+	./build/flat-int32 --benchmark_filter="flat/add/" | tee -a $@
 	codium $@ 
 
 # use 15 to show clang is inconsistent
@@ -96,13 +97,13 @@ plot-flat-vecvec: flat-float vecvec
 	./scripts/plot_benchmark_result.py $@ 4
 
 plot-data-type-float-int: flat-float flat-int
-	./build/flat-int --benchmark_filter="flat/fma_i/" | tee $@
+	./build/flat-int32 --benchmark_filter="flat/fma_i/" | tee $@
 	./build/flat-float --benchmark_filter="flat/fma_i/" | tee -a $@
 	codium $@ 
 
-plot-data-type-int-16-32-64: flat-int flat-int64 flat-int16
+plot-data-type-int-16-32-64: flat-int32 flat-int64 flat-int16
 	./build/flat-int16 --benchmark_filter="flat/fma_i/" | tee $@
-	./build/flat-int --benchmark_filter="flat/fma_i/" | tee -a $@
+	./build/flat-int32 --benchmark_filter="flat/fma_i/" | tee -a $@
 	./build/flat-int64 --benchmark_filter="flat/fma_i/" | tee -a $@
 	codium $@ 
 
@@ -112,14 +113,20 @@ plot-int16-fma-checked-unchecked: flat-int16
 	./build/flat-int16 --benchmark_filter="flat/fma_ic/" | tee -a $@
 	codium $@ 
 
-# plot-testing
-################################################################################
-
 plot-SIGFPE-float-double: flat-float flat-double
 	./build/flat-float --benchmark_filter="flat/fma_ic/" | tee $@
 	./build/flat-double --benchmark_filter="flat/fma_ic/" | tee -a $@
 	codium $@ 
 
+# plot-testing
+################################################################################
+
+# export BENCH_SIZE="-D SIZE_8_16_32"
+unchecked: flat-int16 flat-int32 flat-float flat-double
+	./build/flat-float --benchmark_filter="flat/fma_i/" | tee $@
+	./build/flat-double --benchmark_filter="flat/fma_i/" | tee -a $@
+	./build/flat-int16 --benchmark_filter="flat/fma_i/" | tee -a $@
+	./build/flat-int32 --benchmark_filter="flat/fma_i/" | tee -a $@
 
 ################################################################################
 
@@ -132,8 +139,8 @@ plot-auto-vectorize-bad-float: flat-float
 	./scripts/plot_benchmark_result.py $@ 15
 
 plot-auto-vectorize-bad-int: flat-int
-	./build/flat-int --benchmark_filter="flat/fma_m/" | tee $@
-	./build/flat-int --benchmark_filter="flat/fma/" | tee -a $@
+	./build/flat-int32 --benchmark_filter="flat/fma_m/" | tee $@
+	./build/flat-int32 --benchmark_filter="flat/fma/" | tee -a $@
 	./scripts/plot_benchmark_result.py $@ 15
 
 flat-int-scalar: 

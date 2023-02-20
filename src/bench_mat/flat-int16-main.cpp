@@ -40,11 +40,11 @@ static void flat(benchmark::State& state,
     fclose(somefile);
 }
 
+#ifdef AVX512_ENABLED
 
 BENCHMARK_CAPTURE(flat, fma_i, &mat_fma_intrinsic)->BMarg;
-
-#ifdef AVX512_ENABLED
 BENCHMARK_CAPTURE(flat, fma_ic, &mat_fma_intrinsic_checked)->BMarg;
+
 #endif
 
 BENCHMARK_MAIN();

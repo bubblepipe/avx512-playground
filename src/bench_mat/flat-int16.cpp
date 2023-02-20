@@ -6,6 +6,8 @@
 #include <utils/matrix.cpp>
 #include <utils/int16_utils.cpp>
 
+#ifdef AVX512_ENABLED
+
 void mat_fma_intrinsic ( unsigned int row, unsigned int col, 
     matrix<int16_t> &mat_src1, matrix<int16_t> &mat_src2,
     matrix<int16_t> &mat_src3, matrix<int16_t> &mat_dst) {
@@ -27,7 +29,6 @@ void mat_fma_intrinsic ( unsigned int row, unsigned int col,
 
 }
 
-#ifdef AVX512_ENABLED
 
 void mat_fma_intrinsic_checked(unsigned int row, unsigned int col,
     matrix<int16_t> &mat_src1, matrix<int16_t> &mat_src2,
