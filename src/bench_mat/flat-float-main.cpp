@@ -14,10 +14,10 @@ static void flat(benchmark::State& state,
 
     for (int r = 0; r < row; r += 1) {
         for (int c = 0; c < col; c += 1) {
-            mat_src1.set(r,c, rand() );
-            mat_src2.set(r,c, rand() );
-            mat_src3.set(r,c, c + 1 ); // rand()/1 );
-            mat_dst. set(r,c, rand() );
+            mat_src1.set(r,c, r );
+            mat_src2.set(r,c, c );
+            mat_src3.set(r,c, c ); // rand()/1 );
+            mat_dst. set(r,c, r );
         }
     }
     
@@ -41,6 +41,6 @@ BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_m, &mat_fma_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_i, &mat_fma_intrinsic)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_iu, &mat_fma_intrinsic_unroll)->BMarg;
-BENCHMARK_CAPTURE(flat, fma_i_check, &mat_fma_intrinsic_check)->BMarg;
+BENCHMARK_CAPTURE(flat, fma_ic, &mat_fma_intrinsic_check)->BMarg;
 
 BENCHMARK_MAIN();

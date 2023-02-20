@@ -106,14 +106,20 @@ plot-data-type-int-16-32-64: flat-int flat-int64 flat-int16
 	./build/flat-int64 --benchmark_filter="flat/fma_i/" | tee -a $@
 	codium $@ 
 
-# plot-testing
-################################################################################
-
 # turn on export BENCH_SIZE="-D SIZE_MODERATE"
 plot-int16-fma-checked-unchecked: flat-int16
 	./build/flat-int16 --benchmark_filter="flat/fma_i/" | tee $@
 	./build/flat-int16 --benchmark_filter="flat/fma_ic/" | tee -a $@
 	codium $@ 
+
+# plot-testing
+################################################################################
+
+plot-SIGFPE-float-double: flat-float flat-double
+	./build/flat-float --benchmark_filter="flat/fma_ic/" | tee $@
+	./build/flat-double --benchmark_filter="flat/fma_ic/" | tee -a $@
+	codium $@ 
+
 
 ################################################################################
 
