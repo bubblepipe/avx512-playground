@@ -117,16 +117,21 @@ plot-SIGFPE-float-double: flat-float flat-double
 	./build/flat-float --benchmark_filter="flat/fma_ic/" | tee $@
 	./build/flat-double --benchmark_filter="flat/fma_ic/" | tee -a $@
 	codium $@ 
-
+unchecked: flat-int16 flat-int32 flat-float flat-double
+	./build/flat-int16 --benchmark_filter="flat/fma_i/" | tee $@
+	./build/flat-int32 --benchmark_filter="flat/fma_i/" | tee -a $@
+	./build/flat-float --benchmark_filter="flat/fma_i/" | tee -a $@
+	./build/flat-double --benchmark_filter="flat/fma_i/" | tee -a $@
+	codium $@ 
 # plot-testing
 ################################################################################
 
 # export BENCH_SIZE="-D SIZE_8_16_32"
-unchecked: flat-int16 flat-int32 flat-float flat-double
-	./build/flat-int16 --benchmark_filter="flat/fma_i/" | tee -a $@
-	./build/flat-int32 --benchmark_filter="flat/fma_i/" | tee -a $@
-	./build/flat-float --benchmark_filter="flat/fma_i/" | tee $@
-	./build/flat-double --benchmark_filter="flat/fma_i/" | tee -a $@
+checked: flat-int16 flat-int32 flat-float flat-double
+	./build/flat-int16 --benchmark_filter="flat/fma_ic/" | tee $@
+	./build/flat-int32 --benchmark_filter="flat/fma_ic/" | tee -a $@
+	./build/flat-float --benchmark_filter="flat/fma_ic/" | tee -a $@
+	./build/flat-double --benchmark_filter="flat/fma_ic/" | tee -a $@
 	codium $@ 
 
 ################################################################################

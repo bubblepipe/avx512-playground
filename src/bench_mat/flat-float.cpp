@@ -47,26 +47,6 @@ void mat_fma_intrinsic ( unsigned int row, unsigned int col,
     float * src3_ptr = (float *) mat_src3.m.data();
     float * dst_ptr  = (float *) mat_dst.m.data();
 
-    for (int i = 0; i < size; i += 8 ){
-        __m256 src1 = _mm256_loadu_ps ((const float *) (src1_ptr + i));
-        __m256 src2 = _mm256_loadu_ps ((const float *) (src2_ptr + i));
-        __m256 src3 = _mm256_loadu_ps ((const float *) (src3_ptr + i));
-        __m256 result = _mm256_fmadd_ps(src1, src2, src3);
-        _mm256_storeu_ps((float *) (dst_ptr + i), result);
-    }
-}
-
-void mat_fma_intrinsic_check ( unsigned int row, unsigned int col, 
-    matrix<float> & mat_src1, matrix<float> & mat_src2, matrix<float> & mat_src3, matrix<float> & mat_dst ) {
-    auto size = mat_src1.m.size();
-    float * src1_ptr = (float *) mat_src1.m.data();
-    float * src2_ptr = (float *) mat_src2.m.data();
-    float * src3_ptr = (float *) mat_src3.m.data();
-    float * dst_ptr  = (float *) mat_dst.m.data();
-
-    std::feclearexcept (FE_ALL_EXCEPT);
-    feenableexcept (FE_INEXACT | FE_INVALID);
-
 #ifdef AVX512_ENABLED
     for (int i = 0; i < size; i += 16 ){
         __m512 src1 = _mm512_loadu_ps ((const float *) (src1_ptr + i));
@@ -84,6 +64,16 @@ void mat_fma_intrinsic_check ( unsigned int row, unsigned int col,
         _mm256_storeu_ps((float *) (dst_ptr + i), result);
     }
 #endif
+}
+
+void mat_fma_intrinsic_check ( unsigned int row, unsigned int col, 
+    matrix<float> & mat_src1, matrix<float> & mat_src2, matrix<float> & mat_src3, matrix<float> & mat_dst ) {
+
+    std::feclearexcept (FE_ALL_EXCEPT);
+    feenableexcept (FE_INEXACT | FE_INVALID);
+
+    mat_fma_intrinsic( row, col, mat_src1, mat_src2, mat_src3, mat_dst ) ;
+
     fedisableexcept (FE_INEXACT | FE_INVALID);
 }
 

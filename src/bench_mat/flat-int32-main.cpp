@@ -43,6 +43,7 @@ BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
 #ifndef SCALAR_ONLY
 BENCHMARK_CAPTURE(flat, add_m, &mat_add_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_i, &mat_fma_intrinsic)->BMarg;
+BENCHMARK_CAPTURE(flat, fma_ic, &mat_fma_intrinsic_checked)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_m_hw, &mat_fma_manual_half_width)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_s_check, &mat_fma_scalar_inacurate_check)->BMarg;
 #endif

@@ -63,6 +63,6 @@ BENCHMARK_CAPTURE(flat, fma_ic, &mat_fma_intrinsic_check)->BMarg;
 // BENCHMARK_CAPTURE(flat, 2m1a_m_check, &mat_2m1a_manual_check_REALISTIC)->BMarg;
 // BENCHMARK_CAPTURE(flat, 2m1a_m_local_check, &mat_2m1a_manual_local_check_REALISTIC)->BMarg;
 
-BENCHMARK_CAPTURE(flat, fma_m_rdtscp, &mat_fma_manual_rdtscp)->BMarg;
+BENCHMARK_CAPTURE(flat, fma_i_rdtscp, &mat_fma_intrinsic_rdtscp)->BMarg;
 
 BENCHMARK_MAIN();

@@ -46,6 +46,15 @@ void mat_fma_intrinsic ( unsigned int row, unsigned int col,
     double * src3_ptr = (double *) mat_src3.m.data();
     double * dst_ptr  = (double *) mat_dst.m.data();
 
+#ifdef AVX512_ENABLED
+    for (int i = 0; i < size; i += 8 ){
+        __m512 src1 = _mm512_loadu_pd ((const double *) (src1_ptr + i));
+        __m512 src2 = _mm512_loadu_pd ((const double *) (src2_ptr + i));
+        __m512 src3 = _mm512_loadu_pd ((const double *) (src3_ptr + i));
+        __m512 result = _mm512_fmadd_pd(src1, src2, src3);
+        _mm512_storeu_pd((double *) (dst_ptr + i), result);
+    }
+#else
     for (int i = 0; i < size; i += 4 ){
         __m256 src1 = _mm256_loadu_pd ((const double *) (src1_ptr + i));
         __m256 src2 = _mm256_loadu_pd ((const double *) (src2_ptr + i));
@@ -53,6 +62,7 @@ void mat_fma_intrinsic ( unsigned int row, unsigned int col,
         __m256 result = _mm256_fmadd_pd(src1, src2, src3);
         _mm256_storeu_pd((double *) (dst_ptr + i), result);
     }
+#endif
 }
 
 void mat_fma_check ( unsigned int row, unsigned int col, 
@@ -79,32 +89,12 @@ void mat_fma_check ( unsigned int row, unsigned int col,
 
 void mat_fma_intrinsic_check ( unsigned int row, unsigned int col, 
     matrix<double> & mat_src1, matrix<double> & mat_src2, matrix<double> & mat_src3, matrix<double> & mat_dst ) {
-    auto size = mat_src1.m.size();
-    double * src1_ptr = (double *) mat_src1.m.data();
-    double * src2_ptr = (double *) mat_src2.m.data();
-    double * src3_ptr = (double *) mat_src3.m.data();
-    double * dst_ptr  = (double *) mat_dst.m.data();
 
     std::feclearexcept (FE_ALL_EXCEPT);
     feenableexcept (FE_INEXACT | FE_INVALID);
 
-#ifdef AVX512_ENABLED
-    for (int i = 0; i < size; i += 8 ){
-        __m512 src1 = _mm512_loadu_pd ((const double *) (src1_ptr + i));
-        __m512 src2 = _mm512_loadu_pd ((const double *) (src2_ptr + i));
-        __m512 src3 = _mm512_loadu_pd ((const double *) (src3_ptr + i));
-        __m512 result = _mm512_fmadd_pd(src1, src2, src3);
-        _mm512_storeu_pd((double *) (dst_ptr + i), result);
-    }
-#else
-    for (int i = 0; i < size; i += 4 ){
-        __m256 src1 = _mm256_loadu_pd ((const double *) (src1_ptr + i));
-        __m256 src2 = _mm256_loadu_pd ((const double *) (src2_ptr + i));
-        __m256 src3 = _mm256_loadu_pd ((const double *) (src3_ptr + i));
-        __m256 result = _mm256_fmadd_pd(src1, src2, src3);
-        _mm256_storeu_pd((double *) (dst_ptr + i), result);
-    }
-#endif
+    mat_fma_intrinsic( row, col, mat_src1, mat_src2, mat_src3, mat_dst ) ;
+
     fedisableexcept (FE_INEXACT | FE_INVALID);
 }
 
@@ -242,13 +232,13 @@ void mat_fma_intrinsic_check ( unsigned int row, unsigned int col,
 
 
 
-void mat_fma_manual_rdtscp ( unsigned int row, unsigned int col, 
+void mat_fma_intrinsic_rdtscp ( unsigned int row, unsigned int col, 
     matrix<double> & mat_src1, matrix<double> & mat_src2, matrix<double> & mat_src3, matrix<double> & mat_dst ) {
 
     unsigned int dummy;
     unsigned long long t1 = __rdtscp(&dummy);
 
-    mat_fma_manual(row, col, mat_src1, mat_src2, mat_src3, mat_dst);
+    mat_fma_intrinsic(row, col, mat_src1, mat_src2, mat_src3, mat_dst);
 
     unsigned long long t2 = __rdtscp(&dummy);
     std::cout << "Time: " << t2 - t1 << std::endl;
