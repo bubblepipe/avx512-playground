@@ -127,6 +127,7 @@ unchecked: flat-int16 flat-int32 flat-float flat-double
 	./build/flat-double --benchmark_filter="flat/fma_i/" | tee -a $@
 	./build/flat-int16 --benchmark_filter="flat/fma_i/" | tee -a $@
 	./build/flat-int32 --benchmark_filter="flat/fma_i/" | tee -a $@
+	codium $@ 
 
 ################################################################################
 
