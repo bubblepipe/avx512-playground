@@ -64,8 +64,8 @@ TEST-TARGET=flat-test vecvec-test
 $(TARGET):
 	$(CC) $(CFLAGS) src/bench_mat/$@-main.cpp -o $(OUT)$@ $(INC) $(LINK)
 
-flat-int: vector_int.o
-	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int-main.cpp -o $(OUT)$@ $(INC) $(LINK)
+flat-int32: vector_int.o
+	$(CC) $(CFLAGS) $(OUT)vector_int.o src/bench_mat/flat-int32-main.cpp -o $(OUT)$@ $(INC) $(LINK)
 
 # int-SafeInteger.o:
 # 	$(CC) $(CFLAGS) -c src/bench_mat/int-SafeInteger.cpp -o $(OUT)vector_int.o $(INC) 
@@ -78,7 +78,7 @@ int-SafeInteger:
 ################################################################################
 
 # require manual renaming 
-plot-scalar-bad:  flat-int-scalar flat-int
+plot-scalar-bad:  flat-int-scalar flat-int32
 	./build/flat-int-scalar --benchmark_filter="flat/add/" | tee $@
 	./build/flat-int32 --benchmark_filter="flat/add/" | tee -a $@
 	codium $@ 
@@ -96,7 +96,7 @@ plot-flat-vecvec: flat-float vecvec
 	./build/flat-float --benchmark_filter="flat/fma_m/" | tee -a $@
 	./scripts/plot_benchmark_result.py $@ 4
 
-plot-data-type-float-int: flat-float flat-int
+plot-data-type-float-int: flat-float flat-int32
 	./build/flat-int32 --benchmark_filter="flat/fma_i/" | tee $@
 	./build/flat-float --benchmark_filter="flat/fma_i/" | tee -a $@
 	codium $@ 
@@ -138,14 +138,14 @@ plot-auto-vectorize-bad-float: flat-float
 	./build/flat-float --benchmark_filter="flat/fma/" | tee -a $@
 	./scripts/plot_benchmark_result.py $@ 15
 
-plot-auto-vectorize-bad-int: flat-int
+plot-auto-vectorize-bad-int: flat-int32
 	./build/flat-int32 --benchmark_filter="flat/fma_m/" | tee $@
 	./build/flat-int32 --benchmark_filter="flat/fma/" | tee -a $@
 	./scripts/plot_benchmark_result.py $@ 15
 
 flat-int-scalar: 
 	$(CC) $(CFLAGS_no_vec) -c src/bench_vec/bench_vector_int.cpp -o $(OUT)vector_int.o $(INC) -D SCALAR_ONLY
-	$(CC) $(CFLAGS_no_vec) $(OUT)vector_int.o $(CFLAGS) src/bench_mat/flat-int-main.cpp -o $(OUT)$@ $(INC) $(LINK) -D SCALAR_ONLY
+	$(CC) $(CFLAGS_no_vec) $(OUT)vector_int.o $(CFLAGS) src/bench_mat/flat-int32-main.cpp -o $(OUT)$@ $(INC) $(LINK) -D SCALAR_ONLY
 
 
 
