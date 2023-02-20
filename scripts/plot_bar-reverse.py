@@ -32,11 +32,10 @@ for x in xs:
         if not (bench_name in d):
             d[bench_name] = {}
         if (row,col) in d[bench_name]:
-            prev_avg,prev_count = d[bench_name][row,col]
-            new_avg = (prev_avg * prev_count + cpu_time) / (prev_count + 1)
-            d[bench_name][row,col] = (new_avg,prev_count + 1)
+            d[bench_name][row,col].append(cpu_time)
         else:
-            d[bench_name][row,col] = (cpu_time,1)
+            d[bench_name][row,col] = [cpu_time]
+
 
 color_iter = iter(['slateblue', 'crimson', 'lightseagreen', 'darkred'])
 
@@ -46,28 +45,33 @@ barWidth = 0.2
 xss = []
 xss.append(np.arange(3))
 yss = []
+errss = []
 xlabel = ['col size 8','col size 16','col size 32']
 
 for bench_name, bench_vals in d.items():
-    color = next(color_iter)
-    print(f"{bench_name} {color}")
 
     xss.append([x + barWidth for x in xss[-1]])
     ys = []
-    for (row,col), (cpu_time,count) in bench_vals.items():
-        ys.append(cpu_time)
+    errs = []
+    for (row,col), (cpu_time_xs) in bench_vals.items():
+        ys.append(sum(cpu_time_xs)/len(cpu_time_xs))
+        errs.append(np.std(cpu_time_xs))
     yss.append(ys)
+    errss.append(errs)
 
-for (xs,ys) in zip(xss,yss):
-    ax.bar(xs,ys, width=barWidth)
+for (xs,ys,errs) in zip(xss,yss,errss):
+    ax.bar(xs,ys,width=barWidth)
+ax.legend(labels=['int16', 'int32', 'float', 'double'], fontsize="x-large")
+
+for (xs,ys,errs) in zip(xss,yss,errss):
+    color = next(color_iter)
+    ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2)
 
 
 # exit(0)
 
-print(xlabel)
 
 plt.xticks([ x+0.5*barWidth for x in xss[1]], list(xlabel), fontsize="x-large")
 ax.set_ylabel("time (ns), lower is better", fontsize="x-large")
-ax.legend(labels=['int16', 'int32', 'float', 'double'], fontsize="x-large")
 ax.set_title(filename, fontsize="xx-large")
 plt.show()
