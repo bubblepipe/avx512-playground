@@ -50,3 +50,4 @@ inline Vector32x16 mul(Vector32x16 x, Vector32x16 y) {
   return lo;
 }
 
+#endif
