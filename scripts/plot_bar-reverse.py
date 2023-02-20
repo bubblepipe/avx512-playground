@@ -61,7 +61,9 @@ for bench_name, bench_vals in d.items():
 
 for (xs,ys,errs) in zip(xss,yss,errss):
     ax.bar(xs,ys,width=barWidth)
-ax.legend(labels=['int16', 'int32', 'float', 'double'], fontsize="x-large")
+# ax.legend(labels=['int16', 'int32', 'float', 'double'], fontsize="x-large")
+# ax.legend(labels=['int16', 'int32', 'int16 with overflow checking', 'int32 with overflow checking'], fontsize="x-large")
+ax.legend(labels=['float', 'double', 'float with overflow checking', 'double with overflow checking'], fontsize="x-large")
 
 for (xs,ys,errs) in zip(xss,yss,errss):
     color = next(color_iter)

@@ -1,0 +1,115 @@
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+float/fma_unchecked/16/8        6.78 ns         6.78 ns    102546438
+float/fma_unchecked/16/16       13.1 ns         13.1 ns     53612266
+float/fma_unchecked/16/32       31.9 ns         31.9 ns     21741650
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+double/fma_unchecked/16/8        14.1 ns         14.1 ns     50067475
+double/fma_unchecked/16/16       27.9 ns         27.9 ns     25164199
+double/fma_unchecked/16/32       58.1 ns         58.1 ns     12084253
+
+
+-------------------------------------------------------------
+Benchmark                   Time             CPU   Iterations
+-------------------------------------------------------------
+float/fma_unchecked/16/8         6.77 ns         6.77 ns    100770449
+float/fma_unchecked/16/16        13.2 ns         13.2 ns     53113284
+float/fma_unchecked/16/32        28.2 ns         28.2 ns     24269555
+-------------------------------------------------------------
+Benchmark                   Time             CPU   Iterations
+-------------------------------------------------------------
+double/fma_unchecked/16/8        14.1 ns         14.1 ns     49966917
+double/fma_unchecked/16/16       28.0 ns         28.0 ns     25153305
+double/fma_unchecked/16/32       57.2 ns         57.2 ns     12202851
+
+
+-------------------------------------------------------------
+Benchmark                 Time             CPU   Iterations  
+-------------------------------------------------------------
+float/fma_unchecked/16/8       7.09 ns         7.09 ns     99592673  
+float/fma_unchecked/16/16      13.2 ns         13.2 ns     53137937  
+float/fma_unchecked/16/32      28.7 ns         28.7 ns     24111242  
+-------------------------------------------------------------
+Benchmark                 Time             CPU   Iterations  
+-------------------------------------------------------------
+double/fma_unchecked/16/8      14.1 ns         14.1 ns     49807168  
+double/fma_unchecked/16/16     30.6 ns         30.6 ns     23003104  
+double/fma_unchecked/16/32     57.1 ns         57.1 ns     12249507  
+
+-------------------------------------------------------------
+Benchmark                   Time             CPU   Iterations
+-------------------------------------------------------------
+float/fma_unchecked/16/8         6.84 ns         6.84 ns    102345781
+float/fma_unchecked/16/16        13.2 ns         13.2 ns     52871370
+float/fma_unchecked/16/32        28.7 ns         28.7 ns     24291416
+-------------------------------------------------------------
+Benchmark                   Time             CPU   Iterations
+-------------------------------------------------------------
+double/fma_unchecked/16/8        13.8 ns         13.8 ns     50230294
+double/fma_unchecked/16/16       27.7 ns         27.7 ns     25039503
+double/fma_unchecked/16/32       56.9 ns         56.9 ns     12286901
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+float/fma_checked/16/8         171 ns          171 ns      4089121
+float/fma_checked/16/16        180 ns          180 ns      3884254
+float/fma_checked/16/32        190 ns          190 ns      3682805
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+double/fma_checked/16/8         175 ns          175 ns      3968476
+double/fma_checked/16/16        189 ns          189 ns      3679138
+double/fma_checked/16/32        424 ns          424 ns      1618486
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+float/fma_checked/16/8         170 ns          170 ns      4109625
+float/fma_checked/16/16        178 ns          178 ns      3937265
+float/fma_checked/16/32        188 ns          188 ns      3681290
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+double/fma_checked/16/8         179 ns          179 ns      3912401
+double/fma_checked/16/16        193 ns          193 ns      3630075
+double/fma_checked/16/32        221 ns          221 ns      3164843
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+float/fma_checked/16/8         171 ns          171 ns      4077207
+float/fma_checked/16/16        180 ns          180 ns      3887288
+float/fma_checked/16/32        191 ns          191 ns      3688962
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+double/fma_checked/16/8         175 ns          175 ns      3971155
+double/fma_checked/16/16        194 ns          194 ns      3594990
+double/fma_checked/16/32        218 ns          218 ns      3188277
