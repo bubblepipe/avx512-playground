@@ -1,11 +1,13 @@
-#include <utils/bench_utils.cpp>
 #include <iostream>
 #include <time.h>
 #include <stdlib.h>
 #include <simdpp/simd.h>
+#include <cfenv>
+#include <utils/cfenv_local.cpp>
 #include <utils/matrix.cpp>
+#include <utils/bench_utils.cpp>
+#include <x86intrin.h>
 #include <immintrin.h>
-
 
 void mat_fma ( unsigned int row, unsigned int col, 
     matrix<float> & mat_src1, matrix<float> & mat_src2, matrix<float> & mat_src3, matrix<float> & mat_dst ) {
@@ -53,6 +55,38 @@ void mat_fma_intrinsic ( unsigned int row, unsigned int col,
         _mm256_storeu_ps((float *) (dst_ptr + i), result);
     }
 }
+
+void mat_fma_intrinsic_check ( unsigned int row, unsigned int col, 
+    matrix<float> & mat_src1, matrix<float> & mat_src2, matrix<float> & mat_src3, matrix<float> & mat_dst ) {
+    auto size = mat_src1.m.size();
+    float * src1_ptr = (float *) mat_src1.m.data();
+    float * src2_ptr = (float *) mat_src2.m.data();
+    float * src3_ptr = (float *) mat_src3.m.data();
+    float * dst_ptr  = (float *) mat_dst.m.data();
+
+    std::feclearexcept (FE_ALL_EXCEPT);
+    feenableexcept (FE_INEXACT | FE_INVALID);
+
+#ifdef AVX512_ENABLED
+    for (int i = 0; i < size; i += 16 ){
+        __m512 src1 = _mm512_loadu_ps ((const float *) (src1_ptr + i));
+        __m512 src2 = _mm512_loadu_ps ((const float *) (src2_ptr + i));
+        __m512 src3 = _mm512_loadu_ps ((const float *) (src3_ptr + i));
+        __m512 result = _mm512_fmadd_ps(src1, src2, src3);
+        _mm512_storeu_ps((float *) (dst_ptr + i), result);
+    }
+#else
+    for (int i = 0; i < size; i += 8 ){
+        __m256 src1 = _mm256_loadu_ps ((const float *) (src1_ptr + i));
+        __m256 src2 = _mm256_loadu_ps ((const float *) (src2_ptr + i));
+        __m256 src3 = _mm256_loadu_ps ((const float *) (src3_ptr + i));
+        __m256 result = _mm256_fmadd_ps(src1, src2, src3);
+        _mm256_storeu_ps((float *) (dst_ptr + i), result);
+    }
+#endif
+    fedisableexcept (FE_INEXACT | FE_INVALID);
+}
+
 
 void mat_fma_intrinsic_unroll ( unsigned int row, unsigned int col, 
     matrix<float> & mat_src1, matrix<float> & mat_src2, matrix<float> & mat_src3, matrix<float> & mat_dst ) {

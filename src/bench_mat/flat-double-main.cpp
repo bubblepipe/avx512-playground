@@ -53,11 +53,11 @@ static void flat(benchmark::State& state,
     fclose(somefile);
 }
 
+BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_m, &mat_fma_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_i, &mat_fma_intrinsic)->BMarg;
-BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
-BENCHMARK_CAPTURE(flat, fma_check, &mat_fma_check)->BMarg;
-BENCHMARK_CAPTURE(flat, fma_m_check, &mat_fma_manual_check)->BMarg;
+BENCHMARK_CAPTURE(flat, fma_c, &mat_fma_check)->BMarg;
+BENCHMARK_CAPTURE(flat, fma_ic, &mat_fma_intrinsic_check)->BMarg;
 
 // BENCHMARK_CAPTURE(flat, 2m1a_m, &mat_2m1a_manual)->BMarg;
 // BENCHMARK_CAPTURE(flat, 2m1a_m_check, &mat_2m1a_manual_check_REALISTIC)->BMarg;

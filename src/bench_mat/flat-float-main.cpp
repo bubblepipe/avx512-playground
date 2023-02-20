@@ -41,5 +41,6 @@ BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_m, &mat_fma_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_i, &mat_fma_intrinsic)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_iu, &mat_fma_intrinsic_unroll)->BMarg;
+BENCHMARK_CAPTURE(flat, fma_i_check, &mat_fma_intrinsic_check)->BMarg;
 
 BENCHMARK_MAIN();
