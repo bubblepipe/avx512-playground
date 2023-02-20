@@ -46,7 +46,7 @@ barWidth = 0.25
 xss = []
 xss.append(np.arange(4))
 yss = []
-xlabel = ['float', 'double','int16','int32']
+xlabel = ['int16','int32','float', 'double']
 
 for i in [8,16,32]:
     xss.append([x + barWidth for x in xss[-1]])
