@@ -17,7 +17,7 @@ static void RowColSizeArgs(benchmark::internal::Benchmark* b) {
     #define SIZE 3
     int sizes[SIZE] = {8,16,32};
     for (int i = 0; i < SIZE; ++i){
-        int row = 8;
+        int row = 16;
         int col = sizes[i];
         b->Args({row, col});
     }
