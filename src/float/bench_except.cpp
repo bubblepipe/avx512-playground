@@ -21,6 +21,17 @@ static void except_on_off_local(benchmark::State &state) {
   }
 }
 
+
+static void if_fetestexcept(benchmark::State &state) {
+  for (auto _ : state) {
+      std::feclearexcept (FE_ALL_EXCEPT);
+      if (std::fetestexcept(FE_INEXACT)) {
+        exit(0);
+    }
+  }
+}
+
 BENCHMARK(except_on_off);
 BENCHMARK(except_on_off_local);
+BENCHMARK(if_fetestexcept);
 BENCHMARK_MAIN();
