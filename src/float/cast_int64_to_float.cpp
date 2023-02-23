@@ -11,11 +11,11 @@ int main() {
     double f64 = (double) i;
 
     // if (std::fetestexcept(FE_INEXACT)) {
-    if (std::fetestexcept(FE_ALL_EXCEPT)) {
+    if (std::fetestexcept(FE_INEXACT)) {
         printf("inexact result reported\n");
     }
 
     printf("int: %ld \n", i);
     printf("float: %f \n", f32);
-    printf("double: %f \n", f64);
+    // printf("double: %f \n", f64);
 }
