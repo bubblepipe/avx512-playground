@@ -30,7 +30,7 @@ OUT=build/
 # float toys
 ################################################################################
 
-rand_int_float_int test_all_int52 i16u32 doubledouble fe_inexact clang-overflow ifma:
+cast_int64_to_float rand_int_float_int test_all_int52 i16u32 doubledouble fe_inexact clang-overflow ifma:
 	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@  -lpthread 
 bench_except:
 	$(CC) $(CFLAGS) src/float/$@.cpp -o $(OUT)$@ $(INC)  $(LINK)
