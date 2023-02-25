@@ -3,7 +3,7 @@ CC=clang++-17
 # CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -Wno-format 
 CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 
 CFLAGS_no_vec=-O3 -mno-avx -mno-sse -march=native -I src/ -fno-omit-frame-pointer -std=c++17
-# CFLAGS=-O0 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g
+CFLAGS=-O0 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g
 
 INC_GBENCH=-isystem include/benchmark/include
 INC_LIBSIMDPP=-I ./include/libsimdpp
@@ -29,6 +29,12 @@ OUT=build/
 
 # pivot
 ################################################################################
+
+# pivot.o:
+# 	$(CC) $(CFLAGS) -c src/bench_pivot/pivot.cpp -o $(OUT)$@ $(INC) 
+# pivot: pivot.o
+# 	$(CC) $(CFLAGS) $(OUT)pivot.o src/bench_pivot/main.cpp -o $(OUT)$@ $(INC) $(LINK)
+
 pivot:
 	$(CC) $(CFLAGS) src/bench_pivot/main.cpp -o $(OUT)$@ $(INC) $(LINK)
 

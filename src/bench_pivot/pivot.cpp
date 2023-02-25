@@ -1,10 +1,7 @@
-#include <bench_pivot/matrix.cpp>
 #include <bench_pivot/pivot.h>
-#include <cstdint>
-
 
 template <typename T, typename T_Zmm>
-void pivot(matrix<T>tableau, unsigned pivotRow, unsigned pivotCol) {
+void pivot(matrix<T> & tableau , unsigned pivotRow, unsigned pivotCol) {
   printx(INFO, "\n>>> pivotRow %ld, pivotCol %ld <<<\n", (int64_t)pivotRow, (int64_t)pivotCol);
 
 //   swapRowWithCol(pivotRow, pivotCol);
@@ -13,15 +10,13 @@ void pivot(matrix<T>tableau, unsigned pivotRow, unsigned pivotCol) {
 
   bool no_overflow;
   if (std::is_same<T, double>::value) {
-    no_overflow = pivot_int52_vecvec<double, doubleZmm>(tableau, pivotRow, pivotCol); }
-  else if (std::is_same<T, float>::value) {
-    no_overflow = pivot_int52_vecvec<float, floatZmm>(tableau, pivotRow, pivotCol); }
-  else if (std::is_same<T, int16_t>::value) {
-    printx(ERROR, "\nint16_t is not implemented!\n\n");
-    exit(0);
+    no_overflow = pivot_int52_vecvec<double, doubleZmm>(tableau, pivotRow, pivotCol); 
+  } else if (std::is_same<T, float>::value) {
+    // no_overflow = pivot_int52_vecvec<float,  floatZmm> (tableau, pivotRow, pivotCol); 
+  } else if (std::is_same<T, int16_t>::value) {
+    printx(ERROR, "\nint16_t is not implemented!\n\n"); exit(0);
   } else{
-    printx(ERROR, "\nunknown type\n\n");
-    exit(0);
+    printx(ERROR, "\nunknown type\n\n"); exit(0);
   }
 
   if (! no_overflow) {
@@ -31,29 +26,19 @@ void pivot(matrix<T>tableau, unsigned pivotRow, unsigned pivotCol) {
   }
 }
 
+// true: fine
+// false: overflow
 template <typename T, typename T_Zmm>
-// true: no fpe
-// false: no
-bool pivot_int52_vecvec(matrix<T>tableau, unsigned pivotRow, unsigned pivotCol) {
+bool pivot_int52_vecvec(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
 
-//   assert(pivotCol >= getNumFixedCols() && "Refusing to pivot invalid column");
-//   assert(!unknownFromColumn(pivotCol).isSymbol);
-
-  // Note: this is called outside
+  // todo this
   // swapRowWithCol(pivotRow, pivotCol);
 
-  // step 1. copy tableau to a 2d array of doubles
-  // step 2. run overflow-checked vectorized pivot on doubles
-  // step 3. if overflow occurs, run original code below:
-  // step 4. if no overflow occurs, copy result back to talbeau
-
   unsigned nRow, nCol;
-  nRow = tableau.nRow();
-  nCol = tableau.nCol();
+  nRow = tableau.nRow;
+  nCol = tableau.nCol;
 
-
-
-  matrix<T> mat(tableau, nRow, nCol);
+  matrix<T> mat(tableau);
   mat.print();
 
   T tmp = mat.get(pivotRow, 0);
@@ -101,7 +86,6 @@ bool pivot_int52_vecvec(matrix<T>tableau, unsigned pivotRow, unsigned pivotCol) 
 
   // row = row * ConstA +  ConstB * PivotRow;
 
-  // #ifdef USE_INT52
   if (std::is_same<T, double>::value) {
 
     for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
@@ -112,7 +96,6 @@ bool pivot_int52_vecvec(matrix<T>tableau, unsigned pivotRow, unsigned pivotCol) 
       _mm512_storeu_pd((T *)(rowPtr + colIndex), result1);
     }
   }
-  // #elif defined USE_INT23
   else if (std::is_same<T, float>::value) {
 
     for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmFloatVecSize) {
@@ -127,9 +110,8 @@ bool pivot_int52_vecvec(matrix<T>tableau, unsigned pivotRow, unsigned pivotCol) 
     printf("neither USE_INT23 not USE_INT52 is defined in pivot");
     exit(0);
   }
-  // #endif
 
-    mat(rowIndex, pivotCol) = (int64_t)tableau(rowIndex, pivotCol);
+    mat(rowIndex, pivotCol) = tableau(rowIndex, pivotCol);
     mat(rowIndex, pivotCol) *= mat(pivotRow, pivotCol);
 
 #endif
@@ -142,25 +124,25 @@ bool pivot_int52_vecvec(matrix<T>tableau, unsigned pivotRow, unsigned pivotCol) 
   if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {
     return false;
   } else {
+
     for (unsigned r = 0; r < nRow ; r += 1) {
       for (unsigned c = 0; c < nCol ; c += 1) {
-        exit(0);
-        // MPInt x( (int64_t)mat(r, c) );
-        // tableau(r, c) = x;
+        auto x = mat(r, c);
+        tableau(r, c) = x;
       }
     }
 
     mat.print();
+
+    // TODO: is this necessary?
     if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {
-      printx(WARNING, "error when converting backto int\n");
+      printf("error when converting backto int\n");
       exit(0);
       return false;
     } else {
       return true;
     }
-
   }
-
-
-
 }
+
+

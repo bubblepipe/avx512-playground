@@ -18,7 +18,21 @@ public:
     nColPadding = compute_nCol_padding(nCol);
     m.resize(nRow, std::vector<T>(nColPadding, 0));
   }
-  
+
+  matrix(matrix<double> & other) {
+    nRow = other.nRow;
+    nCol = other.nCol;
+    nColPadding = other.nColPadding;
+    m.resize(nRow, std::vector<T>(nColPadding, 0));
+
+    for (int rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
+      for (int colIndex = 0; colIndex < nCol; colIndex += 1) {
+        this->set(rowIndex, colIndex, other(rowIndex, colIndex));
+      }
+    }
+  } 
+
+
 //   matrix(mlir::presburger::Matrix &tableau, unsigned nRow_, unsigned nCol_) {
 //     nRow = nRow_;
 //     nCol = nCol_;
