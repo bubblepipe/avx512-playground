@@ -37,10 +37,10 @@ static void PivotCol16Bench(benchmark::State& state) {
   prepare_mat(mat);
 
   for (auto _ : state) {
-    prepare_mat(mat);
+    // prepare_mat(mat);
     pivot<double, doubleZmm>(mat, pivotRow, pivotCol);
     // validate(mat);
-    exit(0);
+    // exit(0);
 
 
   }

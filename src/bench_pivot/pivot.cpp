@@ -2,7 +2,7 @@
 
 template <typename T, typename T_Zmm>
 void pivot(matrix<T> & tableau , unsigned pivotRow, unsigned pivotCol) {
-  printx(INFO, "\n>>> pivotRow %ld, pivotCol %ld <<<\n", (int64_t)pivotRow, (int64_t)pivotCol);
+  // printx(INFO, "\n>>> pivotRow %ld, pivotCol %ld <<<\n", (int64_t)pivotRow, (int64_t)pivotCol);
 
 //   swapRowWithCol(pivotRow, pivotCol);
 
@@ -41,7 +41,7 @@ bool pivot_vecvec(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
   nCol = tableau.nCol;
 
   matrix<T> mat(tableau);
-  mat.print();
+  // mat.print();
 
   T tmp = mat.get(pivotRow, 0);
   mat.set(pivotRow, 0, -mat.get(pivotRow, pivotCol));
@@ -73,7 +73,7 @@ bool pivot_vecvec(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
 #ifdef SCALAR
 
     mat(rowIndex, 0) *= mat(pivotRow, 0);
-    for (unsigned col = 1, numCols = getNumColumns(); col < numCols; ++col) {
+    for (unsigned col = 1; col < nCol; ++col) {
       if (col == pivotCol){ continue; }
 
       mat(rowIndex, col) = mat(rowIndex, col) * mat(pivotRow, 0) +
@@ -88,7 +88,7 @@ bool pivot_vecvec(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
 
   // row = row * ConstA +  ConstB * PivotRow;
 
-  if (std::is_same<T, double>::value) {
+  if  constexpr (std::is_same<T, double>::value) {
 
     for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
       __m512 mat_row_ymm = _mm512_loadu_pd((const T *)(rowPtr + colIndex));
@@ -98,7 +98,7 @@ bool pivot_vecvec(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
       _mm512_storeu_pd((T *)(rowPtr + colIndex), result1);
     }
   }
-  else if (std::is_same<T, float>::value) {
+  else if constexpr (std::is_same<T, float>::value) {
 
     for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmFloatVecSize) {
       __m512 mat_row_ymm = _mm512_loadu_ps((const T *)(rowPtr + colIndex));
@@ -134,7 +134,7 @@ bool pivot_vecvec(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
       }
     }
 
-    mat.print();
+    // mat.print();
 
     // TODO: is this necessary?
     if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {

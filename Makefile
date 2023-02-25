@@ -37,6 +37,8 @@ OUT=build/
 
 pivot:
 	$(CC) $(CFLAGS) src/bench_pivot/main.cpp -o $(OUT)$@ $(INC) $(LINK)
+pivot-scalar:
+	$(CC) $(CFLAGS_no_vec) src/bench_pivot/main.cpp -o $(OUT)$@ $(INC) $(LINK) -DSCALAR
 
 
 # float toys
