@@ -34,16 +34,11 @@ OUT=build/
 ################################################################################
 
 xs = pivot matrix_vecvec utils
+xs = pivot matrix_flat utils
 xs_out = $(OUT)pivot.o $(OUT)matrix_vecvec.o $(OUT)utils.o
+xs_out = $(OUT)pivot.o $(OUT)matrix_flat.o $(OUT)utils.o
 $(xs):
 	$(CC) $(CFLAGS) -c src/bench_pivot/$@.cpp -o $(OUT)$@.o $(INC) 
-# utils:
-# 	$(CC) $(CFLAGS) -c src/bench_pivot/utils.cpp -o $(OUT)utils.o $(INC) 
-# matrix_vecvec: utils
-# 	$(CC) $(CFLAGS) -c src/bench_pivot/matrix_vecvec.cpp -o $(OUT)matrix_vecvec.o $(INC) 
-# pivot: matrix_vecvec
-# 	$(CC) $(CFLAGS) -c src/bench_pivot/pivot.cpp -o $(OUT)pivot.o $(INC) 
-
 bench-pivot: $(xs)
 	$(CC) $(CFLAGS) $(xs_out) src/bench_pivot/main.cpp -o $(OUT)pivot $(INC) $(LINK)
 

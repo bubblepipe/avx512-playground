@@ -1,8 +1,8 @@
 #include <bench_pivot/pivot.h>
 #include <bench_pivot/utils.h>
 
-// true: fine
-// false: overflow
+// true: no fpe
+// false: no
 template <typename T, typename T_Zmm>
 bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
   std::feclearexcept (FE_INEXACT | FE_INVALID);
@@ -66,7 +66,6 @@ bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
   // row = row * ConstA +  ConstB * PivotRow;
 
   if constexpr (std::is_same<T, double>::value) {
-
     for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
       __m512 mat_row_ymm = _mm512_loadu_pd((const T *)(rowPtr + colIndex));
       __m512 pivot_row_ymm = _mm512_loadu_pd((const T *)(pivotRowPtr + colIndex));
@@ -76,7 +75,6 @@ bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
     }
   }
   else if constexpr (std::is_same<T, float>::value) {
-
     for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmFloatVecSize) {
       __m512 mat_row_ymm = _mm512_loadu_ps((const T *)(rowPtr + colIndex));
       __m512 pivot_row_ymm = _mm512_loadu_ps((const T *)(pivotRowPtr + colIndex));

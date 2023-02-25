@@ -5,7 +5,8 @@ template <typename T>
 class matrix {
 
 public:
-  std::vector<std::vector<T>> m;
+  std::vector<T> m;
+  // std::vector<std::vector<T>> m;
 
   unsigned int nRow;
   unsigned int nCol;
