@@ -27,8 +27,10 @@ static void PivotCol16Bench(benchmark::State& state) {
   auto pivotRow = input_mat_pivot_row;
   auto pivotCol = input_mat_pivot_col;
 
-  // matrix<float> toy(nRow,nCol);
-  // pivot<float, floatZmm>(toy, pivotRow, pivotCol);
+  matrix<float> toy1(nRow,nCol);
+  matrix<double> toy2(nRow,nCol);
+  pivot<float, floatZmm>(toy1, pivotRow, pivotCol);
+  pivot<double, doubleZmm>(toy2, pivotRow, pivotCol);
     
 
   matrix<double> mat(nRow,nCol);

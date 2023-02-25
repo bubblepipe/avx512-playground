@@ -10,9 +10,9 @@ void pivot(matrix<T> & tableau , unsigned pivotRow, unsigned pivotCol) {
 
   bool no_overflow;
   if (std::is_same<T, double>::value) {
-    no_overflow = pivot_int52_vecvec<double, doubleZmm>(tableau, pivotRow, pivotCol); 
+    no_overflow = pivot_vecvec<double, doubleZmm>(tableau, pivotRow, pivotCol); 
   } else if (std::is_same<T, float>::value) {
-    // no_overflow = pivot_int52_vecvec<float,  floatZmm> (tableau, pivotRow, pivotCol); 
+    no_overflow = pivot_vecvec<float,  floatZmm> (tableau, pivotRow, pivotCol); 
   } else if (std::is_same<T, int16_t>::value) {
     printx(ERROR, "\nint16_t is not implemented!\n\n"); exit(0);
   } else{
@@ -29,7 +29,7 @@ void pivot(matrix<T> & tableau , unsigned pivotRow, unsigned pivotCol) {
 // true: fine
 // false: overflow
 template <typename T, typename T_Zmm>
-bool pivot_int52_vecvec(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
+bool pivot_vecvec(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
 
   // todo this
   // swapRowWithCol(pivotRow, pivotCol);
