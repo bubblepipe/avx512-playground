@@ -1,37 +1,13 @@
 #include <bench_pivot/pivot.h>
 
-template <typename T, typename T_Zmm>
-void pivot(matrix<T> & tableau , unsigned pivotRow, unsigned pivotCol) {
-  // printx(INFO, "\n>>> pivotRow %ld, pivotCol %ld <<<\n", (int64_t)pivotRow, (int64_t)pivotCol);
-
-//   swapRowWithCol(pivotRow, pivotCol);
-
-  std::feclearexcept (FE_INEXACT | FE_INVALID);
-
-  bool no_overflow;
-  no_overflow = pivot_vecvec<T, T_Zmm>(tableau, pivotRow, pivotCol); 
-
-  // if (std::is_same<T, double>::value) {
-    // no_overflow = pivot_vecvec<double, doubleZmm>(tableau, pivotRow, pivotCol); 
-  // } else if (std::is_same<T, float>::value) {
-    // no_overflow = pivot_vecvec<float,  floatZmm> (tableau, pivotRow, pivotCol); 
-  // } else if (std::is_same<T, int16_t>::value) {
-    // printx(ERROR, "\nint16_t is not implemented!\n\n"); exit(0);
-  // } else{
-    // printx(ERROR, "\nunknown type\n\n"); exit(0);
-  // }
-
-  if (! no_overflow) {
-    printx(ERROR, "\noverflow!\n\n");
-    printx(ERROR, "\npivot_default is not implemented!\n\n");
-    exit(0);
-  }
-}
 
 // true: fine
 // false: overflow
 template <typename T, typename T_Zmm>
-bool pivot_vecvec(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
+bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
+  std::feclearexcept (FE_INEXACT | FE_INVALID);
+
+  // printx(INFO, "\n>>> pivotRow %ld, pivotCol %ld <<<\n", (int64_t)pivotRow, (int64_t)pivotCol);
 
   // todo this
   // swapRowWithCol(pivotRow, pivotCol);
@@ -124,6 +100,8 @@ bool pivot_vecvec(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
   // copy back to tableau
   // but if feinexact, don't
   if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {
+    printf("fpe\n");
+    exit(0);
     return false;
   } else {
 
