@@ -16,8 +16,8 @@ bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
   nRow = tableau.nRow;
   nCol = tableau.nCol;
 
-  matrix<T> mat(tableau);
-  // matrix<T> mat = tableau;
+  // matrix<T> mat(tableau);
+  matrix<T> mat = tableau;
   // mat.print();
 
   T tmp = mat.get(pivotRow, 0);
@@ -48,7 +48,6 @@ bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
     T * rowPtr = mat.getRowPtr(rowIndex);
 
 #ifdef SCALAR
-
     mat(rowIndex, 0) *= mat(pivotRow, 0);
     for (unsigned col = 1; col < nCol; ++col) {
       if (col == pivotCol){ continue; }
@@ -104,23 +103,24 @@ bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
     return false;
   } else {
 
-    for (unsigned r = 0; r < nRow ; r += 1) {
-      for (unsigned c = 0; c < nCol ; c += 1) {
-        auto x = mat(r, c);
-        tableau(r, c) = x;
-      }
-    }
+    // for (unsigned r = 0; r < nRow ; r += 1) {
+    //   for (unsigned c = 0; c < nCol ; c += 1) {
+    //     auto x = mat(r, c);
+    //     tableau(r, c) = x;
+    //   }
+    // }
+    return true;
 
     // mat.print();
 
     // TODO: is this necessary?
-    if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {
-      printf("error when converting backto int\n");
-      exit(0);
-      return false;
-    } else {
-      return true;
-    }
+    // if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {
+    //   printf("error when converting backto int\n");
+    //   exit(0);
+    //   return false;
+    // } else {
+    //   return true;
+    // }
   }
 }
 
