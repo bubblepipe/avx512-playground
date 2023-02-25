@@ -3,7 +3,7 @@ CC=clang++-17
 # CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -Wno-format 
 CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 
 CFLAGS_no_vec=-O3 -mno-avx -mno-sse -march=native -I src/ -fno-omit-frame-pointer -std=c++17
-CFLAGS=-O0 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g
+# CFLAGS=-O0 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g
 
 INC_GBENCH=-isystem include/benchmark/include
 INC_LIBSIMDPP=-I ./include/libsimdpp
@@ -24,21 +24,28 @@ CFLAGS+=${BENCH_SIZE}
 # export AVX512_ENABLED=""
 CFLAGS+=${AVX512_ENABLED}
 
+# export PIVOT_SCALAR="-mno-avx -mno-sse -DSCALAR"
+CFLAGS+=${PIVOT_SCALAR}
+
 OUT=build/
 
 
 # pivot
 ################################################################################
 
-# pivot.o:
-# 	$(CC) $(CFLAGS) -c src/bench_pivot/pivot.cpp -o $(OUT)$@ $(INC) 
-# pivot: pivot.o
-# 	$(CC) $(CFLAGS) $(OUT)pivot.o src/bench_pivot/main.cpp -o $(OUT)$@ $(INC) $(LINK)
+xs = pivot matrix_vecvec utils
+xs_out = $(OUT)pivot.o $(OUT)matrix_vecvec.o $(OUT)utils.o
+$(xs):
+	$(CC) $(CFLAGS) -c src/bench_pivot/$@.cpp -o $(OUT)$@.o $(INC) 
+# utils:
+# 	$(CC) $(CFLAGS) -c src/bench_pivot/utils.cpp -o $(OUT)utils.o $(INC) 
+# matrix_vecvec: utils
+# 	$(CC) $(CFLAGS) -c src/bench_pivot/matrix_vecvec.cpp -o $(OUT)matrix_vecvec.o $(INC) 
+# pivot: matrix_vecvec
+# 	$(CC) $(CFLAGS) -c src/bench_pivot/pivot.cpp -o $(OUT)pivot.o $(INC) 
 
-pivot:
-	$(CC) $(CFLAGS) src/bench_pivot/main.cpp -o $(OUT)$@ $(INC) $(LINK)
-pivot-scalar:
-	$(CC) $(CFLAGS_no_vec) src/bench_pivot/main.cpp -o $(OUT)$@ $(INC) $(LINK) -DSCALAR
+bench-pivot: $(xs)
+	$(CC) $(CFLAGS) $(xs_out) src/bench_pivot/main.cpp -o $(OUT)pivot $(INC) $(LINK)
 
 
 # float toys

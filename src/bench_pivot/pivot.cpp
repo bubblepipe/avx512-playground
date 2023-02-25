@@ -1,5 +1,5 @@
 #include <bench_pivot/pivot.h>
-
+#include <bench_pivot/utils.h>
 
 // true: fine
 // false: overflow
@@ -17,6 +17,7 @@ bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
   nCol = tableau.nCol;
 
   matrix<T> mat(tableau);
+  // matrix<T> mat = tableau;
   // mat.print();
 
   T tmp = mat.get(pivotRow, 0);
@@ -64,7 +65,7 @@ bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
 
   // row = row * ConstA +  ConstB * PivotRow;
 
-  if  constexpr (std::is_same<T, double>::value) {
+  if constexpr (std::is_same<T, double>::value) {
 
     for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
       __m512 mat_row_ymm = _mm512_loadu_pd((const T *)(rowPtr + colIndex));
@@ -125,4 +126,7 @@ bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
   }
 }
 
+
+template bool pivot <double, doubleZmm>(matrix<double> & tableau, unsigned pivotRow, unsigned pivotCol);
+template bool pivot <float, floatZmm>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
 
