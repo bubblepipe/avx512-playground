@@ -9,15 +9,17 @@ void pivot(matrix<T> & tableau , unsigned pivotRow, unsigned pivotCol) {
   std::feclearexcept (FE_INEXACT | FE_INVALID);
 
   bool no_overflow;
-  if (std::is_same<T, double>::value) {
-    no_overflow = pivot_vecvec<double, doubleZmm>(tableau, pivotRow, pivotCol); 
-  } else if (std::is_same<T, float>::value) {
-    no_overflow = pivot_vecvec<float,  floatZmm> (tableau, pivotRow, pivotCol); 
-  } else if (std::is_same<T, int16_t>::value) {
-    printx(ERROR, "\nint16_t is not implemented!\n\n"); exit(0);
-  } else{
-    printx(ERROR, "\nunknown type\n\n"); exit(0);
-  }
+  no_overflow = pivot_vecvec<T, T_Zmm>(tableau, pivotRow, pivotCol); 
+
+  // if (std::is_same<T, double>::value) {
+    // no_overflow = pivot_vecvec<double, doubleZmm>(tableau, pivotRow, pivotCol); 
+  // } else if (std::is_same<T, float>::value) {
+    // no_overflow = pivot_vecvec<float,  floatZmm> (tableau, pivotRow, pivotCol); 
+  // } else if (std::is_same<T, int16_t>::value) {
+    // printx(ERROR, "\nint16_t is not implemented!\n\n"); exit(0);
+  // } else{
+    // printx(ERROR, "\nunknown type\n\n"); exit(0);
+  // }
 
   if (! no_overflow) {
     printx(ERROR, "\noverflow!\n\n");
