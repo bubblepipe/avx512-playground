@@ -38,8 +38,14 @@ static void fetestexcept_local(benchmark::State &state) {
     }
   }
 }
+static void feclearexcept(benchmark::State &state) {
+  for (auto _ : state) {
+  std::feclearexcept (FE_ALL_EXCEPT);
+  }
+}
 BENCHMARK(except_on_off);
 BENCHMARK(except_on_off_local);
 BENCHMARK(if_fetestexcept);
 BENCHMARK(fetestexcept_local);
+BENCHMARK(feclearexcept);
 BENCHMARK_MAIN();

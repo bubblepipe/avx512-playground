@@ -12,8 +12,9 @@
 // #define PIVOT_DEFAULT
 // #define NO_LOG
 // #define SCALAR
-#define USE_INT52
-// #define USE_INT23
+// #define USE_MPInt
+// #define USE_INT52
+#define USE_INT23
 
 #define TRIVIAL 0
 #define INFO 114

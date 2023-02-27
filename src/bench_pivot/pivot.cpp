@@ -1,5 +1,6 @@
 #include <bench_pivot/pivot.h>
 #include <bench_pivot/utils.h>
+#include <bench_pivot/MPInt.h>
 #include <x86intrin.h>
 
 #define START_TIMER     unsigned int dummy;  \
@@ -50,11 +51,6 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     T c = mat(rowIndex, pivotCol);
     if (c == 0) { continue; }
 
-    T_Zmm ConstA = mat(pivotRow, 0);
-    T_Zmm ConstC = mat(rowIndex, pivotCol);
-    T * pivotRowPtr = mat.getRowPtr(pivotRow);
-    T * rowPtr = mat.getRowPtr(rowIndex);
-
 #ifdef SCALAR
     mat(rowIndex, 0) *= mat(pivotRow, 0);
     for (unsigned col = 1; col < nCol; ++col) {
@@ -68,7 +64,14 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 
 #else
     mat(rowIndex, 0) *= mat(pivotRow, 0);
+
     // row = row * ConstA +  ConstB * PivotRow;
+
+    T_Zmm ConstA = mat(pivotRow, 0);
+    T_Zmm ConstC = mat(rowIndex, pivotCol);
+    T * pivotRowPtr = mat.getRowPtr(pivotRow);
+    T * rowPtr = mat.getRowPtr(rowIndex);
+
     if constexpr (std::is_same<T, double>::value) {
       for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
         __m512 mat_row_ymm = _mm512_loadu_pd((const T *)(rowPtr + colIndex));
@@ -132,4 +135,5 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 template bool pivot <double, doubleZmm>(matrix<double> & tableau, unsigned pivotRow, unsigned pivotCol);
 template bool pivot <float, floatZmm>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
 template bool pivot <int64_t, int64Zmm>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
+// template bool pivot <MPInt, int64Zmm>(matrix<MPInt> & tableau, unsigned pivotRow, unsigned pivotCol);
 

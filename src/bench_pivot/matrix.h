@@ -16,7 +16,7 @@ public:
   // colsize = nRow
   matrix(unsigned int r, unsigned int c);
 
-  matrix(matrix<double> & other);
+  matrix(matrix<T> & other);
 
   T get(unsigned int x, unsigned int y) const;
   T &get(unsigned int x, unsigned int y);

@@ -33,10 +33,10 @@ OUT=build/
 # pivot
 ################################################################################
 
-xs = pivot matrix_vecvec utils
-xs = pivot matrix_flat utils
-xs_out = $(OUT)pivot.o $(OUT)matrix_vecvec.o $(OUT)utils.o
-xs_out = $(OUT)pivot.o $(OUT)matrix_flat.o $(OUT)utils.o
+xs = pivot matrix_vecvec utils MPInt
+xs = pivot matrix_flat utils MPInt
+xs_out = $(OUT)pivot.o $(OUT)matrix_vecvec.o $(OUT)utils.o $(OUT)MPInt.o 
+xs_out = $(OUT)pivot.o $(OUT)matrix_flat.o $(OUT)utils.o $(OUT)MPInt.o 
 $(xs):
 	$(CC) $(CFLAGS) -c src/bench_pivot/$@.cpp -o $(OUT)$@.o $(INC) 
 bench-pivot: $(xs)

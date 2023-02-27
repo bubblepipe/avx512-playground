@@ -3,6 +3,7 @@
 #include <bench_pivot/input_matrix.cpp>
 #include <bench_pivot/utils.h>
 #include <cstdint>
+#include <bench_pivot/MPInt.h>
 
 template <typename T>
 void prepare_mat(matrix<T> & mat){
@@ -38,7 +39,14 @@ static void PivotCol16Bench(benchmark::State& state) {
   for (auto _ : state) {
     pivot<int64_t, int64Zmm>(mat, pivotRow, pivotCol);
   }
-  
+#elif defined USE_MPInt
+  matrix<MPInt> mat(nRow,nCol);
+  prepare_mat(mat);
+
+  for (auto _ : state) {
+    pivot<MPInt, int64Zmm>(mat, pivotRow, pivotCol);
+  }
+
 # elif defined USE_INT52
   matrix<double> mat(nRow,nCol);
   prepare_mat(mat);
