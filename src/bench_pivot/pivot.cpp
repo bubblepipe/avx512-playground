@@ -30,10 +30,6 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
   nRow = mat.nRow;
   nCol = mat.nCol;
 
-  // matrix<T> mat(tableau);
-  // matrix<T> mat = tableau;
-  // mat.print();
- 
   T tmp = mat.get(pivotRow, 0);
   mat.set(pivotRow, 0, -mat.get(pivotRow, pivotCol));
   mat.set(pivotRow, pivotCol, -tmp);
@@ -49,14 +45,22 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
   mat.normalizeRowScalar(pivotRow);
 
   T * pivotRowPtr = mat.getRowPtr(pivotRow);
+  T * rowPtr = mat.getRowPtr(0);
+
 // start of loop
   for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
     auto pivotColBackup = mat(rowIndex, pivotCol);
 
-    if (rowIndex == pivotRow) { continue; }
+    if (rowIndex == pivotRow) { 
+      rowPtr += mat.nColPadding;
+      continue;
+    }
 
     T c = mat(rowIndex, pivotCol);
-    if (c == 0) { continue; }
+    if (c == 0) { 
+      rowPtr += mat.nColPadding;
+      continue; 
+    }
 
 #if defined SCALAR || defined USE_MPInt
     mat(rowIndex, 0) *= mat(pivotRow, 0);
@@ -72,20 +76,20 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 #else
     mat(rowIndex, 0) *= mat(pivotRow, 0);
 
-    T * rowPtr = mat.getRowPtr(rowIndex);
     // row = row * ConstA +  ConstB * PivotRow;
-
     if constexpr (std::is_same<T, double>::value) {
       typedef doubleZmm T2_Zmm;
       T2_Zmm ConstA = mat(pivotRow, 0);
       T2_Zmm ConstC = mat(rowIndex, pivotCol);
-      for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
-        __m512 mat_row_ymm = _mm512_loadu_pd((const T *)(rowPtr + colIndex));
+      T index0 = mat(rowIndex, 0);
+      for (unsigned colIndex = 0; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
+        __m512 mat_row_ymm = _mm512_load_pd((const T *)(rowPtr + colIndex));
         __m512 result0 = _mm512_mul_pd(mat_row_ymm, ConstA);
-        __m512 pivot_row_ymm = _mm512_loadu_pd((const T *)(pivotRowPtr + colIndex));
+        __m512 pivot_row_ymm = _mm512_load_pd((const T *)(pivotRowPtr + colIndex));
         __m512 result1 = _mm512_fmadd_pd(ConstC, pivot_row_ymm, result0);
-        _mm512_storeu_pd((T *)(rowPtr + colIndex), result1);
+        _mm512_store_pd((T *)(rowPtr + colIndex), result1);
       }
+      mat(rowIndex, 0) = index0;
     }
     else if constexpr (std::is_same<T, float>::value) {
       typedef floatZmm T2_Zmm;
@@ -121,11 +125,12 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     mat(rowIndex, pivotCol) = pivotColBackup;
     mat(rowIndex, pivotCol) *= mat(pivotRow, pivotCol);
 
+    rowPtr += mat.nColPadding;
 #endif
 
     mat.normalizeRowScalar(rowIndex);
   }
-
+// end of loop
 
   if constexpr (std::is_same<T, double>::value || std::is_same<T, float>::value ) {
     if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {

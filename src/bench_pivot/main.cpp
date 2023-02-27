@@ -22,7 +22,7 @@ void validate(matrix<T> & mat){
         printf("mismatch at %d,%d\n", rowIndex, colIndex);
       }
     }
-  }
+  } exit(0);
 }
 
 static void PivotCol16Bench(benchmark::State& state) {
