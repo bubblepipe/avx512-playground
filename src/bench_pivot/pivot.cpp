@@ -16,7 +16,11 @@
 // false: no
 template <typename T>
 bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
-  std::feclearexcept (FE_INEXACT | FE_INVALID);
+
+  if constexpr (std::is_same<T, double>::value || std::is_same<T, float>::value ) {
+    std::feclearexcept (FE_INEXACT | FE_INVALID);
+  }
+
   // printx(INFO, "\n>>> pivotRow %ld, pivotCol %ld <<<\n", (int64_t)pivotRow, (int64_t)pivotCol);
 
   // todo this
@@ -126,31 +130,17 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     mat.normalizeRowScalar(rowIndex);
   }
 
-  // copy back to tableau
-  // but if feinexact, don't
-  if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {
-    // printf("fpe\n");
-    // exit(0);
-    return false;
+
+  if constexpr (std::is_same<T, double>::value || std::is_same<T, float>::value ) {
+    if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {
+      return false;
+    } else {
+      return true;
+    } 
   } else {
-
-    // for (unsigned r = 0; r < nRow ; r += 1) {
-    //   for (unsigned c = 0; c < nCol ; c += 1) {
-    //     auto x = mat(r, c);
-    //     tableau(r, c) = x;
-    //   }
-    // }
     return true;
-
-    // TODO: is this necessary?
-    // if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {
-    //   printf("error when converting backto int\n");
-    //   exit(0);
-    //   return false;
-    // } else {
-    //   return true;
-    // }
   }
+
 }
 
 
