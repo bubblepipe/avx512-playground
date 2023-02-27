@@ -61,6 +61,8 @@ unsigned int matrix<T>::compute_nCol_padding(unsigned int nCol) {
     vector_size = ZmmInt64VecSize;
   } else if (std::is_same<T, MPInt>::value) {
     vector_size = ZmmInt64VecSize;
+  } else if (std::is_same<T, int16_t>::value) {
+    vector_size = ZmmInt16VecSize;
   } else {
     printf("compute_nCol_padding\n");
     exit(0); // TODO: 
@@ -134,6 +136,7 @@ void matrix<T>::normalizeRowScalar(unsigned row) {
 template class matrix<double>;
 template class matrix<float>;
 template class matrix<int64_t>;
+template class matrix<int16_t>;
 template class matrix<MPInt>;
 
 inline int64_t greatestCommonDivisor(int64_t A, int64_t B) {

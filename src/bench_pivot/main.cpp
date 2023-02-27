@@ -36,7 +36,7 @@ static void PivotCol16Bench(benchmark::State& state) {
     matrix<TYPE> mat(nRow,nCol);                            \
     prepare_mat(mat);                                       \
     for (auto _ : state) {                                  \
-      pivot<TYPE>(mat, pivotRow, pivotCol);       \
+      pivot<TYPE>(mat, pivotRow, pivotCol); \
     }                                                       \
   }
 
@@ -44,10 +44,10 @@ static void PivotCol16Bench(benchmark::State& state) {
   BENCH(int64_t)
 #elif defined USE_MPInt
   BENCH(MPInt)
-
+#elif defined USE_INT16
+  BENCH(int16_t)
 # elif defined USE_INT52
   BENCH(double)
-
 # elif defined USE_INT23
   BENCH(float)
 

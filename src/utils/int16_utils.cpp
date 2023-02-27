@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <immintrin.h>
 
+#define AVX512_ENABLED
 #ifdef AVX512_ENABLED
 
 typedef int16_t Vector16x32 __attribute__((ext_vector_type(32)));

@@ -1,7 +1,9 @@
 #include <bench_pivot/pivot.h>
 #include <bench_pivot/utils.h>
 #include <bench_pivot/MPInt.h>
+#include <cstdint>
 #include <x86intrin.h>
+#include <utils/int16_utils.cpp>
 
 #define START_TIMER     unsigned int dummy;  \
     unsigned long t1 = __rdtscp(&dummy);
@@ -94,9 +96,24 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
         __m512 result1 = _mm512_fmadd_ps(ConstC, pivot_row_ymm, result0);
         _mm512_storeu_ps((T *)(rowPtr + colIndex), result1);
       }
-  
-    } else{
-      printf("neither USE_INT23 not USE_INT52 is defined in pivot");
+    } 
+    else if constexpr (std::is_same<T, int16_t>::value) {
+      typedef int16Zmm T2_Zmm;
+      T2_Zmm ConstA = mat(pivotRow, 0);
+      T2_Zmm ConstC = mat(rowIndex, pivotCol);
+      T * pivotRowPtr = mat.getRowPtr(pivotRow);
+      T * rowPtr = mat.getRowPtr(rowIndex);
+      for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmInt16VecSize) {
+        __m512 mat_row_ymm = _mm512_loadu_si512((const T *)(rowPtr + colIndex));
+        __m512 result0 = mul<true>(mat_row_ymm, ConstA);
+        __m512 pivot_row_ymm = _mm512_loadu_si512((const T *)(pivotRowPtr + colIndex));
+        __m512 result1 = mul<true>(ConstC, pivot_row_ymm);
+        __m512 result2 = add<true>(result1, result0);
+        _mm512_storeu_si512((T *)(rowPtr + colIndex), result2);
+      }
+    }
+    else {
+      printf("neither USE_INT16, USE_INT23 not USE_INT52 is defined in pivot");
       exit(0);
     }
   
@@ -140,5 +157,6 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 template bool pivot <double>(matrix<double> & tableau, unsigned pivotRow, unsigned pivotCol);
 template bool pivot <float>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
 template bool pivot <int64_t>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
+template bool pivot <int16_t>(matrix<int16_t> & tableau, unsigned pivotRow, unsigned pivotCol);
 template bool pivot <MPInt>(matrix<MPInt> & tableau, unsigned pivotRow, unsigned pivotCol);
 

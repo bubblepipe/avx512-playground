@@ -13,8 +13,9 @@
 // #define NO_LOG
 // #define SCALAR
 // #define USE_MPInt
+#define USE_INT16
 // #define USE_INT52
-#define USE_INT23
+// #define USE_INT23
 
 #define TRIVIAL 0
 #define INFO 114
@@ -25,11 +26,13 @@ void printx(int priority, const char *__restrict format, ...);
 
 #define ZmmDoubleVecSize 8
 #define ZmmInt64VecSize 8
+#define ZmmInt16VecSize 32
 #define ZmmFloatVecSize 16
 
 typedef double doubleZmm __attribute__((ext_vector_type(ZmmDoubleVecSize)));
 typedef float floatZmm __attribute__((ext_vector_type(ZmmFloatVecSize)));
 typedef int64_t int64Zmm __attribute__((ext_vector_type(ZmmInt64VecSize)));
+typedef int16_t int16Zmm __attribute__((ext_vector_type(ZmmInt16VecSize)));
 
 void trigger_FPE();
 
