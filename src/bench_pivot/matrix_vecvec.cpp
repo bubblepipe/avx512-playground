@@ -126,7 +126,7 @@ void matrix<T>::normalizeRowScalar(unsigned row) {
     if (gcd == 1)
       break;
     // TODO: this is slow?
-    printx(TRIVIAL, "gcd %f, elem %f\n", gcd, this->get(row, col));
+    // printx(TRIVIAL, "gcd %f, elem %f\n", gcd, this->get(row, col));
     gcd = greatestCommonDivisor((int64_t)gcd, std::abs((int64_t)this->get(row, col)));
   }
 

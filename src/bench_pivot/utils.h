@@ -23,12 +23,14 @@
 void printx(int priority, const char *__restrict format, ...);
 
 #define ZmmDoubleVecSize 8
+#define ZmmInt64VecSize 8
 #define ZmmFloatVecSize 16
 
 // typedef double doubleYmm __attribute__((ext_vector_type(4)));
 typedef double doubleZmm __attribute__((ext_vector_type(ZmmDoubleVecSize)));
 // typedef float floatYmm __attribute__((ext_vector_type(8)));
 typedef float floatZmm __attribute__((ext_vector_type(ZmmFloatVecSize)));
+typedef float int64Zmm __attribute__((ext_vector_type(ZmmInt64VecSize)));
 
 void trigger_FPE();
 

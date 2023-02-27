@@ -1,5 +1,6 @@
 #include <bench_pivot/matrix.h>
 #include <bench_pivot/utils.h>
+#include <cstdint>
 
 template <typename T>
 matrix<T>::matrix(unsigned int r, unsigned int c) {
@@ -55,6 +56,8 @@ unsigned int matrix<T>::compute_nCol_padding(unsigned int nCol) {
     vector_size = ZmmDoubleVecSize;
   } else if (std::is_same<T, float>::value) {
     vector_size = ZmmFloatVecSize;
+  } else if (std::is_same<T, int64_t>::value) {
+    vector_size = ZmmInt64VecSize;
   } else {
     printf("compute_nCol_padding\n");
     exit(0); // TODO: 
@@ -112,7 +115,7 @@ void matrix<T>::normalizeRowScalar(unsigned row) {
     if (gcd == 1)
       break;
     // TODO: this is slow?
-    printx(TRIVIAL, "gcd %f, elem %f\n", gcd, this->get(row, col));
+    // printx(TRIVIAL, "gcd %f, elem %f\n", gcd, this->get(row, col));
     gcd = greatestCommonDivisor((int64_t)gcd, std::abs((int64_t)this->get(row, col)));
   }
 
@@ -127,6 +130,7 @@ void matrix<T>::normalizeRowScalar(unsigned row) {
 
 template class matrix<double>;
 template class matrix<float>;
+template class matrix<int64_t>;
 
 inline int64_t greatestCommonDivisor(int64_t A, int64_t B) {
   while (B) {

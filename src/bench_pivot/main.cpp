@@ -2,6 +2,7 @@
 #include <bench_pivot/pivot.h>
 #include <bench_pivot/input_matrix.cpp>
 #include <bench_pivot/utils.h>
+#include <cstdint>
 
 template <typename T>
 void prepare_mat(matrix<T> & mat){
@@ -12,7 +13,8 @@ void prepare_mat(matrix<T> & mat){
   }
 }
 
-void validate(matrix<double> & mat){
+template <typename T>
+void validate(matrix<T> & mat){
   for (int rowIndex = 0; rowIndex < mat.nRow; rowIndex += 1) {
     for (int colIndex = 0; colIndex < mat.nCol; colIndex += 1) {
       if (mat(rowIndex, colIndex) != expected_out_mat_arr[rowIndex][colIndex]){
@@ -29,22 +31,34 @@ static void PivotCol16Bench(benchmark::State& state) {
   auto pivotRow = input_mat_pivot_row;
   auto pivotCol = input_mat_pivot_col;
 
-# ifdef USE_INT52
+#ifdef SCALAR
+  matrix<int64_t> mat(nRow,nCol);
+  prepare_mat(mat);
+
+  for (auto _ : state) {
+    pivot<int64_t, int64Zmm>(mat, pivotRow, pivotCol);
+  }
+  
+# elif defined USE_INT52
   matrix<double> mat(nRow,nCol);
   prepare_mat(mat);
 
   for (auto _ : state) {
+    // prepare_mat(mat);
     pivot<double, doubleZmm>(mat, pivotRow, pivotCol);
     // validate(mat); exit(0);
   }
+
 # elif defined USE_INT23
   matrix<float> mat(nRow,nCol);
   prepare_mat(mat);
 
   for (auto _ : state) {
+    // prepare_mat(mat);
     pivot<float, floatZmm>(mat, pivotRow, pivotCol);
     // validate(mat); exit(0);
   }
+
 # else
   printf("neither USE_INT23 not USE_INT52 is defined in pivot"); exit(0);
 # endif

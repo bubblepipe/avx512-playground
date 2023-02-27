@@ -1,13 +1,19 @@
 #include <bench_pivot/pivot.h>
 #include <bench_pivot/utils.h>
+#include <x86intrin.h>
+
+#define START_TIMER     unsigned int dummy;  \
+    unsigned long t1 = __rdtscp(&dummy);
+#define STOP_TIMER     unsigned long t2 = __rdtscp(&dummy); \
+    printf("Time: %ld\n",  t2 - t1); \
+    exit(0);
+
 
 // true: no fpe
 // false: no
 template <typename T, typename T_Zmm>
 bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
-// bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
   std::feclearexcept (FE_INEXACT | FE_INVALID);
-
   // printx(INFO, "\n>>> pivotRow %ld, pivotCol %ld <<<\n", (int64_t)pivotRow, (int64_t)pivotCol);
 
   // todo this
@@ -61,16 +67,13 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     mat(rowIndex, pivotCol) *= mat(pivotRow, pivotCol);
 
 #else
-
     mat(rowIndex, 0) *= mat(pivotRow, 0);
-  
     // row = row * ConstA +  ConstB * PivotRow;
-  
     if constexpr (std::is_same<T, double>::value) {
       for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
         __m512 mat_row_ymm = _mm512_loadu_pd((const T *)(rowPtr + colIndex));
-        __m512 pivot_row_ymm = _mm512_loadu_pd((const T *)(pivotRowPtr + colIndex));
         __m512 result0 = _mm512_mul_pd(mat_row_ymm, ConstA);
+        __m512 pivot_row_ymm = _mm512_loadu_pd((const T *)(pivotRowPtr + colIndex));
         __m512 result1 = _mm512_fmadd_pd(ConstC, pivot_row_ymm, result0);
         _mm512_storeu_pd((T *)(rowPtr + colIndex), result1);
       }
@@ -78,8 +81,8 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     else if constexpr (std::is_same<T, float>::value) {
       for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmFloatVecSize) {
         __m512 mat_row_ymm = _mm512_loadu_ps((const T *)(rowPtr + colIndex));
-        __m512 pivot_row_ymm = _mm512_loadu_ps((const T *)(pivotRowPtr + colIndex));
         __m512 result0 = _mm512_mul_ps(mat_row_ymm, ConstA);
+        __m512 pivot_row_ymm = _mm512_loadu_ps((const T *)(pivotRowPtr + colIndex));
         __m512 result1 = _mm512_fmadd_ps(ConstC, pivot_row_ymm, result0);
         _mm512_storeu_ps((T *)(rowPtr + colIndex), result1);
       }
@@ -101,8 +104,8 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
   // copy back to tableau
   // but if feinexact, don't
   if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {
-    printf("fpe\n");
-    exit(0);
+    // printf("fpe\n");
+    // exit(0);
     return false;
   } else {
 
@@ -113,8 +116,6 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     //   }
     // }
     return true;
-
-    // mat.print();
 
     // TODO: is this necessary?
     // if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {
@@ -130,4 +131,5 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 
 template bool pivot <double, doubleZmm>(matrix<double> & tableau, unsigned pivotRow, unsigned pivotCol);
 template bool pivot <float, floatZmm>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
+template bool pivot <int64_t, int64Zmm>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
 
