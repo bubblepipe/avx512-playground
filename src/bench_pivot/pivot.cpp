@@ -81,15 +81,15 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
       typedef doubleZmm T2_Zmm;
       T2_Zmm ConstA = mat(pivotRow, 0);
       T2_Zmm ConstC = mat(rowIndex, pivotCol);
-      // T index0 = mat(rowIndex, 0);
-      for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
-        __m512 mat_row_ymm = _mm512_loadu_pd((const T *)(rowPtr + colIndex));
+      T index0 = mat(rowIndex, 0);
+      for (unsigned colIndex = 0; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
+        __m512 mat_row_ymm = _mm512_load_pd((const T *)(rowPtr + colIndex));
         __m512 result0 = _mm512_mul_pd(mat_row_ymm, ConstA);
-        __m512 pivot_row_ymm = _mm512_loadu_pd((const T *)(pivotRowPtr + colIndex));
+        __m512 pivot_row_ymm = _mm512_load_pd((const T *)(pivotRowPtr + colIndex));
         __m512 result1 = _mm512_fmadd_pd(ConstC, pivot_row_ymm, result0);
-        _mm512_storeu_pd((T *)(rowPtr + colIndex), result1);
+        _mm512_store_pd((T *)(rowPtr + colIndex), result1);
       }
-      // mat(rowIndex, 0) = index0;
+      mat(rowIndex, 0) = index0;
     }
     else if constexpr (std::is_same<T, float>::value) {
       typedef floatZmm T2_Zmm;
