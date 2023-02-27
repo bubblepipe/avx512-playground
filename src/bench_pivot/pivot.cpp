@@ -45,20 +45,20 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
   mat.normalizeRowScalar(pivotRow);
 
   T * pivotRowPtr = mat.getRowPtr(pivotRow);
-  // T * rowPtr = mat.getRowPtr(0);
+  T * rowPtr = mat.getRowPtr(0);
 
 // start of loop
   for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
     auto pivotColBackup = mat(rowIndex, pivotCol);
 
     if (rowIndex == pivotRow) { 
-      // rowPtr += mat.nColPadding;
+      rowPtr += mat.nColPadding;
       continue;
     }
 
     T c = mat(rowIndex, pivotCol);
     if (c == 0) { 
-      // rowPtr += mat.nColPadding;
+      rowPtr += mat.nColPadding;
       continue; 
     }
 
@@ -76,7 +76,6 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 #else
     mat(rowIndex, 0) *= mat(pivotRow, 0);
 
-    T * rowPtr = mat.getRowPtr(rowIndex);
     // row = row * ConstA +  ConstB * PivotRow;
     if constexpr (std::is_same<T, double>::value) {
       typedef doubleZmm T2_Zmm;
@@ -126,7 +125,7 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     mat(rowIndex, pivotCol) = pivotColBackup;
     mat(rowIndex, pivotCol) *= mat(pivotRow, pivotCol);
 
-    // rowPtr += mat.nColPadding;
+    rowPtr += mat.nColPadding;
 #endif
 
     mat.normalizeRowScalar(rowIndex);
