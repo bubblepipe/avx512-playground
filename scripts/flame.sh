@@ -1,5 +1,5 @@
 sudo rm /dev/shm/1145141919810  
-sudo perf record -F 99 -g -- $1 --benchmark_filter=$2
+sudo perf record --call-graph dwarf -F 99 -g -- $1 --benchmark_filter=$2
 sudo perf script > out.perf
 sudo chown aoiduo:aoiduo out.perf
 ./FlameGraph/stackcollapse-perf.pl ./out.perf > out.flame

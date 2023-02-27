@@ -48,6 +48,7 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 
   mat.normalizeRowScalar(pivotRow);
 
+  T * pivotRowPtr = mat.getRowPtr(pivotRow);
 // start of loop
   for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
     auto pivotColBackup = mat(rowIndex, pivotCol);
@@ -71,14 +72,13 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 #else
     mat(rowIndex, 0) *= mat(pivotRow, 0);
 
+    T * rowPtr = mat.getRowPtr(rowIndex);
     // row = row * ConstA +  ConstB * PivotRow;
 
     if constexpr (std::is_same<T, double>::value) {
       typedef doubleZmm T2_Zmm;
       T2_Zmm ConstA = mat(pivotRow, 0);
       T2_Zmm ConstC = mat(rowIndex, pivotCol);
-      T * pivotRowPtr = mat.getRowPtr(pivotRow);
-      T * rowPtr = mat.getRowPtr(rowIndex);
       for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
         __m512 mat_row_ymm = _mm512_loadu_pd((const T *)(rowPtr + colIndex));
         __m512 result0 = _mm512_mul_pd(mat_row_ymm, ConstA);
@@ -91,8 +91,6 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
       typedef floatZmm T2_Zmm;
       T2_Zmm ConstA = mat(pivotRow, 0);
       T2_Zmm ConstC = mat(rowIndex, pivotCol);
-      T * pivotRowPtr = mat.getRowPtr(pivotRow);
-      T * rowPtr = mat.getRowPtr(rowIndex);
       for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmFloatVecSize) {
         __m512 mat_row_ymm = _mm512_loadu_ps((const T *)(rowPtr + colIndex));
         __m512 result0 = _mm512_mul_ps(mat_row_ymm, ConstA);
@@ -105,8 +103,6 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
       typedef int16Zmm T2_Zmm;
       T2_Zmm ConstA = mat(pivotRow, 0);
       T2_Zmm ConstC = mat(rowIndex, pivotCol);
-      T * pivotRowPtr = mat.getRowPtr(pivotRow);
-      T * rowPtr = mat.getRowPtr(rowIndex);
       for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmInt16VecSize) {
         __m512 mat_row_ymm = _mm512_loadu_si512((const T *)(rowPtr + colIndex));
         __m512 result0 = mul<true>(mat_row_ymm, ConstA);

@@ -9,7 +9,7 @@ matrix<T>::matrix(unsigned int r, unsigned int c) {
   nCol = c;
   nColPadding = compute_nCol_padding(nCol);
   m.resize(nRow * nColPadding);
-  }
+}
 
 template <typename T>
 matrix<T>::matrix(matrix<T> & other) {
@@ -26,27 +26,27 @@ matrix<T>::matrix(matrix<T> & other) {
 } 
 
 template <typename T>
-T matrix<T>::get(unsigned int x, unsigned int y) const { return m[nColPadding * x + y]; }
+inline T matrix<T>::get(unsigned int x, unsigned int y) const { return m[nColPadding * x + y]; }
 
 template <typename T>
-T &matrix<T>::get(unsigned int x, unsigned int y) { return m[nColPadding * x + y]; }
+inline T &matrix<T>::get(unsigned int x, unsigned int y) { return m[nColPadding * x + y]; }
 
 template <typename T>
-void matrix<T>::set(unsigned int x, unsigned int y, T val) { m[nColPadding * x + y] = val; }
+inline void matrix<T>::set(unsigned int x, unsigned int y, T val) { m[nColPadding * x + y] = val; }
 
 template <typename T>
-T matrix<T>::operator()(unsigned int row, unsigned int column) const { return get(row, column); }
+inline T matrix<T>::operator()(unsigned int row, unsigned int column) const { return get(row, column); }
 
 template <typename T>
-T &matrix<T>::operator()(unsigned int row, unsigned int column) { return get(row, column); }
+inline T &matrix<T>::operator()(unsigned int row, unsigned int column) { return get(row, column); }
 
 template <typename T>
-T* matrix<T>::getPtr(){
+inline T* matrix<T>::getPtr(){
   return m.data();
 }
 
 template <typename T>
-T* matrix<T>::getRowPtr(unsigned int row){
+inline T* matrix<T>::getRowPtr(unsigned int row){
   return m.data() + nColPadding * row;
 }
 
