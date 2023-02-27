@@ -12,7 +12,7 @@
 
 // true: no fpe
 // false: no
-template <typename T, typename T_Zmm>
+template <typename T>
 bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
   std::feclearexcept (FE_INEXACT | FE_INVALID);
   // printx(INFO, "\n>>> pivotRow %ld, pivotCol %ld <<<\n", (int64_t)pivotRow, (int64_t)pivotCol);
@@ -51,7 +51,7 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     T c = mat(rowIndex, pivotCol);
     if (c == 0) { continue; }
 
-#ifdef SCALAR
+#if defined SCALAR || defined USE_MPInt
     mat(rowIndex, 0) *= mat(pivotRow, 0);
     for (unsigned col = 1; col < nCol; ++col) {
       if (col == pivotCol){ continue; }
@@ -67,12 +67,12 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 
     // row = row * ConstA +  ConstB * PivotRow;
 
-    T_Zmm ConstA = mat(pivotRow, 0);
-    T_Zmm ConstC = mat(rowIndex, pivotCol);
-    T * pivotRowPtr = mat.getRowPtr(pivotRow);
-    T * rowPtr = mat.getRowPtr(rowIndex);
-
     if constexpr (std::is_same<T, double>::value) {
+      typedef doubleZmm T2_Zmm;
+      T2_Zmm ConstA = mat(pivotRow, 0);
+      T2_Zmm ConstC = mat(rowIndex, pivotCol);
+      T * pivotRowPtr = mat.getRowPtr(pivotRow);
+      T * rowPtr = mat.getRowPtr(rowIndex);
       for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
         __m512 mat_row_ymm = _mm512_loadu_pd((const T *)(rowPtr + colIndex));
         __m512 result0 = _mm512_mul_pd(mat_row_ymm, ConstA);
@@ -82,6 +82,11 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
       }
     }
     else if constexpr (std::is_same<T, float>::value) {
+      typedef floatZmm T2_Zmm;
+      T2_Zmm ConstA = mat(pivotRow, 0);
+      T2_Zmm ConstC = mat(rowIndex, pivotCol);
+      T * pivotRowPtr = mat.getRowPtr(pivotRow);
+      T * rowPtr = mat.getRowPtr(rowIndex);
       for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmFloatVecSize) {
         __m512 mat_row_ymm = _mm512_loadu_ps((const T *)(rowPtr + colIndex));
         __m512 result0 = _mm512_mul_ps(mat_row_ymm, ConstA);
@@ -132,8 +137,8 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 }
 
 
-template bool pivot <double, doubleZmm>(matrix<double> & tableau, unsigned pivotRow, unsigned pivotCol);
-template bool pivot <float, floatZmm>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
-template bool pivot <int64_t, int64Zmm>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
-// template bool pivot <MPInt, int64Zmm>(matrix<MPInt> & tableau, unsigned pivotRow, unsigned pivotCol);
+template bool pivot <double>(matrix<double> & tableau, unsigned pivotRow, unsigned pivotCol);
+template bool pivot <float>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
+template bool pivot <int64_t>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
+template bool pivot <MPInt>(matrix<MPInt> & tableau, unsigned pivotRow, unsigned pivotCol);
 
