@@ -41,12 +41,7 @@ static void PivotCol16Bench(benchmark::State& state) {
   }
 
 #ifdef SCALAR
-  matrix<int64_t> mat(nRow,nCol);
-  prepare_mat(mat);
-
-  for (auto _ : state) {
-    pivot<int64_t, int64Zmm>(mat, pivotRow, pivotCol);
-  }
+  BENCH(int64_t)
 #elif defined USE_MPInt
   BENCH(MPInt)
 
@@ -54,14 +49,8 @@ static void PivotCol16Bench(benchmark::State& state) {
   BENCH(double)
 
 # elif defined USE_INT23
-  matrix<float> mat(nRow,nCol);
-  prepare_mat(mat);
+  BENCH(float)
 
-  for (auto _ : state) {
-    // prepare_mat(mat);
-    pivot<float, floatZmm>(mat, pivotRow, pivotCol);
-    // validate(mat); exit(0);
-  }
 
 # else
   printf("neither USE_INT23 not USE_INT52 is defined in pivot"); exit(0);
