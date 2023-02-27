@@ -4,7 +4,8 @@
 // true: no fpe
 // false: no
 template <typename T, typename T_Zmm>
-bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
+bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
+// bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
   std::feclearexcept (FE_INEXACT | FE_INVALID);
 
   // printx(INFO, "\n>>> pivotRow %ld, pivotCol %ld <<<\n", (int64_t)pivotRow, (int64_t)pivotCol);
@@ -13,19 +14,18 @@ bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
   // swapRowWithCol(pivotRow, pivotCol);
 
   unsigned nRow, nCol;
-  nRow = tableau.nRow;
-  nCol = tableau.nCol;
+  nRow = mat.nRow;
+  nCol = mat.nCol;
 
   // matrix<T> mat(tableau);
-  matrix<T> mat = tableau;
+  // matrix<T> mat = tableau;
   // mat.print();
-
+ 
   T tmp = mat.get(pivotRow, 0);
   mat.set(pivotRow, 0, -mat.get(pivotRow, pivotCol));
   mat.set(pivotRow, pivotCol, -tmp);
 
   if (mat(pivotRow, 0) < 0) {
-
 #ifdef SCALAR
     mat.negateRow(pivotRow);
 #else
@@ -35,7 +35,9 @@ bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
 
   mat.normalizeRowScalar(pivotRow);
 
+// start of loop
   for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
+    auto pivotColBackup = mat(rowIndex, pivotCol);
 
     if (rowIndex == pivotRow) { continue; }
 
@@ -60,34 +62,35 @@ bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) {
 
 #else
 
-  mat(rowIndex, 0) *= mat(pivotRow, 0);
-
-  // row = row * ConstA +  ConstB * PivotRow;
-
-  if constexpr (std::is_same<T, double>::value) {
-    for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
-      __m512 mat_row_ymm = _mm512_loadu_pd((const T *)(rowPtr + colIndex));
-      __m512 pivot_row_ymm = _mm512_loadu_pd((const T *)(pivotRowPtr + colIndex));
-      __m512 result0 = _mm512_mul_pd(mat_row_ymm, ConstA);
-      __m512 result1 = _mm512_fmadd_pd(ConstC, pivot_row_ymm, result0);
-      _mm512_storeu_pd((T *)(rowPtr + colIndex), result1);
+    mat(rowIndex, 0) *= mat(pivotRow, 0);
+  
+    // row = row * ConstA +  ConstB * PivotRow;
+  
+    if constexpr (std::is_same<T, double>::value) {
+      for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
+        __m512 mat_row_ymm = _mm512_loadu_pd((const T *)(rowPtr + colIndex));
+        __m512 pivot_row_ymm = _mm512_loadu_pd((const T *)(pivotRowPtr + colIndex));
+        __m512 result0 = _mm512_mul_pd(mat_row_ymm, ConstA);
+        __m512 result1 = _mm512_fmadd_pd(ConstC, pivot_row_ymm, result0);
+        _mm512_storeu_pd((T *)(rowPtr + colIndex), result1);
+      }
     }
-  }
-  else if constexpr (std::is_same<T, float>::value) {
-    for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmFloatVecSize) {
-      __m512 mat_row_ymm = _mm512_loadu_ps((const T *)(rowPtr + colIndex));
-      __m512 pivot_row_ymm = _mm512_loadu_ps((const T *)(pivotRowPtr + colIndex));
-      __m512 result0 = _mm512_mul_ps(mat_row_ymm, ConstA);
-      __m512 result1 = _mm512_fmadd_ps(ConstC, pivot_row_ymm, result0);
-      _mm512_storeu_ps((T *)(rowPtr + colIndex), result1);
+    else if constexpr (std::is_same<T, float>::value) {
+      for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmFloatVecSize) {
+        __m512 mat_row_ymm = _mm512_loadu_ps((const T *)(rowPtr + colIndex));
+        __m512 pivot_row_ymm = _mm512_loadu_ps((const T *)(pivotRowPtr + colIndex));
+        __m512 result0 = _mm512_mul_ps(mat_row_ymm, ConstA);
+        __m512 result1 = _mm512_fmadd_ps(ConstC, pivot_row_ymm, result0);
+        _mm512_storeu_ps((T *)(rowPtr + colIndex), result1);
+      }
+  
+    } else{
+      printf("neither USE_INT23 not USE_INT52 is defined in pivot");
+      exit(0);
     }
-
-  } else{
-    printf("neither USE_INT23 not USE_INT52 is defined in pivot");
-    exit(0);
-  }
-
-    mat(rowIndex, pivotCol) = tableau(rowIndex, pivotCol);
+  
+    // mat(rowIndex, pivotCol) = mat(rowIndex, pivotCol);
+    mat(rowIndex, pivotCol) = pivotColBackup;
     mat(rowIndex, pivotCol) *= mat(pivotRow, pivotCol);
 
 #endif
