@@ -89,27 +89,27 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     }
     else if constexpr (std::is_same<T, float>::value) {
       typedef floatZmm T2_Zmm;
-      T2_Zmm ConstA = mat(pivotRow, 0);
-      T2_Zmm ConstC = mat(rowIndex, pivotCol);
-      for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmFloatVecSize) {
-        __m512 mat_row_ymm = _mm512_loadu_ps((const T *)(rowPtr + colIndex));
+      T2_Zmm ConstA = pivotRowPtr[0];
+      T2_Zmm ConstC = rowPtr[pivotCol];
+      for (unsigned colIndex = 0; colIndex < nCol; colIndex += ZmmFloatVecSize) {
+        __m512 mat_row_ymm = _mm512_load_ps((const T *)(rowPtr + colIndex));
         __m512 result0 = _mm512_mul_ps(mat_row_ymm, ConstA);
-        __m512 pivot_row_ymm = _mm512_loadu_ps((const T *)(pivotRowPtr + colIndex));
+        __m512 pivot_row_ymm = _mm512_load_ps((const T *)(pivotRowPtr + colIndex));
         __m512 result1 = _mm512_fmadd_ps(ConstC, pivot_row_ymm, result0);
-        _mm512_storeu_ps((T *)(rowPtr + colIndex), result1);
+        _mm512_store_ps((T *)(rowPtr + colIndex), result1);
       }
     } 
     else if constexpr (std::is_same<T, int16_t>::value) {
       typedef int16Zmm T2_Zmm;
-      T2_Zmm ConstA = mat(pivotRow, 0);
-      T2_Zmm ConstC = mat(rowIndex, pivotCol);
-      for (unsigned colIndex = 1; colIndex < nCol; colIndex += ZmmInt16VecSize) {
-        __m512 mat_row_ymm = _mm512_loadu_si512((const T *)(rowPtr + colIndex));
+      T2_Zmm ConstA = pivotRowPtr[0];
+      T2_Zmm ConstC = rowPtr[pivotCol];
+      for (unsigned colIndex = 0; colIndex < nCol; colIndex += ZmmInt16VecSize) {
+        __m512 mat_row_ymm = _mm512_load_si512((const T *)(rowPtr + colIndex));
         __m512 result0 = mul<true>(mat_row_ymm, ConstA);
-        __m512 pivot_row_ymm = _mm512_loadu_si512((const T *)(pivotRowPtr + colIndex));
+        __m512 pivot_row_ymm = _mm512_load_si512((const T *)(pivotRowPtr + colIndex));
         __m512 result1 = mul<true>(ConstC, pivot_row_ymm);
         __m512 result2 = add<true>(result1, result0);
-        _mm512_storeu_si512((T *)(rowPtr + colIndex), result2);
+        _mm512_store_si512((T *)(rowPtr + colIndex), result2);
       }
     }
     else {
