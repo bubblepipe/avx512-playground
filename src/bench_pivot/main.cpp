@@ -22,7 +22,7 @@ void validate(matrix<T> & mat){
         printf("mismatch at %d,%d\n", rowIndex, colIndex);
       }
     }
-  }
+  } exit(0);
 }
 
 static void PivotCol16Bench(benchmark::State& state) {
@@ -36,7 +36,7 @@ static void PivotCol16Bench(benchmark::State& state) {
     matrix<TYPE> mat(nRow,nCol);                            \
     prepare_mat(mat);                                       \
     for (auto _ : state) {                                  \
-      pivot<TYPE>(mat, pivotRow, pivotCol);\
+      pivot<TYPE>(mat, pivotRow, pivotCol); \
     }                                                       \
   }
 
