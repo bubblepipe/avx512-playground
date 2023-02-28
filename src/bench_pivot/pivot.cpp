@@ -73,12 +73,12 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     T * rowPtr = mat.getRowPtr(rowIndex);
     rowPtr[0] *= pivotRowPtr[0];
 
+    T index0 = rowPtr[0];
     // row = row * ConstA +  ConstB * PivotRow;
     if constexpr (std::is_same<T, double>::value) {
       typedef doubleZmm T2_Zmm;
       T2_Zmm ConstA = pivotRowPtr[0];
       T2_Zmm ConstC = rowPtr[pivotCol];
-      // T index0 = mat(rowIndex, 0);
       for (unsigned colIndex = 0; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
         __m512 mat_row_ymm = _mm512_load_pd((const T *)(rowPtr + colIndex));
         __m512 result0 = _mm512_mul_pd(mat_row_ymm, ConstA);
@@ -116,7 +116,7 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
       printf("neither USE_INT16, USE_INT23 not USE_INT52 is defined in pivot");
       exit(0);
     }
-  
+    rowPtr[0] = index0;
     // mat(rowIndex, pivotCol) = mat(rowIndex, pivotCol);
     mat(rowIndex, pivotCol) = pivotColBackup;
     mat(rowIndex, pivotCol) *= pivotRowPtr[pivotCol];
