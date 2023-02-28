@@ -75,7 +75,7 @@ vector_int_overflow: vector_int_overflow.o
 
 # matrix
 ################################################################################
-TARGET=vecvec flat-int64 flat-int16 flat-float flat-double
+TARGET=vecvec flat-int64 flat-int16 flat-float flat-double flat-align  flat-unalign
 TEST-TARGET=flat-test vecvec-test
 $(TARGET):
 	$(CC) $(CFLAGS) src/bench_mat/$@-main.cpp -o $(OUT)$@ $(INC) $(LINK)
