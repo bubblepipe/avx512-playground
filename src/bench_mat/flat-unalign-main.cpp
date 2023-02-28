@@ -36,10 +36,10 @@ static void flat(benchmark::State& state,
     matrix<double> mat_src3(row,col);
     matrix<double> mat_dst(row,col);
 
-printf("src1_ptr: %lx\n",  (uint64_t)((double *) mat_src1.m.data()) % 64);
-printf("src2_ptr: %lx\n",  (uint64_t)((double *) mat_src2.m.data()) % 64);
-printf("src3_ptr: %lx\n",  (uint64_t)((double *) mat_src3.m.data()) % 64);
-printf("dst_ptr: %lx\n",  (uint64_t) ((double *) mat_dst.m.data() ) % 64);
+fprintf(stderr,"src1_ptr: %lx\n",  (uint64_t)((double *) mat_src1.m.data()) % 64);
+fprintf(stderr,"src2_ptr: %lx\n",  (uint64_t)((double *) mat_src2.m.data()) % 64);
+fprintf(stderr,"src3_ptr: %lx\n",  (uint64_t)((double *) mat_src3.m.data()) % 64);
+fprintf(stderr,"dst_ptr: %lx\n",   (uint64_t) ((double *) mat_dst.m.data()) % 64);
 
     for (int r = 0; r < row; r += 1) {
         for (int c = 0; c < col; c += 1) {
