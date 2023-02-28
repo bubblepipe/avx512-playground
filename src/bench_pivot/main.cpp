@@ -19,7 +19,7 @@ void validate(matrix<T> & mat){
   for (int rowIndex = 0; rowIndex < mat.nRow; rowIndex += 1) {
     for (int colIndex = 0; colIndex < mat.nCol; colIndex += 1) {
       if (! (mat(rowIndex, colIndex) == expected_out_mat_arr[rowIndex][colIndex])){
-        printf("mismatch at %d,%d\n", rowIndex, colIndex);
+        printf("mismatch at %d,%d: %f, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), expected_out_mat_arr[rowIndex][colIndex]);
       }
     }
   } exit(0);
@@ -36,7 +36,7 @@ static void PivotCol16Bench(benchmark::State& state) {
     matrix<TYPE> mat(nRow,nCol);                            \
     prepare_mat(mat);                                       \
     for (auto _ : state) {                                  \
-      pivot<TYPE>(mat, pivotRow, pivotCol);  \
+      pivot<TYPE>(mat, pivotRow, pivotCol); \
     }                                                       \
   }
 

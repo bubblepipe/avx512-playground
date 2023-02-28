@@ -73,17 +73,23 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     T * rowPtr = mat.getRowPtr(rowIndex);
     rowPtr[0] *= pivotRowPtr[0];
 
-    T index0 = rowPtr[0];
+    // T index0 = rowPtr[0];
     // row = row * ConstA +  ConstB * PivotRow;
     if constexpr (std::is_same<T, double>::value) {
       typedef doubleZmm T2_Zmm;
       T2_Zmm ConstA = pivotRowPtr[0];
       T2_Zmm ConstC = rowPtr[pivotCol];
-      for (unsigned colIndex = 0; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
-        __m512 mat_row_ymm = _mm512_load_pd((const T *)(rowPtr + colIndex));
-        __m512 result0 = _mm512_mul_pd(mat_row_ymm, ConstA);
-        __m512 pivot_row_ymm = _mm512_load_pd((const T *)(pivotRowPtr + colIndex));
-        __m512 result1 = _mm512_fmadd_pd(ConstC, pivot_row_ymm, result0);
+      unsigned colIndex = 0;
+      __m512d mat_row_ymm = _mm512_load_pd((const T *)(rowPtr + colIndex));
+      __m512d result0 = _mm512_mul_pd(mat_row_ymm, ConstA);
+      __m512d pivot_row_ymm = _mm512_load_pd((const T *)(pivotRowPtr + colIndex));
+      __m512d result1 = _mm512_fmadd_pd(ConstC, pivot_row_ymm, result0);
+      _mm512_mask_store_pd((T *)(rowPtr + colIndex), 0b11111110,result1);
+      for (colIndex = ZmmDoubleVecSize; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
+        __m512d mat_row_ymm = _mm512_load_pd((const T *)(rowPtr + colIndex));
+        __m512d result0 = _mm512_mul_pd(mat_row_ymm, ConstA);
+        __m512d pivot_row_ymm = _mm512_load_pd((const T *)(pivotRowPtr + colIndex));
+        __m512d result1 = _mm512_fmadd_pd(ConstC, pivot_row_ymm, result0);
         _mm512_store_pd((T *)(rowPtr + colIndex), result1);
       }
     }
@@ -116,7 +122,7 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
       printf("neither USE_INT16, USE_INT23 not USE_INT52 is defined in pivot");
       exit(0);
     }
-    rowPtr[0] = index0;
+    // rowPtr[0] = index0;
     // mat(rowIndex, pivotCol) = mat(rowIndex, pivotCol);
     mat(rowIndex, pivotCol) = pivotColBackup;
     mat(rowIndex, pivotCol) *= pivotRowPtr[pivotCol];
