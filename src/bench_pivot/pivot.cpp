@@ -47,12 +47,13 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 
 // start of loop
   for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
+    T * rowPtr = mat.getRowPtr(rowIndex);
 
     if (rowIndex == pivotRow) { 
       continue;
     }
 
-    T c = mat(rowIndex, pivotCol);
+    T c = rowPtr[pivotCol];
     if (c == 0) { 
       continue; 
     }
@@ -69,7 +70,6 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     mat(rowIndex, pivotCol) *= mat(pivotRow, pivotCol);
 
 #else
-    T * rowPtr = mat.getRowPtr(rowIndex);
     auto pivotColBackup = rowPtr[pivotCol];
     rowPtr[0] *= pivotRowPtr[0];
 
