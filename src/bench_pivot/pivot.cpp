@@ -47,7 +47,6 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 
 // start of loop
   for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
-    auto pivotColBackup = mat(rowIndex, pivotCol);
 
     if (rowIndex == pivotRow) { 
       continue;
@@ -71,6 +70,7 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 
 #else
     T * rowPtr = mat.getRowPtr(rowIndex);
+    auto pivotColBackup = rowPtr[pivotCol];
     rowPtr[0] *= pivotRowPtr[0];
 
     // row = row * ConstA +  ConstB * PivotRow;
@@ -111,10 +111,8 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
       printf("neither USE_INT16, USE_INT23 not USE_INT52 is defined in pivot");
       exit(0);
     }
-    // mat(rowIndex, pivotCol) = mat(rowIndex, pivotCol);
-    mat(rowIndex, pivotCol) = pivotColBackup;
-    mat(rowIndex, pivotCol) *= pivotRowPtr[pivotCol];
-
+    
+    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr[pivotCol];
 
 #endif
 
