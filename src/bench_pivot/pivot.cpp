@@ -45,16 +45,20 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 
   mat.normalizeRowScalar(pivotRow);
 
+  T * rowPtr = mat.getRowPtr(0);
+
 // start of loop
   for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
-    T * rowPtr = mat.getRowPtr(rowIndex);
+    // T * rowPtr = mat.getRowPtr(rowIndex);
 
     if (rowIndex == pivotRow) { 
+      rowPtr += mat.nColPadding;
       continue;
     }
 
     T c = rowPtr[pivotCol];
     if (c == 0) { 
+      rowPtr += mat.nColPadding;
       continue; 
     }
 
@@ -117,6 +121,7 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 #endif
 
     mat.normalizeRowScalar(rowIndex);
+    rowPtr += mat.nColPadding;
   }
 // end of loop
 
