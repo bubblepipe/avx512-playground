@@ -73,6 +73,7 @@ public:
   void negateRowVectorized(unsigned int row);
 
   void normalizeRowScalar(unsigned row);
+  void normalizeRow2(T * rowPtr);
 };
 
-inline int64_t greatestCommonDivisor(int64_t A, int64_t B) ;
+inline int32_t greatestCommonDivisor(int32_t A, int32_t B) ;

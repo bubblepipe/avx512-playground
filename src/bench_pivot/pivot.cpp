@@ -11,6 +11,22 @@
     printf("Time: %ld\n",  t2 - t1); \
     exit(0);
 
+// template <typename Zmm>
+// void normalizeRowVectorized(Zmm * rowPtr) {
+//   T gcd = (T) 0;
+//   for (unsigned col = 0; col < nCol; ++col) {
+//     if (gcd == 1)
+//       break;
+//     gcd = greatestCommonDivisor((int32_t)gcd, std::abs((int32_t)rowPtr[col]));
+//   }
+
+//   if (gcd == 0 || gcd == 1)
+//     return;
+//   for (unsigned col = 0; col < nCol; ++col) {
+//     auto val = rowPtr[col] / gcd;
+//     rowPtr[col] = val;
+//   }
+// }
 
 // true: no fpe
 // false: no
@@ -44,7 +60,7 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 #endif
   }
 
-  mat.normalizeRowScalar(pivotRow);
+  mat.normalizeRow2(pivotRowPtr);
 
   T * rowPtr = mat.getRowPtr(0);
 
@@ -115,7 +131,7 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 
 #endif
 
-    mat.normalizeRowScalar(rowIndex);
+    mat.normalizeRow2(rowPtr);
     rowPtr += mat.nColPadding;
   }
 // end of loop
