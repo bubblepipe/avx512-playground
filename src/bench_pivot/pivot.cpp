@@ -60,7 +60,7 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 #endif
   }
 
-  mat.normalizeRow2(pivotRowPtr);
+  // mat.normalizeRow2(pivotRowPtr);
 
   T * rowPtr = mat.getRowPtr(0);
 
@@ -108,9 +108,26 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
       *(Zmm *)(rowPtr) =  result1;
     }
     else if constexpr (std::is_same<T, double>::value) {
-      printf("no double \n");
-      exit(0);
-    } 
+      typedef doubleZmm Zmm;
+      doubleZmm pvec = *(doubleZmm *)pivotRowPtr;
+      pvec[0] = 0;
+      Zmm ConstA = pivotRowPtr[0];
+      ConstA[0] = 1;
+      Zmm ConstC = rowPtr[pivotCol];
+      unsigned colIndex = 0;
+      Zmm mat_row_ymm = *(Zmm *)(rowPtr + colIndex);
+      Zmm result0 = mat_row_ymm * ConstA;
+      Zmm pivot_row_ymm = pvec;
+      Zmm result1 = ConstC * pivot_row_ymm + result0;
+      *(Zmm *)(rowPtr + colIndex) =  result1;
+      for (colIndex = ZmmDoubleVecSize; colIndex < 16; colIndex += ZmmDoubleVecSize) {
+        Zmm matRowZmm = *(Zmm *)(rowPtr + colIndex);
+        Zmm result0 = matRowZmm * ConstA;
+        Zmm pivotRowZmm = *(Zmm *)(pivotRowPtr + colIndex);
+        Zmm result1 = ConstC * pivotRowZmm + result0;
+        *(Zmm *)(rowPtr + colIndex) = result1;
+      }
+    }
     else if constexpr (std::is_same<T, int16_t>::value) {
       T index0 = rowPtr[0]; // manual backup of the first element
       typedef int16Zmm Zmm;
@@ -131,7 +148,7 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 
 #endif
 
-    mat.normalizeRow2(rowPtr);
+    // mat.normalizeRow2(rowPtr);
     rowPtr += mat.nColPadding;
   }
 // end of loop
