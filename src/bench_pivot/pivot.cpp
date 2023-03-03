@@ -93,11 +93,10 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
       T pivotColBackup = rowPtr[pivotCol];
       if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
 
-      rowPtr[0] *= pivotRowPtr_0;
-
       Zmm ConstC = pivotColBackup;
       Zmm matRowVec = *(Zmm *)(rowPtr);
       Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
+      matRowVec[0] *= pivotRowPtr_0;
       *(Zmm *)(rowPtr) =  result;
 
       rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
