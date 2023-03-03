@@ -47,7 +47,6 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
   nCol = mat.nCol;
   T * pivotRowPtr = mat.getRowPtr(pivotRow);
   
-
   T tmp = pivotRowPtr[0];
   pivotRowPtr[0] = -pivotRowPtr[pivotCol];
   pivotRowPtr[pivotCol] = -tmp;
@@ -64,22 +63,9 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 
   T * rowPtr = mat.getRowPtr(0);
 
-// start of loop
-  for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
-    // T * rowPtr = mat.getRowPtr(rowIndex);
-
-    if (rowIndex == pivotRow) { 
-      rowPtr += mat.nColPadding;
-      continue;
-    }
-
-    T c = rowPtr[pivotCol];
-    if (c == 0) { 
-      rowPtr += mat.nColPadding;
-      continue; 
-    }
-
 #if defined SCALAR || defined USE_MPInt
+    printf("not implemented\n");
+    exit(0);
     mat(rowIndex, 0) *= mat(pivotRow, 0);
     for (unsigned col = 1; col < nCol; ++col) {
       if (col == pivotCol){ continue; }
@@ -91,67 +77,34 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     mat(rowIndex, pivotCol) *= mat(pivotRow, pivotCol);
 
 #else
-    auto pivotColBackup = rowPtr[pivotCol];
-    rowPtr[0] *= pivotRowPtr[0];
-
-    // row = row * ConstA +  ConstB * PivotRow;
-    if constexpr (std::is_same<T, float>::value){
-      typedef floatZmm Zmm;
-      Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
-      pivotRowVec[0] = 0;
-      Zmm ConstA = pivotRowPtr[0];
-      ConstA[0] = 1;
-      Zmm ConstC = rowPtr[pivotCol];
-      Zmm matRowVec = *(Zmm *)(rowPtr);
-      Zmm result0 = matRowVec * ConstA;
-      Zmm result1 = ConstC * pivotRowVec + result0;
-      *(Zmm *)(rowPtr) =  result1;
-    }
-    else if constexpr (std::is_same<T, double>::value) {
-      typedef doubleZmm Zmm;
-      doubleZmm pvec = *(doubleZmm *)pivotRowPtr;
-      pvec[0] = 0;
-      Zmm ConstA = pivotRowPtr[0];
-      ConstA[0] = 1;
-      Zmm ConstC = rowPtr[pivotCol];
-      unsigned colIndex = 0;
-      Zmm mat_row_ymm = *(Zmm *)(rowPtr + colIndex);
-      Zmm result0 = mat_row_ymm * ConstA;
-      Zmm pivot_row_ymm = pvec;
-      Zmm result1 = ConstC * pivot_row_ymm + result0;
-      *(Zmm *)(rowPtr + colIndex) =  result1;
-      for (colIndex = ZmmDoubleVecSize; colIndex < 16; colIndex += ZmmDoubleVecSize) {
-        Zmm matRowZmm = *(Zmm *)(rowPtr + colIndex);
-        Zmm result0 = matRowZmm * ConstA;
-        Zmm pivotRowZmm = *(Zmm *)(pivotRowPtr + colIndex);
-        Zmm result1 = ConstC * pivotRowZmm + result0;
-        *(Zmm *)(rowPtr + colIndex) = result1;
-      }
-    }
-    else if constexpr (std::is_same<T, int16_t>::value) {
-      T index0 = rowPtr[0]; // manual backup of the first element
-      typedef int16Zmm Zmm;
-      CONST_A_C
-      unsigned colIndex = 0;
-      for (colIndex = 0; colIndex < nCol; colIndex += ZmmInt16VecSize) {
-        I16_OP
-        I16_TORE
-      }
-      rowPtr[0] = index0;
-    }
-    else {
-      printf("neither USE_INT16, USE_INT23 not USE_INT52 is defined in pivot");
-      exit(0);
-    }
+  if constexpr (std::is_same<T, float>::value){
     
-    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr[pivotCol];
+    typedef floatZmm Zmm;
+    Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
+    pivotRowVec[0] = 0;
+    Zmm ConstA = pivotRowPtr[0];
+    ConstA[0] = 1;
+      
+    for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
+
+      auto pivotColBackup = rowPtr[pivotCol];
+      rowPtr[0] *= pivotRowPtr[0];
+      if (rowIndex == pivotRow) { rowPtr += mat.nColPadding; continue; }
+
+      T c = rowPtr[pivotCol];
+      if (c == 0) { rowPtr += mat.nColPadding; continue; }
+
+      Zmm ConstC = c;
+      Zmm matRowVec = *(Zmm *)(rowPtr);
+      Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
+      *(Zmm *)(rowPtr) =  result;
+
+      rowPtr[pivotCol] = pivotColBackup * pivotRowPtr[pivotCol];
+      rowPtr += mat.nColPadding;
+    }
+  } 
 
 #endif
-
-    // mat.normalizeRow2(rowPtr);
-    rowPtr += mat.nColPadding;
-  }
-// end of loop
 
   if constexpr (std::is_same<T, double>::value || std::is_same<T, float>::value ) {
     // if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {
