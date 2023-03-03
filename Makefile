@@ -151,7 +151,7 @@ checked: flat-int16 flat-int32 flat-float flat-double
 ################################################################################
 # export BENCH_SIZE="-D SIZE_8_16_32"
 plot-align-unalign: flat-align flat-unalign
-	./build/flat-unalign --benchmark_filter="flat/fma_iu/" | tee $@
+	./build/flat-unalign --benchmark_filter="flat/fma_iu/" | tee -a $@
 	./build/flat-align --benchmark_filter="flat/fma_ia/" | tee -a $@
 	codium $@ 
 

@@ -32,11 +32,11 @@ static void PivotCol16Bench(benchmark::State& state) {
   auto pivotRow = input_mat_pivot_row;
   auto pivotCol = input_mat_pivot_col;
 
-#define BENCH(TYPE)    {                          \
+#define BENCH(TYPE)    {                                    \
     matrix<TYPE> mat(nRow,nCol);                            \
     prepare_mat(mat);                                       \
     for (auto _ : state) {                                  \
-      pivot<TYPE>(mat, pivotRow, pivotCol); \
+      pivot<TYPE>(mat, pivotRow, pivotCol);  \
     }                                                       \
   }
 

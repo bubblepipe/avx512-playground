@@ -5,11 +5,11 @@
 template <typename T> 
 bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) ;
 
-#define F32_64_OP(__m512X, _mm512_load_pX, _mm512_mul_pX, _mm512_fmadd_pX) \
+#define F32_64_OP(__m512X, _mm512_load_pX) \
     __m512X mat_row_ymm = _mm512_load_pX((const T *)(rowPtr + colIndex)); \
-    __m512X result0 = _mm512_mul_pX(mat_row_ymm, ConstA); \
+    __m512X result0 = mat_row_ymm * ConstA; \
     __m512X pivot_row_ymm = _mm512_load_pX((const T *)(pivotRowPtr + colIndex)); \
-    __m512X result1 = _mm512_fmadd_pX(ConstC, pivot_row_ymm, result0); 
+    __m512X result1 = ConstC * pivot_row_ymm + result0; 
 
 #define F64_MASK_STORE \
     _mm512_mask_store_pd((T *)(rowPtr + colIndex), 0b11111110, result1);
