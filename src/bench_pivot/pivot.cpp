@@ -51,7 +51,10 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
   pivotRowPtr[0] = -pivotRowPtr[pivotCol];
   pivotRowPtr[pivotCol] = -tmp;
 
-  if (pivotRowPtr[0] < 0) {
+  auto pivotRowPtr_pivotCol = -tmp;
+  auto pivotRowPtr_0 = pivotRowPtr[0];
+
+  if (pivotRowPtr_0 < 0) {
 #ifdef SCALAR
     mat.negateRow(pivotRow);
 #else
@@ -82,25 +85,34 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     typedef floatZmm Zmm;
     Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
     pivotRowVec[0] = 0;
-    Zmm ConstA = pivotRowPtr[0];
+    Zmm ConstA = pivotRowPtr_0;
     ConstA[0] = 1;
-      
+    
     for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
       if (rowIndex == pivotRow) { rowPtr += mat.nColPadding; continue; }
       T pivotColBackup = rowPtr[pivotCol];
       if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
 
-      rowPtr[0] *= pivotRowPtr[0];
+      rowPtr[0] *= pivotRowPtr_0;
 
       Zmm ConstC = pivotColBackup;
       Zmm matRowVec = *(Zmm *)(rowPtr);
       Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
       *(Zmm *)(rowPtr) =  result;
 
-      rowPtr[pivotCol] = pivotColBackup * pivotRowPtr[pivotCol];
+      rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
       rowPtr += mat.nColPadding;
     }
   } 
+
+  else if constexpr (std::is_same<T, double>::value){
+
+  } 
+  else if constexpr (std::is_same<T, int16_t>::value){
+
+  } else {
+
+  }
 
 #endif
 
