@@ -1,6 +1,6 @@
 #include <benchmark/benchmark.h>
 #include <bench_pivot/pivot.h>
-#include <bench_pivot/input_matrix.cpp>
+#include <bench_pivot/input_matrix_16.cpp>
 #include <bench_pivot/utils.h>
 #include <cstdint>
 #include <bench_pivot/MPInt.h>
