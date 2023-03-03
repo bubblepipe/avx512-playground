@@ -2,6 +2,7 @@
 #include <bench_pivot/pivot.h>
 #include <bench_pivot/input_matrix_16.cpp>
 #include <bench_pivot/utils.h>
+#include <cstdarg>
 #include <cstdint>
 #include <bench_pivot/MPInt.h>
 
@@ -15,14 +16,17 @@ void prepare_mat(matrix<T> & mat){
 }
 
 template <typename T>
-void validate(matrix<T> & mat){
+bool validate(matrix<T> & mat){
+  bool ret = true;
   for (int rowIndex = 0; rowIndex < mat.nRow; rowIndex += 1) {
     for (int colIndex = 0; colIndex < mat.nCol; colIndex += 1) {
       if (! (mat(rowIndex, colIndex) == expected_out_mat_arr[rowIndex][colIndex])){
         printf("mismatch at %d,%d: %f, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), expected_out_mat_arr[rowIndex][colIndex]);
+        ret = false;
       }
     }
-  } exit(0);
+  }
+  return ret; 
 }
 
 static void PivotCol16Bench(benchmark::State& state) {
@@ -35,8 +39,11 @@ static void PivotCol16Bench(benchmark::State& state) {
 #define BENCH(TYPE)    {                                    \
     matrix<TYPE> mat(nRow,nCol);                            \
     prepare_mat(mat);                                       \
+    pivot<TYPE>(mat, pivotRow, pivotCol);                   \
+    if (!validate(mat)) {exit(0);}                          \
+    prepare_mat(mat);                                       \
     for (auto _ : state) {                                  \
-      pivot<TYPE>(mat, pivotRow, pivotCol);\
+      pivot<TYPE>(mat, pivotRow, pivotCol);                 \
     }                                                       \
   }
 
