@@ -79,9 +79,14 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     rowPtr[0] *= pivotRowPtr[0];
 
     // row = row * ConstA +  ConstB * PivotRow;
-    if constexpr (std::is_same<T, double>::value) {
+    if constexpr (std::is_same<T, double>::value || std::is_same<T, float>::value) {
       typedef doubleZmm Zmm;
-      doubleZmm pvec = *(doubleZmm *)pivotRowPtr;
+      auto step = ZmmDoubleVecSize;
+      if (std::is_same<T, float>::value) {
+        typedef floatZmm Zmm;
+        auto step = ZmmFloatVecSize;
+      }
+      Zmm pvec = *(Zmm *)pivotRowPtr;
       pvec[0] = 1;
       Zmm ConstA = pivotRowPtr[0];
       Zmm ConstC = rowPtr[pivotCol];
@@ -91,26 +96,25 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
       Zmm pivot_row_ymm = pvec;
       Zmm result1 = ConstC * pivot_row_ymm + result0;
       *(Zmm *)(rowPtr + colIndex) =  result1;
-      for (colIndex = ZmmDoubleVecSize; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
+      for (colIndex = step; colIndex < nCol; colIndex += step) {
         Zmm mat_row_ymm = *(Zmm *)(rowPtr + colIndex);
         Zmm result0 = mat_row_ymm * ConstA;
         Zmm pivot_row_ymm = *(Zmm *)(pivotRowPtr + colIndex);
         Zmm result1 = ConstC * pivot_row_ymm + result0;
         *(Zmm *)(rowPtr + colIndex) = result1;
-        // _mm512_store_pd((T *)(rowPtr + colIndex), result1);
       }
     }
     else if constexpr (std::is_same<T, float>::value) {
       // TODO
-      typedef floatZmm Zmm;
-      CONST_A_C
-      unsigned colIndex = 0;
-      F32_64_OP(__m512, _mm512_load_ps)
-      F32_MASK_STORE
-      for (colIndex = ZmmFloatVecSize; colIndex < nCol; colIndex += ZmmFloatVecSize) {
-        F32_64_OP(__m512, _mm512_load_ps)
-        F32_64_STORE(_mm512_store_ps)
-      }
+      // typedef floatZmm Zmm;
+      // CONST_A_C
+      // unsigned colIndex = 0;
+      // F32_64_OP(__m512, _mm512_load_ps)
+      // F32_MASK_STORE
+      // for (colIndex = ZmmFloatVecSize; colIndex < nCol; colIndex += ZmmFloatVecSize) {
+      //   F32_64_OP(__m512, _mm512_load_ps)
+      //   F32_64_STORE(_mm512_store_ps)
+      // }
     } 
     else if constexpr (std::is_same<T, int16_t>::value) {
       T index0 = rowPtr[0]; // manual backup of the first element
