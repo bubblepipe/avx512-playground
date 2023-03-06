@@ -23,7 +23,7 @@ bool validate(matrix<T> & mat){
       if (! (mat(rowIndex, colIndex) == expected_out_mat_arr[rowIndex][colIndex])){
         if constexpr (std::is_same<T, int16_t>::value){
           printf("mismatch at %d,%d: %hd, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), expected_out_mat_arr[rowIndex][colIndex]);
-        } else if constexpr (std::is_same<T, MPInt>::value){
+        } else if constexpr (std::is_same<T, MPInt>::value || std::is_same<T, int64_t>::value){
           printf("mismatch at %d,%d: %ld, %d\n", rowIndex, colIndex, (int64_t)mat(rowIndex, colIndex), expected_out_mat_arr[rowIndex][colIndex]);
         } else {
           printf("mismatch at %d,%d: %f, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), expected_out_mat_arr[rowIndex][colIndex]);        }
@@ -52,7 +52,7 @@ static void PivotCol16Bench(benchmark::State& state) {
     }                                                       \
   }
 
-#ifdef SCALAR
+#ifdef USE_INT64
   BENCH(int64_t)
 #elif defined USE_MPInt
   BENCH(MPInt)
@@ -69,8 +69,8 @@ static void PivotCol16Bench(benchmark::State& state) {
 }
 
 
-#ifdef SCALAR
-  BENCH(int64_t)
+#ifdef USE_INT64
+  BENCHMARK(PivotCol16Bench)->Name("int64_t");
 #elif defined USE_MPInt
   BENCHMARK(PivotCol16Bench)->Name("MPInt");
 #elif defined USE_INT16

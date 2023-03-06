@@ -11,7 +11,7 @@
     printf("Time: %ld\n",  t2 - t1); \
     exit(0);
 
-#ifdef CHECK_FPE
+#ifdef CHECK_OVERFLOW
   #define FECLEAREXCEPT std::feclearexcept (FE_INEXACT | FE_INVALID);
   #define if_fetestexcept_return_false_else \
     if (fetestexcept_local(FE_INEXACT | FE_INVALID)) { \
@@ -49,7 +49,7 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
   if (pivotRowPtr_0 < 0) { 
     mat.negateRowVectorized(pivotRow);
   }
-  mat.normalizeRow2(pivotRowPtr);
+  //mat.normalizerow2(pivotRowPtr);
 
   T * rowPtr = mat.getRowPtr(0);
    
@@ -70,7 +70,7 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
     *(Zmm *)(rowPtr) =  result;
 
     rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
-    mat.normalizeRow2(rowPtr);
+    //mat.normalizerow2(rowPtr);
     rowPtr += mat.nColPadding;
   }
 
@@ -102,7 +102,7 @@ template<> bool pivot<double>(matrix<double> & mat, unsigned pivotRow, unsigned 
   if (pivotRowPtr_0 < 0) { 
     mat.negateRowVectorized(pivotRow);
   }
-  mat.normalizeRow2(pivotRowPtr);
+  //mat.normalizerow2(pivotRowPtr);
 
   T * rowPtr = mat.getRowPtr(0);
    
@@ -132,7 +132,7 @@ template<> bool pivot<double>(matrix<double> & mat, unsigned pivotRow, unsigned 
     }
 
     rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
-    mat.normalizeRow2(rowPtr);
+    //mat.normalizerow2(rowPtr);
     rowPtr += mat.nColPadding;
   }
 
@@ -161,7 +161,7 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   if (pivotRowPtr_0 < 0) { 
     mat.negateRowVectorized(pivotRow);
   }
-  mat.normalizeRow2(pivotRowPtr);
+  //mat.normalizerow2(pivotRowPtr);
 
   T * rowPtr = mat.getRowPtr(0);
    
@@ -177,12 +177,16 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
 
     Zmm ConstC = pivotColBackup;
     Zmm matRowVec = *(Zmm *)(rowPtr);
+    #ifdef CHECK_OVERFLOW
+    Zmm result = add<true>(mul<true>(ConstC, pivotRowVec), mul<true>(matRowVec, ConstA));
+    #else
     Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
+    #endif
     matRowVec[0] *= pivotRowPtr_0;
     *(Zmm *)(rowPtr) =  result;
 
     rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
-    mat.normalizeRow2(rowPtr);
+    //mat.normalizerow2(rowPtr);
     rowPtr += mat.nColPadding;
   }
 
@@ -209,7 +213,7 @@ template<> bool pivot<MPInt>(matrix<MPInt> & mat, unsigned pivotRow, unsigned pi
     mat.negateRow(pivotRow);
   }
 
-  mat.normalizeRowScalar(pivotRow);
+  //mat.normalizeRowScalar(pivotRow);
 
   for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
     auto pivotColBackup = mat(rowIndex, pivotCol);
@@ -228,7 +232,7 @@ template<> bool pivot<MPInt>(matrix<MPInt> & mat, unsigned pivotRow, unsigned pi
     }
 
     mat(rowIndex, pivotCol) *= mat(pivotRow, pivotCol);
-    mat.normalizeRowScalar(rowIndex);
+    //mat.normalizeRowScalar(rowIndex);
   }
 
   return true;
@@ -236,10 +240,53 @@ template<> bool pivot<MPInt>(matrix<MPInt> & mat, unsigned pivotRow, unsigned pi
 
 
 
+template<> bool pivot<int64_t>(matrix<int64_t> & mat, unsigned pivotRow, unsigned pivotCol) {
+
+  typedef int64_t T;
+
+  unsigned nRow, nCol;
+  nRow = mat.nRow;
+  nCol = mat.nCol;
+  T * pivotRowPtr = mat.getRowPtr(pivotRow);
+
+  T tmp = pivotRowPtr[0];
+  pivotRowPtr[0] = -pivotRowPtr[pivotCol];
+  pivotRowPtr[pivotCol] = -tmp;
+
+  if (pivotRowPtr[0] < 0) {
+    mat.negateRow(pivotRow);
+  }
+
+  //mat.normalizeRowScalar(pivotRow);
+
+  for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
+    auto pivotColBackup = mat(rowIndex, pivotCol);
+
+    if ( rowIndex == pivotRow) { continue; }
+
+    T c = mat(rowIndex, pivotCol);
+    if (c == 0) { continue;   }
+
+    mat(rowIndex, 0) *= mat(pivotRow, 0);
+    for (unsigned col = 1; col < nCol; ++col) {
+      if (col == pivotCol){ continue; }
+
+      mat(rowIndex, col) = mat(rowIndex, col) * mat(pivotRow, 0) +
+                           mat(rowIndex, pivotCol) * mat(pivotRow, col);
+    }
+
+    mat(rowIndex, pivotCol) *= mat(pivotRow, pivotCol);
+    //mat.normalizeRowScalar(rowIndex);
+  }
+
+  return true;
+}
+
+
 
 // template bool pivot <double>(matrix<double> & tableau, unsigned pivotRow, unsigned pivotCol);
 // template bool pivot <float>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
-template bool pivot <int64_t>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
+// template bool pivot <int64_t>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
 // template bool pivot <int16_t>(matrix<int16_t> & tableau, unsigned pivotRow, unsigned pivotCol);
 // template bool pivot <MPInt>(matrix<MPInt> & tableau, unsigned pivotRow, unsigned pivotCol);
 

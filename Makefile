@@ -32,16 +32,15 @@ OUT=build/
 
 # pivot
 ################################################################################
-
 xs = pivot matrix_vecvec utils MPInt
 xs = pivot matrix_flat utils MPInt
 xs_out = $(OUT)pivot.o $(OUT)matrix_vecvec.o $(OUT)utils.o $(OUT)MPInt.o 
 xs_out = $(OUT)pivot.o $(OUT)matrix_flat.o $(OUT)utils.o $(OUT)MPInt.o 
 $(xs):
 	$(CC) $(CFLAGS) -c src/bench_pivot/$@.cpp -o $(OUT)$@.o $(INC) 
+pivot_main_compile_cmd=$(CC) $(CFLAGS) $(xs_out) src/bench_pivot/main.cpp -o $(OUT)pivot $(INC) $(LINK)
 bench-pivot: $(xs)
-	$(CC) $(CFLAGS) $(xs_out) src/bench_pivot/main.cpp -o $(OUT)pivot $(INC) $(LINK)
-
+	$(pivot_main_compile_cmd)
 
 # float toys
 ################################################################################
@@ -155,6 +154,27 @@ plot-align-unalign: flat-align flat-unalign
 	./build/flat-align --benchmark_filter="flat/fma_ia/" | tee -a $@
 	codium $@ 
 
+
+plot-pivot-unchecked: $(xs)
+	$(pivot_main_compile_cmd) -U CHECK_OVERFLOW -D USE_INT16
+	./build/pivot | tee -a $@
+	$(pivot_main_compile_cmd) -U CHECK_OVERFLOW -D USE_INT23
+	./build/pivot | tee -a $@
+	$(pivot_main_compile_cmd) -U CHECK_OVERFLOW -D USE_INT52
+	./build/pivot | tee -a $@
+	$(pivot_main_compile_cmd) -U CHECK_OVERFLOW -D USE_INT64
+	./build/pivot | tee -a $@
+
+# note: manually flip CHECK_OVERFLOW
+plot-pivot-checked: $(xs)
+	$(pivot_main_compile_cmd) -D CHECK_OVERFLOW -D USE_INT16
+	./build/pivot | tee -a $@
+	$(pivot_main_compile_cmd) -D CHECK_OVERFLOW -D USE_INT23
+	./build/pivot | tee -a $@
+	$(pivot_main_compile_cmd) -D CHECK_OVERFLOW -D USE_INT52
+	./build/pivot | tee -a $@
+	$(pivot_main_compile_cmd) -D CHECK_OVERFLOW -D USE_MPInt
+	./build/pivot | tee -a $@
 
 
 ################################################################################
