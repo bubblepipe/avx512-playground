@@ -5,6 +5,8 @@
 #include <iostream>
 #include <limits>
 
+#include <utils/cfenv_local.cpp>
+
 #pragma STDC FENV_ACCESS ON
 
 union uintd {
@@ -30,4 +32,11 @@ int main() {
     if (std::fetestexcept(FE_INEXACT)) {
         std::cout << "inexact result reported\n";
     }
+
+    feclearexcept_local_sse(FE_ALL_EXCEPT);
+
+    if (std::fetestexcept(FE_INEXACT)) {
+        std::cout << "inexact result reported\n";
+    }
+
 }

@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <x86intrin.h>
 #include <utils/int16_utils.cpp>
+#include <utils/cfenv_local.cpp>
 
 #define START_TIMER     unsigned int dummy;  \
     unsigned long t1 = __rdtscp(&dummy);
@@ -12,7 +13,7 @@
     exit(0);
 
 #ifdef CHECK_OVERFLOW
-  #define FECLEAREXCEPT std::feclearexcept (FE_INEXACT | FE_INVALID);
+  #define FECLEAREXCEPT feclearexcept_local_sse (FE_INEXACT | FE_INVALID);
   #define if_fetestexcept_return_false_else \
     if (fetestexcept_local(FE_INEXACT | FE_INVALID)) { \
       return false; \
@@ -158,14 +159,19 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   auto pivotRowPtr_pivotCol = -tmp;
   auto pivotRowPtr_0 = pivotRowPtr[0];
 
+  Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
+
   if (pivotRowPtr_0 < 0) { 
-    mat.negateRowVectorized(pivotRow);
+    #ifdef CHECK_OVERFLOW
+    negate<true>(pivotRowVec);
+    #else
+    negate<false>(pivotRowVec);
+    #endif
   }
   //mat.normalizerow2(pivotRowPtr);
 
   T * rowPtr = mat.getRowPtr(0);
    
-  Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
   pivotRowVec[0] = 0;
   Zmm ConstA = pivotRowPtr_0;
   ConstA[0] = 1;
@@ -288,5 +294,5 @@ template<> bool pivot<int64_t>(matrix<int64_t> & mat, unsigned pivotRow, unsigne
 // template bool pivot <float>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
 // template bool pivot <int64_t>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
 // template bool pivot <int16_t>(matrix<int16_t> & tableau, unsigned pivotRow, unsigned pivotCol);
-// template bool pivot <MPInt>(matrix<MPInt> & tableau, unsigned pivotRow, unsigned pivotCol);
+template bool pivot <uint64_t>(matrix<uint64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
 
