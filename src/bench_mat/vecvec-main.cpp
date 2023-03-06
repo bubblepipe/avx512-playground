@@ -14,6 +14,7 @@ void bench_mat_vecvec(benchmark::State &state,
     std::vector<std::vector<float>> mat_dst;
     mat_src1.resize(row, std::vector<float>(col, 0));
     mat_src2.resize(row, std::vector<float>(col, 0));
+    mat_src3.resize(row, std::vector<float>(col, 0));
     mat_dst.resize(row, std::vector<float>(col, 0));
 
     for (int i = 0; i < row; i += 1) {

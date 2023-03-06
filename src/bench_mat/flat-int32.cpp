@@ -41,14 +41,29 @@ void mat_add_manual ( unsigned int row, unsigned int col,
 
     int32_t * src1_ptr = (int32_t *) mat_src1.m.data();
     int32_t * src2_ptr = (int32_t *) mat_src2.m.data();
+    int32_t * src3_ptr = (int32_t *) mat_src3.m.data();
     int32_t * dst_ptr  = (int32_t *) mat_dst.m.data();
 
+#ifdef AVX512_ENABLED
+    for (int32_t i = 0; i < size; i += 16 ){
+        __m512 src1 = _mm512_loadu_si512 ((__m512i_u*) (src1_ptr + i));
+        __m512 src2 = _mm512_loadu_si512 ((__m512i_u*) (src2_ptr + i));
+        __m512 src3 = _mm512_loadu_si512 ((__m512i_u*) (src3_ptr + i));
+        __m512 result0 = _mm512_add_epi32(src1, src2);
+        __m512 result = _mm512_add_epi32(result0, src3);
+        _mm512_storeu_si512((__m512i_u*) (dst_ptr + i), result);
+    }
+#else
     for (int32_t i = 0; i < size; i += 8 ){
         __m256 src1 = _mm256_loadu_si256 ((__m256i_u*) (src1_ptr + i));
         __m256 src2 = _mm256_loadu_si256 ((__m256i_u*) (src2_ptr + i));
-        __m256 result = _mm256_add_epi32(src1, src2);
+        __m256 src3 = _mm256_loadu_si256 ((__m256i_u*) (src3_ptr + i));
+        __m256 result0 = _mm256_add_epi32(src1, src2);
+        __m256 result = _mm256_add_epi32(result0, src3);
         _mm256_storeu_si256((__m256i_u*) (dst_ptr + i), result);
     }
+#endif
+
 
 }
 
@@ -96,7 +111,8 @@ void mat_fma_intrinsic ( unsigned int row, unsigned int col,
         __m512 r1 = _mm512_mullo_epi32(src1, src2);
         __m512 src3 = _mm512_loadu_si512 ((__m256i_u*) (src3_ptr + i));
         __m512 r2 = _mm512_add_epi32(r1, src3);
-        _mm512_storeu_si512((__m256i_u*) (dst_ptr + i), r2);
+        __m512 rx = _mm512_mullo_epi32(r2, src3);
+        _mm512_storeu_si512((__m256i_u*) (dst_ptr + i), rx);
     }
 #else
     for (int32_t i = 0; i < size; i += 8 ){
