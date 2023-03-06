@@ -9,7 +9,7 @@ matrix<T>::matrix(unsigned int r, unsigned int c) {
   nCol = c;
   nColPadding = compute_nCol_padding(nCol);
   m.resize(nRow * nColPadding);
-  }
+}
 
 template <typename T>
 matrix<T>::matrix(matrix<T> & other) {
@@ -26,27 +26,27 @@ matrix<T>::matrix(matrix<T> & other) {
 } 
 
 template <typename T>
-T matrix<T>::get(unsigned int x, unsigned int y) const { return m[nColPadding * x + y]; }
+inline T matrix<T>::get(unsigned int x, unsigned int y) const { return m[nColPadding * x + y]; }
 
 template <typename T>
-T &matrix<T>::get(unsigned int x, unsigned int y) { return m[nColPadding * x + y]; }
+inline T &matrix<T>::get(unsigned int x, unsigned int y) { return m[nColPadding * x + y]; }
 
 template <typename T>
-void matrix<T>::set(unsigned int x, unsigned int y, T val) { m[nColPadding * x + y] = val; }
+inline void matrix<T>::set(unsigned int x, unsigned int y, T val) { m[nColPadding * x + y] = val; }
 
 template <typename T>
-T matrix<T>::operator()(unsigned int row, unsigned int column) const { return get(row, column); }
+inline T matrix<T>::operator()(unsigned int row, unsigned int column) const { return get(row, column); }
 
 template <typename T>
-T &matrix<T>::operator()(unsigned int row, unsigned int column) { return get(row, column); }
+inline T &matrix<T>::operator()(unsigned int row, unsigned int column) { return get(row, column); }
 
 template <typename T>
-T* matrix<T>::getPtr(){
+inline T* matrix<T>::getPtr(){
   return m.data();
 }
 
 template <typename T>
-T* matrix<T>::getRowPtr(unsigned int row){
+inline T* matrix<T>::getRowPtr(unsigned int row){
   return m.data() + nColPadding * row;
 }
 
@@ -61,11 +61,14 @@ unsigned int matrix<T>::compute_nCol_padding(unsigned int nCol) {
     vector_size = ZmmInt64VecSize;
   } else if (std::is_same<T, MPInt>::value) {
     vector_size = ZmmInt64VecSize;
+  } else if (std::is_same<T, int16_t>::value) {
+    vector_size = ZmmInt16VecSize;
   } else {
     printf("compute_nCol_padding\n");
     exit(0); // TODO: 
   }
-  return nCol + (vector_size - (nCol % vector_size)) + 1;
+  return nCol + (vector_size - (nCol % vector_size));
+  // return nCol + (vector_size - (nCol % vector_size)) + 1;
 }
 
 template <typename T>
@@ -134,6 +137,7 @@ void matrix<T>::normalizeRowScalar(unsigned row) {
 template class matrix<double>;
 template class matrix<float>;
 template class matrix<int64_t>;
+template class matrix<int16_t>;
 template class matrix<MPInt>;
 
 inline int64_t greatestCommonDivisor(int64_t A, int64_t B) {

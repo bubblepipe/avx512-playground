@@ -3,13 +3,15 @@
 #include <stdexcept>
 #include <immintrin.h>
 
+#define AVX512_ENABLED
 #ifdef AVX512_ENABLED
 
 typedef int16_t Vector16x32 __attribute__((ext_vector_type(32)));
 
 inline void throwOverflowIf(bool cond) {
-  if (cond)
+  if (cond) {
     throw std::overflow_error("Overflow!");
+  }
 }
 
 inline __mmask32 equalMask(Vector16x32 x, Vector16x32 y) {

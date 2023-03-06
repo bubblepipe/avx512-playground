@@ -19,10 +19,10 @@ void validate(matrix<T> & mat){
   for (int rowIndex = 0; rowIndex < mat.nRow; rowIndex += 1) {
     for (int colIndex = 0; colIndex < mat.nCol; colIndex += 1) {
       if (! (mat(rowIndex, colIndex) == expected_out_mat_arr[rowIndex][colIndex])){
-        printf("mismatch at %d,%d\n", rowIndex, colIndex);
+        printf("mismatch at %d,%d: %f, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), expected_out_mat_arr[rowIndex][colIndex]);
       }
     }
-  }
+  } exit(0);
 }
 
 static void PivotCol16Bench(benchmark::State& state) {
@@ -32,11 +32,11 @@ static void PivotCol16Bench(benchmark::State& state) {
   auto pivotRow = input_mat_pivot_row;
   auto pivotCol = input_mat_pivot_col;
 
-#define BENCH(TYPE)    {                          \
+#define BENCH(TYPE)    {                                    \
     matrix<TYPE> mat(nRow,nCol);                            \
     prepare_mat(mat);                                       \
     for (auto _ : state) {                                  \
-      pivot<TYPE>(mat, pivotRow, pivotCol);       \
+      pivot<TYPE>(mat, pivotRow, pivotCol);  \
     }                                                       \
   }
 
@@ -44,10 +44,10 @@ static void PivotCol16Bench(benchmark::State& state) {
   BENCH(int64_t)
 #elif defined USE_MPInt
   BENCH(MPInt)
-
+#elif defined USE_INT16
+  BENCH(int16_t)
 # elif defined USE_INT52
   BENCH(double)
-
 # elif defined USE_INT23
   BENCH(float)
 

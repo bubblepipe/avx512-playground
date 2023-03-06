@@ -1,7 +1,7 @@
 CC=clang++-17
 
 # CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -Wno-format 
-CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g
+CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g 
 CFLAGS_no_vec=-O3 -mno-avx -mno-sse -march=native -I src/ -fno-omit-frame-pointer -std=c++17
 # CFLAGS=-O0 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g
 
@@ -75,7 +75,7 @@ vector_int_overflow: vector_int_overflow.o
 
 # matrix
 ################################################################################
-TARGET=vecvec flat-int64 flat-int16 flat-float flat-double
+TARGET=vecvec flat-int64 flat-int16 flat-float flat-double flat-align  flat-unalign
 TEST-TARGET=flat-test vecvec-test
 $(TARGET):
 	$(CC) $(CFLAGS) src/bench_mat/$@-main.cpp -o $(OUT)$@ $(INC) $(LINK)
@@ -139,8 +139,6 @@ unchecked: flat-int16 flat-int32 flat-float flat-double
 	./build/flat-float --benchmark_filter="flat/fma_i/" | tee -a $@
 	./build/flat-double --benchmark_filter="flat/fma_i/" | tee -a $@
 	codium $@ 
-# plot-testing
-################################################################################
 
 # export BENCH_SIZE="-D SIZE_8_16_32"
 checked: flat-int16 flat-int32 flat-float flat-double
@@ -149,6 +147,15 @@ checked: flat-int16 flat-int32 flat-float flat-double
 	./build/flat-float --benchmark_filter="flat/fma_ic/" | tee -a $@
 	./build/flat-double --benchmark_filter="flat/fma_ic/" | tee -a $@
 	codium $@ 
+# plot-testing
+################################################################################
+# export BENCH_SIZE="-D SIZE_8_16_32"
+plot-align-unalign: flat-align flat-unalign
+	./build/flat-unalign --benchmark_filter="flat/fma_iu/" | tee -a $@
+	./build/flat-align --benchmark_filter="flat/fma_ia/" | tee -a $@
+	codium $@ 
+
+
 
 ################################################################################
 
