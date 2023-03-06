@@ -159,14 +159,19 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   auto pivotRowPtr_pivotCol = -tmp;
   auto pivotRowPtr_0 = pivotRowPtr[0];
 
+  Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
+
   if (pivotRowPtr_0 < 0) { 
-    mat.negateRowVectorized(pivotRow);
+    #ifdef CHECK_OVERFLOW
+    negate<true>(pivotRowVec);
+    #else
+    negate<false>(pivotRowVec);
+    #endif
   }
   //mat.normalizerow2(pivotRowPtr);
 
   T * rowPtr = mat.getRowPtr(0);
    
-  Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
   pivotRowVec[0] = 0;
   Zmm ConstA = pivotRowPtr_0;
   ConstA[0] = 1;
