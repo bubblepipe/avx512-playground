@@ -1,6 +1,7 @@
 #include <bench_pivot/pivot.h>
 #include <bench_pivot/utils.h>
 #include <bench_pivot/MPInt.h>
+#include <bench_pivot/fpe.cpp>
 #include <cstdint>
 #include <x86intrin.h>
 #include <utils/int16_utils.cpp>

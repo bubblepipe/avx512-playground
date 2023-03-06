@@ -3,7 +3,6 @@
 #include <vector>
 #include <stdio.h>
 #include <float.h>
-#include <cfenv>
 #include <limits>
 #include <signal.h>
 #include <stdlib.h>
@@ -13,7 +12,7 @@
 // #define NO_LOG
 // #define USE_INT64
 // #define USE_MPInt
-// #define USE_INT16
+#define USE_INT16
 // #define USE_INT52
 // #define USE_INT23
 #define CHECK_OVERFLOW
@@ -36,7 +35,3 @@ typedef int64_t int64Zmm __attribute__((ext_vector_type(ZmmInt64VecSize)));
 typedef int16_t int16Zmm __attribute__((ext_vector_type(ZmmInt16VecSize)));
 
 void trigger_FPE();
-
-
-
-int fetestexcept_local(int excepts);
