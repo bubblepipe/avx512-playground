@@ -26,8 +26,7 @@ bool validate(matrix<T> & mat){
         } else if constexpr (std::is_same<T, MPInt>::value){
           printf("mismatch at %d,%d: %ld, %d\n", rowIndex, colIndex, (int64_t)mat(rowIndex, colIndex), expected_out_mat_arr[rowIndex][colIndex]);
         } else {
-          printf("mismatch at %d,%d: %hd, %hd\n", rowIndex, colIndex, mat(rowIndex, colIndex), expected_out_mat_arr[rowIndex][colIndex]);
-        }
+          printf("mismatch at %d,%d: %f, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), expected_out_mat_arr[rowIndex][colIndex]);        }
         ret = false;
       }
     }
@@ -45,7 +44,6 @@ static void PivotCol16Bench(benchmark::State& state) {
 #define BENCH(TYPE)    {                                    \
     matrix<TYPE> mat(nRow,nCol);                            \
     prepare_mat(mat);                                       \
-    mat.print();\
     pivot<TYPE>(mat, pivotRow, pivotCol);                   \
     if (!validate(mat)) {mat.print(); exit(0);}                          \
     prepare_mat(mat);                                       \
@@ -64,13 +62,24 @@ static void PivotCol16Bench(benchmark::State& state) {
   BENCH(double)
 # elif defined USE_INT23
   BENCH(float)
-
-
 # else
   printf("neither USE_INT23 not USE_INT52 is defined in pivot"); exit(0);
 # endif
 
 }
 
-BENCHMARK(PivotCol16Bench);
+
+#ifdef SCALAR
+  BENCH(int64_t)
+#elif defined USE_MPInt
+  BENCHMARK(PivotCol16Bench)->Name("MPInt");
+#elif defined USE_INT16
+  BENCHMARK(PivotCol16Bench)->Name("int16_t");
+# elif defined USE_INT52
+  BENCHMARK(PivotCol16Bench)->Name("double");
+# elif defined USE_INT23
+  BENCHMARK(PivotCol16Bench)->Name("float");
+# else
+  printf("neither USE_INT23 not USE_INT52 is defined in pivot"); exit(0);
+# endif
 BENCHMARK_MAIN();
