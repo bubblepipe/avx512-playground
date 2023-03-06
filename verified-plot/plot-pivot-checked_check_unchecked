@@ -1,0 +1,28 @@
+uncheck/int16_t          15.4 ns         15.4 ns     46307487
+uncheck/float            20.0 ns         20.0 ns     36178975
+uncheck/double           28.1 ns         28.1 ns     23986953
+uncheck/int16_t          15.3 ns         15.3 ns     46241162
+uncheck/float            19.7 ns         19.7 ns     36779226
+uncheck/double           29.0 ns         29.0 ns     25302872
+uncheck/int16_t          15.3 ns         15.3 ns     45073632
+uncheck/float            19.4 ns         19.4 ns     37090483
+uncheck/double           21.4 ns         21.4 ns     28823248
+uncheck/int16_t          15.4 ns         15.4 ns     46886489
+uncheck/float            23.0 ns         23.0 ns     30882239
+uncheck/double           28.0 ns         28.0 ns     23380395
+
+uncheck/int64_t 0 ns          0 ns      114514
+
+
+check/int16_t          23.7 ns         23.7 ns     29571893
+check/float            60.6 ns         60.6 ns     11374392
+check/double           63.2 ns         63.2 ns     10909726
+check/MPInt             585 ns          585 ns      1202703
+check/int16_t          23.6 ns         23.6 ns     29804075
+check/float            61.0 ns         61.0 ns     11580444
+check/double           61.9 ns         61.9 ns     11156313
+check/MPInt             588 ns          588 ns      1198952
+check/int16_t          23.9 ns         23.9 ns     29276992
+check/float            60.8 ns         60.8 ns     11499318
+check/double           62.0 ns         62.0 ns     10979453
+check/MPInt             588 ns          588 ns      1197867
