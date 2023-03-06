@@ -11,59 +11,218 @@
     printf("Time: %ld\n",  t2 - t1); \
     exit(0);
 
+#ifdef CHECK_OVERFLOW
+  #define FECLEAREXCEPT std::feclearexcept (FE_INEXACT | FE_INVALID);
+  #define if_fetestexcept_return_false_else \
+    if (fetestexcept_local(FE_INEXACT | FE_INVALID)) { \
+      return false; \
+    } else  
+#else 
+  #define FECLEAREXCEPT 
+  #define if_fetestexcept_return_false_else 
+#endif
 
-// true: no fpe
-// false: no
 template <typename T>
 bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
+  return false;
+}
 
-  if constexpr (std::is_same<T, double>::value || std::is_same<T, float>::value ) {
-    // std::feclearexcept (FE_INEXACT | FE_INVALID);
-  }
+template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pivotCol) {
 
-  // printx(INFO, "\n>>> pivotRow %ld, pivotCol %ld <<<\n", (int64_t)pivotRow, (int64_t)pivotCol);
+  FECLEAREXCEPT
 
-  // todo this
-  // swapRowWithCol(pivotRow, pivotCol);
+  typedef float T;
+  typedef floatZmm Zmm;
 
   unsigned nRow, nCol;
   nRow = mat.nRow;
   nCol = mat.nCol;
   T * pivotRowPtr = mat.getRowPtr(pivotRow);
   
+  T tmp = pivotRowPtr[0];
+  pivotRowPtr[0] = -pivotRowPtr[pivotCol];
+  pivotRowPtr[pivotCol] = -tmp;
+
+  auto pivotRowPtr_pivotCol = -tmp;
+  auto pivotRowPtr_0 = pivotRowPtr[0];
+
+  if (pivotRowPtr_0 < 0) { 
+    mat.negateRowVectorized(pivotRow);
+  }
+  //mat.normalizerow2(pivotRowPtr);
+
+  T * rowPtr = mat.getRowPtr(0);
+   
+  Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
+  pivotRowVec[0] = 0;
+  Zmm ConstA = pivotRowPtr_0;
+  ConstA[0] = 1;
+  
+  for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
+    if (rowIndex == pivotRow) { rowPtr += mat.nColPadding; continue; }
+    T pivotColBackup = rowPtr[pivotCol];
+    if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
+
+    Zmm ConstC = pivotColBackup;
+    Zmm matRowVec = *(Zmm *)(rowPtr);
+    Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
+    matRowVec[0] *= pivotRowPtr_0;
+    *(Zmm *)(rowPtr) =  result;
+
+    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
+    //mat.normalizerow2(rowPtr);
+    rowPtr += mat.nColPadding;
+  }
+
+  if_fetestexcept_return_false_else
+  return true;
+
+}
+
+
+template<> bool pivot<double>(matrix<double> & mat, unsigned pivotRow, unsigned pivotCol) {
+
+  FECLEAREXCEPT
+
+  typedef double T;
+  typedef doubleZmm Zmm;
+
+  unsigned nRow, nCol;
+  nRow = mat.nRow;
+  nCol = mat.nCol;
+  T * pivotRowPtr = mat.getRowPtr(pivotRow);
+  
+  T tmp = pivotRowPtr[0];
+  pivotRowPtr[0] = -pivotRowPtr[pivotCol];
+  pivotRowPtr[pivotCol] = -tmp;
+
+  auto pivotRowPtr_pivotCol = -tmp;
+  auto pivotRowPtr_0 = pivotRowPtr[0];
+
+  if (pivotRowPtr_0 < 0) { 
+    mat.negateRowVectorized(pivotRow);
+  }
+  //mat.normalizerow2(pivotRowPtr);
+
+  T * rowPtr = mat.getRowPtr(0);
+   
+  Zmm pivotRowVec_head = *(Zmm *)pivotRowPtr;
+  pivotRowVec_head[0] = 0;
+  Zmm ConstA = pivotRowPtr_0;
+  Zmm ConstA_head = pivotRowPtr_0;
+  ConstA_head[0] = 1;
+  
+  for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
+    
+    if (rowIndex == pivotRow) { rowPtr += mat.nColPadding; continue; }
+    T pivotColBackup = rowPtr[pivotCol];
+    if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
+
+    Zmm ConstC = pivotColBackup;
+    Zmm matRowVec_head = *(Zmm *)(rowPtr);
+    Zmm result = ConstC * pivotRowVec_head + matRowVec_head * ConstA_head;
+    matRowVec_head[0] *= pivotRowPtr_0;
+    *(Zmm *)(rowPtr) =  result;
+
+    for (unsigned colIndex = ZmmDoubleVecSize; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
+      Zmm matRowVec = *(Zmm *)(rowPtr + colIndex);
+      Zmm pivotRowVec = *(Zmm *)(pivotRowPtr + colIndex);
+      Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
+      *(Zmm *)(rowPtr + colIndex) = result;
+    }
+
+    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
+    //mat.normalizerow2(rowPtr);
+    rowPtr += mat.nColPadding;
+  }
+
+  if_fetestexcept_return_false_else
+  return false;
+
+}
+
+template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigned pivotCol) {
+
+  typedef int16_t T;
+  typedef int16Zmm Zmm;
+
+  unsigned nRow, nCol;
+  nRow = mat.nRow;
+  nCol = mat.nCol;
+  T * pivotRowPtr = mat.getRowPtr(pivotRow);
+  
+  T tmp = pivotRowPtr[0];
+  pivotRowPtr[0] = -pivotRowPtr[pivotCol];
+  pivotRowPtr[pivotCol] = -tmp;
+
+  auto pivotRowPtr_pivotCol = -tmp;
+  auto pivotRowPtr_0 = pivotRowPtr[0];
+
+  if (pivotRowPtr_0 < 0) { 
+    mat.negateRowVectorized(pivotRow);
+  }
+  //mat.normalizerow2(pivotRowPtr);
+
+  T * rowPtr = mat.getRowPtr(0);
+   
+  Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
+  pivotRowVec[0] = 0;
+  Zmm ConstA = pivotRowPtr_0;
+  ConstA[0] = 1;
+  
+  for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
+    if (rowIndex == pivotRow) { rowPtr += mat.nColPadding; continue; }
+    T pivotColBackup = rowPtr[pivotCol];
+    if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
+
+    Zmm ConstC = pivotColBackup;
+    Zmm matRowVec = *(Zmm *)(rowPtr);
+    #ifdef CHECK_OVERFLOW
+    Zmm result = add<true>(mul<true>(ConstC, pivotRowVec), mul<true>(matRowVec, ConstA));
+    #else
+    Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
+    #endif
+    matRowVec[0] *= pivotRowPtr_0;
+    *(Zmm *)(rowPtr) =  result;
+
+    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
+    //mat.normalizerow2(rowPtr);
+    rowPtr += mat.nColPadding;
+  }
+
+  return true;
+
+}
+
+
+
+template<> bool pivot<MPInt>(matrix<MPInt> & mat, unsigned pivotRow, unsigned pivotCol) {
+
+  typedef MPInt T;
+
+  unsigned nRow, nCol;
+  nRow = mat.nRow;
+  nCol = mat.nCol;
+  T * pivotRowPtr = mat.getRowPtr(pivotRow);
 
   T tmp = pivotRowPtr[0];
   pivotRowPtr[0] = -pivotRowPtr[pivotCol];
   pivotRowPtr[pivotCol] = -tmp;
 
   if (pivotRowPtr[0] < 0) {
-#ifdef SCALAR
     mat.negateRow(pivotRow);
-#else
-    mat.negateRowVectorized(pivotRow);
-#endif
   }
 
-  mat.normalizeRowScalar(pivotRow);
+  //mat.normalizeRowScalar(pivotRow);
 
-  T * rowPtr = mat.getRowPtr(0);
-
-// start of loop
   for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
-    // T * rowPtr = mat.getRowPtr(rowIndex);
+    auto pivotColBackup = mat(rowIndex, pivotCol);
 
-    if (rowIndex == pivotRow) { 
-      rowPtr += mat.nColPadding;
-      continue;
-    }
+    if ( rowIndex == pivotRow) { continue; }
 
-    T c = rowPtr[pivotCol];
-    if (c == 0) { 
-      rowPtr += mat.nColPadding;
-      continue; 
-    }
+    T c = mat(rowIndex, pivotCol);
+    if (c == 0) { continue;   }
 
-#if defined SCALAR || defined USE_MPInt
     mat(rowIndex, 0) *= mat(pivotRow, 0);
     for (unsigned col = 1; col < nCol; ++col) {
       if (col == pivotCol){ continue; }
@@ -73,89 +232,61 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
     }
 
     mat(rowIndex, pivotCol) *= mat(pivotRow, pivotCol);
-
-#else
-    auto pivotColBackup = rowPtr[pivotCol];
-    rowPtr[0] *= pivotRowPtr[0];
-
-    // row = row * ConstA +  ConstB * PivotRow;
-    if constexpr (std::is_same<T, double>::value || std::is_same<T, float>::value) {
-      typedef doubleZmm Zmm;
-      auto step = ZmmDoubleVecSize;
-      if (std::is_same<T, float>::value) {
-        typedef floatZmm Zmm;
-        auto step = ZmmFloatVecSize;
-      }
-      Zmm pvec = *(Zmm *)pivotRowPtr;
-      pvec[0] = 1;
-      Zmm ConstA = pivotRowPtr[0];
-      Zmm ConstC = rowPtr[pivotCol];
-      unsigned colIndex = 0;
-      Zmm mat_row_ymm = *(Zmm *)(rowPtr + colIndex);
-      Zmm result0 = mat_row_ymm * ConstA;
-      Zmm pivot_row_ymm = pvec;
-      Zmm result1 = ConstC * pivot_row_ymm + result0;
-      *(Zmm *)(rowPtr + colIndex) =  result1;
-      for (colIndex = step; colIndex < nCol; colIndex += step) {
-        Zmm mat_row_ymm = *(Zmm *)(rowPtr + colIndex);
-        Zmm result0 = mat_row_ymm * ConstA;
-        Zmm pivot_row_ymm = *(Zmm *)(pivotRowPtr + colIndex);
-        Zmm result1 = ConstC * pivot_row_ymm + result0;
-        *(Zmm *)(rowPtr + colIndex) = result1;
-      }
-    }
-    else if constexpr (std::is_same<T, float>::value) {
-      // TODO
-      // typedef floatZmm Zmm;
-      // CONST_A_C
-      // unsigned colIndex = 0;
-      // F32_64_OP(__m512, _mm512_load_ps)
-      // F32_MASK_STORE
-      // for (colIndex = ZmmFloatVecSize; colIndex < nCol; colIndex += ZmmFloatVecSize) {
-      //   F32_64_OP(__m512, _mm512_load_ps)
-      //   F32_64_STORE(_mm512_store_ps)
-      // }
-    } 
-    else if constexpr (std::is_same<T, int16_t>::value) {
-      T index0 = rowPtr[0]; // manual backup of the first element
-      typedef int16Zmm Zmm;
-      CONST_A_C
-      unsigned colIndex = 0;
-      for (colIndex = 0; colIndex < nCol; colIndex += ZmmInt16VecSize) {
-        I16_OP
-        I16_TORE
-      }
-      rowPtr[0] = index0;
-    }
-    else {
-      printf("neither USE_INT16, USE_INT23 not USE_INT52 is defined in pivot");
-      exit(0);
-    }
-    
-    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr[pivotCol];
-
-#endif
-
-    mat.normalizeRowScalar(rowIndex);
-    rowPtr += mat.nColPadding;
-  }
-// end of loop
-
-  if constexpr (std::is_same<T, double>::value || std::is_same<T, float>::value ) {
-    // if (fetestexcept_local(FE_INEXACT | FE_INVALID)) {
-      // return false;
-    // } else 
-      return true;
-  } else {
-    return true;
+    //mat.normalizeRowScalar(rowIndex);
   }
 
+  return true;
 }
 
 
-template bool pivot <double>(matrix<double> & tableau, unsigned pivotRow, unsigned pivotCol);
-template bool pivot <float>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
-template bool pivot <int64_t>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
-template bool pivot <int16_t>(matrix<int16_t> & tableau, unsigned pivotRow, unsigned pivotCol);
-template bool pivot <MPInt>(matrix<MPInt> & tableau, unsigned pivotRow, unsigned pivotCol);
+
+template<> bool pivot<int64_t>(matrix<int64_t> & mat, unsigned pivotRow, unsigned pivotCol) {
+
+  typedef int64_t T;
+
+  unsigned nRow, nCol;
+  nRow = mat.nRow;
+  nCol = mat.nCol;
+  T * pivotRowPtr = mat.getRowPtr(pivotRow);
+
+  T tmp = pivotRowPtr[0];
+  pivotRowPtr[0] = -pivotRowPtr[pivotCol];
+  pivotRowPtr[pivotCol] = -tmp;
+
+  if (pivotRowPtr[0] < 0) {
+    mat.negateRow(pivotRow);
+  }
+
+  //mat.normalizeRowScalar(pivotRow);
+
+  for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
+    auto pivotColBackup = mat(rowIndex, pivotCol);
+
+    if ( rowIndex == pivotRow) { continue; }
+
+    T c = mat(rowIndex, pivotCol);
+    if (c == 0) { continue;   }
+
+    mat(rowIndex, 0) *= mat(pivotRow, 0);
+    for (unsigned col = 1; col < nCol; ++col) {
+      if (col == pivotCol){ continue; }
+
+      mat(rowIndex, col) = mat(rowIndex, col) * mat(pivotRow, 0) +
+                           mat(rowIndex, pivotCol) * mat(pivotRow, col);
+    }
+
+    mat(rowIndex, pivotCol) *= mat(pivotRow, pivotCol);
+    //mat.normalizeRowScalar(rowIndex);
+  }
+
+  return true;
+}
+
+
+
+// template bool pivot <double>(matrix<double> & tableau, unsigned pivotRow, unsigned pivotCol);
+// template bool pivot <float>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
+// template bool pivot <int64_t>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
+// template bool pivot <int16_t>(matrix<int16_t> & tableau, unsigned pivotRow, unsigned pivotCol);
+// template bool pivot <MPInt>(matrix<MPInt> & tableau, unsigned pivotRow, unsigned pivotCol);
 

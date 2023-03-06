@@ -134,15 +134,32 @@ void matrix<T>::normalizeRowScalar(unsigned row) {
   // assert(this->get(row, 0) != 0);
 }
 
+template <typename T>
+void matrix<T>::normalizeRow2(T * rowPtr) {
+  T gcd = (T) 0;
+  for (unsigned col = 0; col < nCol; ++col) {
+    if (gcd == 1)
+      break;
+    gcd = greatestCommonDivisor((int32_t)gcd, std::abs((int32_t)rowPtr[col]));
+  }
+
+  if (gcd == 0 || gcd == 1)
+    return;
+  for (unsigned col = 0; col < nCol; ++col) {
+    auto val = rowPtr[col] / gcd;
+    rowPtr[col] = val;
+  }
+}
+
 template class matrix<double>;
 template class matrix<float>;
 template class matrix<int64_t>;
 template class matrix<int16_t>;
 template class matrix<MPInt>;
 
-inline int64_t greatestCommonDivisor(int64_t A, int64_t B) {
+inline int32_t greatestCommonDivisor(int32_t A, int32_t B) {
   while (B) {
-    int64_t Tmp = B;
+    int32_t Tmp = B;
     B = A % B;
     A = Tmp;
   }

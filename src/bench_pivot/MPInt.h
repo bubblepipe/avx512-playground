@@ -88,7 +88,11 @@ public:
       return getSmall();
     return static_cast<int64_t>(getLarge());
   }
-
+  inline explicit operator int32_t() const {
+    if (isSmall())
+      return getSmall();
+    return static_cast<int32_t>(getLarge());
+  }
 //   bool operator==(const MPInt &o) const;
 //   bool operator!=(const MPInt &o) const;
 //   bool operator>(const MPInt &o) const;
