@@ -12,10 +12,10 @@
 // #define NO_LOG
 // #define USE_INT64
 // #define USE_MPInt
-#define USE_INT16
+// #define USE_INT16
 // #define USE_INT52
-// #define USE_INT23
-#define CHECK_OVERFLOW
+#define USE_INT23
+// #define CHECK_OVERFLOW
 
 #define TRIVIAL 0
 #define INFO 114
