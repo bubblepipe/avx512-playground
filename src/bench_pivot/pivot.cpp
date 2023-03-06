@@ -294,5 +294,5 @@ template<> bool pivot<int64_t>(matrix<int64_t> & mat, unsigned pivotRow, unsigne
 // template bool pivot <float>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
 // template bool pivot <int64_t>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
 // template bool pivot <int16_t>(matrix<int16_t> & tableau, unsigned pivotRow, unsigned pivotCol);
-// template bool pivot <MPInt>(matrix<MPInt> & tableau, unsigned pivotRow, unsigned pivotCol);
+template bool pivot <uint64_t>(matrix<uint64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
 

@@ -44,8 +44,9 @@ static void PivotCol16Bench(benchmark::State& state) {
 #define BENCH(TYPE)    {                                    \
     matrix<TYPE> mat(nRow,nCol);                            \
     prepare_mat(mat);                                       \
-    pivot<TYPE>(mat, pivotRow, pivotCol);                   \
-    if (!validate(mat)) {mat.print(); exit(0);}                          \
+    if (pivot<TYPE>(mat, pivotRow, pivotCol)) {                  \
+      if (!validate(mat)) {mat.print(); exit(0);} \
+    }                         \
     prepare_mat(mat);                                       \
     for (auto _ : state) {                                  \
       pivot<TYPE>(mat, pivotRow, pivotCol);                 \
@@ -62,6 +63,8 @@ static void PivotCol16Bench(benchmark::State& state) {
   BENCH(double)
 # elif defined USE_INT23
   BENCH(float)
+# elif defined EMPTY_PIVOT
+  BENCH(uint64_t)
 # else
   printf("neither USE_INT23 not USE_INT52 is defined in pivot"); exit(0);
 # endif
@@ -79,6 +82,8 @@ static void PivotCol16Bench(benchmark::State& state) {
   BENCHMARK(PivotCol16Bench)->Name("double");
 # elif defined USE_INT23
   BENCHMARK(PivotCol16Bench)->Name("float");
+# elif defined EMPTY_PIVOT
+  BENCHMARK(PivotCol16Bench)->Name("uint64_t");
 # else
   printf("neither USE_INT23 not USE_INT52 is defined in pivot"); exit(0);
 # endif

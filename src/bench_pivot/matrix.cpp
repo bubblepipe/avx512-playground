@@ -55,13 +55,11 @@ unsigned int matrix<T>::compute_nCol_padding(unsigned int nCol) {
   auto vector_size = 4;
   if (std::is_same<T, double>::value) {
     vector_size = ZmmDoubleVecSize;
-  } else if (std::is_same<T, float>::value) {
+  } else if constexpr (std::is_same<T, float>::value) {
     vector_size = ZmmFloatVecSize;
-  } else if (std::is_same<T, int64_t>::value) {
+  } else if constexpr (std::is_same<T, int64_t>::value | std::is_same<T, uint64_t>::value | std::is_same<T, MPInt>::value ) {
     vector_size = ZmmInt64VecSize;
-  } else if (std::is_same<T, MPInt>::value) {
-    vector_size = ZmmInt64VecSize;
-  } else if (std::is_same<T, int16_t>::value) {
+  } else if constexpr (std::is_same<T, int16_t>::value) {
     vector_size = ZmmInt16VecSize;
   } else {
     printf("compute_nCol_padding\n");
@@ -156,6 +154,7 @@ template class matrix<float>;
 template class matrix<int64_t>;
 template class matrix<int16_t>;
 template class matrix<MPInt>;
+template class matrix<uint64_t>;
 
 inline int32_t greatestCommonDivisor(int32_t A, int32_t B) {
   while (B) {
