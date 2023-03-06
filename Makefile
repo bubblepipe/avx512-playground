@@ -156,22 +156,46 @@ plot-align-unalign: flat-align flat-unalign
 plot-pivot-unchecked: $(xs)
 	$(pivot_main_compile_cmd) -U CHECK_OVERFLOW -D USE_INT16
 	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
 	$(pivot_main_compile_cmd) -U CHECK_OVERFLOW -D USE_INT23
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
 	./build/pivot | tee -a $@
 	$(pivot_main_compile_cmd) -U CHECK_OVERFLOW -D USE_INT52
 	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
 	$(pivot_main_compile_cmd) -U CHECK_OVERFLOW -D USE_INT64
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
 	./build/pivot | tee -a $@
 
 # note: manually flip CHECK_OVERFLOW
 plot-pivot-checked: $(xs)
 	$(pivot_main_compile_cmd) -D CHECK_OVERFLOW -D USE_INT16
 	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
 	$(pivot_main_compile_cmd) -D CHECK_OVERFLOW -D USE_INT23
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
 	./build/pivot | tee -a $@
 	$(pivot_main_compile_cmd) -D CHECK_OVERFLOW -D USE_INT52
 	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
 	$(pivot_main_compile_cmd) -D CHECK_OVERFLOW -D USE_MPInt
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
 	./build/pivot | tee -a $@
 
 
