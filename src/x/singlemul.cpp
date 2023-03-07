@@ -9,13 +9,9 @@
     printf("Time: %ld\n",  t2 - t1); \
 
 
-__m512i mul_no(__m512i & a, __m512i & b) {
-  return _mm512_mullo_epi16(a,b);
-}
-
 __m512i no(__m512i & a, __m512i & b){
   int16Zmm c;
-  c = mul_no(a,b);
+  c = _mm512_mullo_epi16(a,b);
   return c;
 }
 
@@ -39,8 +35,8 @@ int main () {
   START_TIMER
 
   for (int i = 0; i < 100000000; i += 1) {
-    // a = no(a,b);
-    a = yes(a,b);
+    a = no(a,b);
+    // a = yes(a,b);
   }
 
   STOP_TIMER
