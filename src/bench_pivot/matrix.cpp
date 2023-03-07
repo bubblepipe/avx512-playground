@@ -1,5 +1,4 @@
 #include <bench_pivot/matrix.h>
-#include <bench_pivot/utils.h>
 #include <bench_pivot/MPInt.h>
 #include <cstdint>
 

@@ -1,10 +1,9 @@
 #include <bench_pivot/pivot.h>
-#include <bench_pivot/utils.h>
 #include <bench_pivot/MPInt.h>
-#include <cstdint>
 #include <x86intrin.h>
 #include <utils/int16_utils.cpp>
-#include <utils/cfenv_local.cpp>
+
+// #include <utils/cfenv_local.cpp>
 
 #define START_TIMER     unsigned int dummy;  \
     unsigned long t1 = __rdtscp(&dummy);
@@ -15,7 +14,7 @@
 #ifdef CHECK_OVERFLOW
   #define FECLEAREXCEPT feclearexcept_local_sse (FE_INEXACT | FE_INVALID);
   #define if_fetestexcept_return_false_else \
-    if (fetestexcept_local(FE_INEXACT | FE_INVALID)) { \
+    if (fetestexcept_local_sse(FE_INEXACT | FE_INVALID)) { \
       return false; \
     } else  
 #else 
