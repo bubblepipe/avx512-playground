@@ -1,0 +1,296 @@
+Iterations:        100
+Instructions:      2000
+Total Cycles:      718
+Total uOps:        2200
+
+Dispatch Width:    6
+uOps Per Cycle:    3.06
+IPC:               2.79
+Block RThroughput: 6.0
+
+
+Instruction Info:
+[1]: #uOps
+[2]: Latency
+[3]: RThroughput
+[4]: MayLoad
+[5]: MayStore
+[6]: HasSideEffects (U)
+
+[1]    [2]    [3]    [4]    [5]    [6]    Instructions:
+ 1      3     1.00                        vpbroadcastw	%ecx, %zmm3
+ 1      5     0.50                        vpmullw	%zmm0, %zmm3, %zmm2
+ 1      5     0.50                        vpmulhw	%zmm0, %zmm3, %zmm3
+ 1      1     1.00                        vpsraw	$15, %zmm2, %zmm4
+ 1      4     1.00                        vpcmpneqw	%zmm3, %zmm4, %k0
+ 1      3     1.00                        kortestd	%k0, %k0
+ 2      8     0.50    *                   vmovdqa64	(%rax), %zmm4
+ 1      5     0.50                        vpmullw	%zmm1, %zmm4, %zmm3
+ 1      5     0.50                        vpmulhw	%zmm1, %zmm4, %zmm4
+ 1      1     1.00                        vpsraw	$15, %zmm3, %zmm5
+ 1      4     1.00                        vpcmpneqw	%zmm4, %zmm5, %k0
+ 1      3     1.00                        kortestd	%k0, %k0
+ 1      1     0.33                        vpaddw	%zmm2, %zmm3, %zmm4
+ 1      1     1.00                        vpaddsw	%zmm3, %zmm2, %zmm2
+ 1      4     1.00                        vpcmpneqw	%zmm4, %zmm2, %k0
+ 1      3     1.00                        kortestd	%k0, %k0
+ 1      1     0.50                        jne	4666723172467343360
+ 2      1     1.00           *            vmovdqa64	%zmm4, (%rax)
+ 1      3     1.00                        imull	%edx, %ecx
+ 1      1     1.00           *            movw	%cx, (%rax,%r15,2)
+
+
+Resources:
+[0]   - ICXDivider
+[1]   - ICXFPDivider
+[2]   - ICXPort0
+[3]   - ICXPort1
+[4]   - ICXPort2
+[5]   - ICXPort3
+[6]   - ICXPort4
+[7]   - ICXPort5
+[8]   - ICXPort6
+[9]   - ICXPort7
+[10]  - ICXPort8
+[11]  - ICXPort9
+
+
+Resource pressure per iteration:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    [10]   [11]   
+ -      -     7.03   2.98   1.00   1.00   2.00   6.99   1.00   1.00    -      -     
+
+Resource pressure by instruction:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    [10]   [11]   Instructions:
+ -      -      -      -      -      -      -     1.00    -      -      -      -     vpbroadcastw	%ecx, %zmm3
+ -      -     0.33    -      -      -      -     0.67    -      -      -      -     vpmullw	%zmm0, %zmm3, %zmm2
+ -      -     0.17    -      -      -      -     0.83    -      -      -      -     vpmulhw	%zmm0, %zmm3, %zmm3
+ -      -     1.00    -      -      -      -      -      -      -      -      -     vpsraw	$15, %zmm2, %zmm4
+ -      -      -      -      -      -      -     1.00    -      -      -      -     vpcmpneqw	%zmm3, %zmm4, %k0
+ -      -     1.00    -      -      -      -      -      -      -      -      -     kortestd	%k0, %k0
+ -      -     0.01   0.98   0.02   0.98    -     0.01    -      -      -      -     vmovdqa64	(%rax), %zmm4
+ -      -     0.35    -      -      -      -     0.65    -      -      -      -     vpmullw	%zmm1, %zmm4, %zmm3
+ -      -     0.17    -      -      -      -     0.83    -      -      -      -     vpmulhw	%zmm1, %zmm4, %zmm4
+ -      -     1.00    -      -      -      -      -      -      -      -      -     vpsraw	$15, %zmm3, %zmm5
+ -      -      -      -      -      -      -     1.00    -      -      -      -     vpcmpneqw	%zmm4, %zmm5, %k0
+ -      -     1.00    -      -      -      -      -      -      -      -      -     kortestd	%k0, %k0
+ -      -      -     1.00    -      -      -      -      -      -      -      -     vpaddw	%zmm2, %zmm3, %zmm4
+ -      -     1.00    -      -      -      -      -      -      -      -      -     vpaddsw	%zmm3, %zmm2, %zmm2
+ -      -      -      -      -      -      -     1.00    -      -      -      -     vpcmpneqw	%zmm4, %zmm2, %k0
+ -      -     1.00    -      -      -      -      -      -      -      -      -     kortestd	%k0, %k0
+ -      -      -      -      -      -      -      -     1.00    -      -      -     jne	4666723172467343360
+ -      -      -      -     0.97   0.01   1.00    -      -     0.02    -      -     vmovdqa64	%zmm4, (%rax)
+ -      -      -     1.00    -      -      -      -      -      -      -      -     imull	%edx, %ecx
+ -      -      -      -     0.01   0.01   1.00    -      -     0.98    -      -     movw	%cx, (%rax,%r15,2)
+
+
+Timeline view:
+                    0123456789          0123456789          0123456789          0123456789
+Index     0123456789          0123456789          0123456789          0123456789          
+
+[0,0]     DeeeER    .    .    .    .    .    .    .    .    .    .    .    .    .    .   .   vpbroadcastw	%ecx, %zmm3
+[0,1]     D===eeeeeER    .    .    .    .    .    .    .    .    .    .    .    .    .   .   vpmullw	%zmm0, %zmm3, %zmm2
+[0,2]     D===eeeeeER    .    .    .    .    .    .    .    .    .    .    .    .    .   .   vpmulhw	%zmm0, %zmm3, %zmm3
+[0,3]     D========eER   .    .    .    .    .    .    .    .    .    .    .    .    .   .   vpsraw	$15, %zmm2, %zmm4
+[0,4]     D=========eeeeER    .    .    .    .    .    .    .    .    .    .    .    .   .   vpcmpneqw	%zmm3, %zmm4, %k0
+[0,5]     D=============eeeER .    .    .    .    .    .    .    .    .    .    .    .   .   kortestd	%k0, %k0
+[0,6]     .DeeeeeeeeE-------R .    .    .    .    .    .    .    .    .    .    .    .   .   vmovdqa64	(%rax), %zmm4
+[0,7]     .D========eeeeeE--R .    .    .    .    .    .    .    .    .    .    .    .   .   vpmullw	%zmm1, %zmm4, %zmm3
+[0,8]     .D=========eeeeeE-R .    .    .    .    .    .    .    .    .    .    .    .   .   vpmulhw	%zmm1, %zmm4, %zmm4
+[0,9]     .D=============eE-R .    .    .    .    .    .    .    .    .    .    .    .   .   vpsraw	$15, %zmm3, %zmm5
+[0,10]    .D==============eeeeER   .    .    .    .    .    .    .    .    .    .    .   .   vpcmpneqw	%zmm4, %zmm5, %k0
+[0,11]    . D=================eeeER.    .    .    .    .    .    .    .    .    .    .   .   kortestd	%k0, %k0
+[0,12]    . D============eE-------R.    .    .    .    .    .    .    .    .    .    .   .   vpaddw	%zmm2, %zmm3, %zmm4
+[0,13]    . D=============eE------R.    .    .    .    .    .    .    .    .    .    .   .   vpaddsw	%zmm3, %zmm2, %zmm2
+[0,14]    . D==============eeeeE--R.    .    .    .    .    .    .    .    .    .    .   .   vpcmpneqw	%zmm4, %zmm2, %k0
+[0,15]    . D==================eeeER    .    .    .    .    .    .    .    .    .    .   .   kortestd	%k0, %k0
+[0,16]    . D=====================eER   .    .    .    .    .    .    .    .    .    .   .   jne	4666723172467343360
+[0,17]    .  D============eE--------R   .    .    .    .    .    .    .    .    .    .   .   vmovdqa64	%zmm4, (%rax)
+[0,18]    .  DeeeE------------------R   .    .    .    .    .    .    .    .    .    .   .   imull	%edx, %ecx
+[0,19]    .  D=============eE-------R   .    .    .    .    .    .    .    .    .    .   .   movw	%cx, (%rax,%r15,2)
+[1,0]     .  D===eeeE---------------R   .    .    .    .    .    .    .    .    .    .   .   vpbroadcastw	%ecx, %zmm3
+[1,1]     .  D=======eeeeeE---------R   .    .    .    .    .    .    .    .    .    .   .   vpmullw	%zmm0, %zmm3, %zmm2
+[1,2]     .   D=======eeeeeE--------R   .    .    .    .    .    .    .    .    .    .   .   vpmulhw	%zmm0, %zmm3, %zmm3
+[1,3]     .   D============eE-------R   .    .    .    .    .    .    .    .    .    .   .   vpsraw	$15, %zmm2, %zmm4
+[1,4]     .   D=============eeeeE---R   .    .    .    .    .    .    .    .    .    .   .   vpcmpneqw	%zmm3, %zmm4, %k0
+[1,5]     .   D=================eeeER   .    .    .    .    .    .    .    .    .    .   .   kortestd	%k0, %k0
+[1,6]     .   DeeeeeeeeE------------R   .    .    .    .    .    .    .    .    .    .   .   vmovdqa64	(%rax), %zmm4
+[1,7]     .    D=======eeeeeE-------R   .    .    .    .    .    .    .    .    .    .   .   vpmullw	%zmm1, %zmm4, %zmm3
+[1,8]     .    D=======eeeeeE-------R   .    .    .    .    .    .    .    .    .    .   .   vpmulhw	%zmm1, %zmm4, %zmm4
+[1,9]     .    D============eE------R   .    .    .    .    .    .    .    .    .    .   .   vpsraw	$15, %zmm3, %zmm5
+[1,10]    .    D=============eeeeE--R   .    .    .    .    .    .    .    .    .    .   .   vpcmpneqw	%zmm4, %zmm5, %k0
+[1,11]    .    D=================eeeER  .    .    .    .    .    .    .    .    .    .   .   kortestd	%k0, %k0
+[1,12]    .    D============eE-------R  .    .    .    .    .    .    .    .    .    .   .   vpaddw	%zmm2, %zmm3, %zmm4
+[1,13]    .    .D============eE------R  .    .    .    .    .    .    .    .    .    .   .   vpaddsw	%zmm3, %zmm2, %zmm2
+[1,14]    .    .D=============eeeeE--R  .    .    .    .    .    .    .    .    .    .   .   vpcmpneqw	%zmm4, %zmm2, %k0
+[1,15]    .    .D=================eeeER .    .    .    .    .    .    .    .    .    .   .   kortestd	%k0, %k0
+[1,16]    .    .D====================eER.    .    .    .    .    .    .    .    .    .   .   jne	4666723172467343360
+[1,17]    .    .D============eE--------R.    .    .    .    .    .    .    .    .    .   .   vmovdqa64	%zmm4, (%rax)
+[1,18]    .    . DeeeE-----------------R.    .    .    .    .    .    .    .    .    .   .   imull	%edx, %ecx
+[1,19]    .    . D============eE-------R.    .    .    .    .    .    .    .    .    .   .   movw	%cx, (%rax,%r15,2)
+[2,0]     .    . D====eeeE-------------R.    .    .    .    .    .    .    .    .    .   .   vpbroadcastw	%ecx, %zmm3
+[2,1]     .    . D=======eeeeeE--------R.    .    .    .    .    .    .    .    .    .   .   vpmullw	%zmm0, %zmm3, %zmm2
+[2,2]     .    . D=============eeeeeE--R.    .    .    .    .    .    .    .    .    .   .   vpmulhw	%zmm0, %zmm3, %zmm3
+[2,3]     .    . D=================eE--R.    .    .    .    .    .    .    .    .    .   .   vpsraw	$15, %zmm2, %zmm4
+[2,4]     .    .  D=================eeeeER   .    .    .    .    .    .    .    .    .   .   vpcmpneqw	%zmm3, %zmm4, %k0
+[2,5]     .    .  D=====================eeeER.    .    .    .    .    .    .    .    .   .   kortestd	%k0, %k0
+[2,6]     .    .  DeeeeeeeeE----------------R.    .    .    .    .    .    .    .    .   .   vmovdqa64	(%rax), %zmm4
+[2,7]     .    .  D=============eeeeeE------R.    .    .    .    .    .    .    .    .   .   vpmullw	%zmm1, %zmm4, %zmm3
+[2,8]     .    .  D==============eeeeeE-----R.    .    .    .    .    .    .    .    .   .   vpmulhw	%zmm1, %zmm4, %zmm4
+[2,9]     .    .   D=================eE-----R.    .    .    .    .    .    .    .    .   .   vpsraw	$15, %zmm3, %zmm5
+[2,10]    .    .   D==================eeeeE-R.    .    .    .    .    .    .    .    .   .   vpcmpneqw	%zmm4, %zmm5, %k0
+[2,11]    .    .   D======================eeeER   .    .    .    .    .    .    .    .   .   kortestd	%k0, %k0
+[2,12]    .    .   D=================eE-------R   .    .    .    .    .    .    .    .   .   vpaddw	%zmm2, %zmm3, %zmm4
+[2,13]    .    .   D==================eE------R   .    .    .    .    .    .    .    .   .   vpaddsw	%zmm3, %zmm2, %zmm2
+[2,14]    .    .   D===================eeeeE--R   .    .    .    .    .    .    .    .   .   vpcmpneqw	%zmm4, %zmm2, %k0
+[2,15]    .    .    D======================eeeER  .    .    .    .    .    .    .    .   .   kortestd	%k0, %k0
+[2,16]    .    .    D=========================eER .    .    .    .    .    .    .    .   .   jne	4666723172467343360
+[2,17]    .    .    D=================eE--------R .    .    .    .    .    .    .    .   .   vmovdqa64	%zmm4, (%rax)
+[2,18]    .    .    DeeeE-----------------------R .    .    .    .    .    .    .    .   .   imull	%edx, %ecx
+[2,19]    .    .    D==================eE-------R .    .    .    .    .    .    .    .   .   movw	%cx, (%rax,%r15,2)
+[3,0]     .    .    .D==eeeE--------------------R .    .    .    .    .    .    .    .   .   vpbroadcastw	%ecx, %zmm3
+[3,1]     .    .    .D============eeeeeE--------R .    .    .    .    .    .    .    .   .   vpmullw	%zmm0, %zmm3, %zmm2
+[3,2]     .    .    .D=============eeeeeE-------R .    .    .    .    .    .    .    .   .   vpmulhw	%zmm0, %zmm3, %zmm3
+[3,3]     .    .    .D=================eE-------R .    .    .    .    .    .    .    .   .   vpsraw	$15, %zmm2, %zmm4
+[3,4]     .    .    .D==================eeeeE---R .    .    .    .    .    .    .    .   .   vpcmpneqw	%zmm3, %zmm4, %k0
+[3,5]     .    .    .D======================eeeER .    .    .    .    .    .    .    .   .   kortestd	%k0, %k0
+[3,6]     .    .    . DeeeeeeeeE----------------R .    .    .    .    .    .    .    .   .   vmovdqa64	(%rax), %zmm4
+[3,7]     .    .    . D=============eeeeeE------R .    .    .    .    .    .    .    .   .   vpmullw	%zmm1, %zmm4, %zmm3
+[3,8]     .    .    . D==============eeeeeE-----R .    .    .    .    .    .    .    .   .   vpmulhw	%zmm1, %zmm4, %zmm4
+[3,9]     .    .    . D==================eE-----R .    .    .    .    .    .    .    .   .   vpsraw	$15, %zmm3, %zmm5
+[3,10]    .    .    . D===================eeeeE-R .    .    .    .    .    .    .    .   .   vpcmpneqw	%zmm4, %zmm5, %k0
+[3,11]    .    .    .  D======================eeeER    .    .    .    .    .    .    .   .   kortestd	%k0, %k0
+[3,12]    .    .    .  D=================eE-------R    .    .    .    .    .    .    .   .   vpaddw	%zmm2, %zmm3, %zmm4
+[3,13]    .    .    .  D=====================eE---R    .    .    .    .    .    .    .   .   vpaddsw	%zmm3, %zmm2, %zmm2
+[3,14]    .    .    .  D======================eeeeER   .    .    .    .    .    .    .   .   vpcmpneqw	%zmm4, %zmm2, %k0
+[3,15]    .    .    .  D==========================eeeER.    .    .    .    .    .    .   .   kortestd	%k0, %k0
+[3,16]    .    .    .  D=============================eER    .    .    .    .    .    .   .   jne	4666723172467343360
+[3,17]    .    .    .   D=================eE-----------R    .    .    .    .    .    .   .   vmovdqa64	%zmm4, (%rax)
+[3,18]    .    .    .   D=eeeE-------------------------R    .    .    .    .    .    .   .   imull	%edx, %ecx
+[3,19]    .    .    .   D==================eE----------R    .    .    .    .    .    .   .   movw	%cx, (%rax,%r15,2)
+[4,0]     .    .    .   D================eeeE----------R    .    .    .    .    .    .   .   vpbroadcastw	%ecx, %zmm3
+[4,1]     .    .    .   D===================eeeeeE-----R    .    .    .    .    .    .   .   vpmullw	%zmm0, %zmm3, %zmm2
+[4,2]     .    .    .    D===================eeeeeE----R    .    .    .    .    .    .   .   vpmulhw	%zmm0, %zmm3, %zmm3
+[4,3]     .    .    .    D=======================eE----R    .    .    .    .    .    .   .   vpsraw	$15, %zmm2, %zmm4
+[4,4]     .    .    .    D========================eeeeER    .    .    .    .    .    .   .   vpcmpneqw	%zmm3, %zmm4, %k0
+[4,5]     .    .    .    .D===========================eeeER .    .    .    .    .    .   .   kortestd	%k0, %k0
+[4,6]     .    .    .    .DeeeeeeeeE----------------------R .    .    .    .    .    .   .   vmovdqa64	(%rax), %zmm4
+[4,7]     .    .    .    .D================eeeeeE---------R .    .    .    .    .    .   .   vpmullw	%zmm1, %zmm4, %zmm3
+[4,8]     .    .    .    .D====================eeeeeE-----R .    .    .    .    .    .   .   vpmulhw	%zmm1, %zmm4, %zmm4
+[4,9]     .    .    .    . D====================eE--------R .    .    .    .    .    .   .   vpsraw	$15, %zmm3, %zmm5
+[4,10]    .    .    .    . D========================eeeeE-R .    .    .    .    .    .   .   vpcmpneqw	%zmm4, %zmm5, %k0
+[4,11]    .    .    .    . D============================eeeER    .    .    .    .    .   .   kortestd	%k0, %k0
+[4,12]    .    .    .    . D=====================eE---------R    .    .    .    .    .   .   vpaddw	%zmm2, %zmm3, %zmm4
+[4,13]    .    .    .    .  D======================eE-------R    .    .    .    .    .   .   vpaddsw	%zmm3, %zmm2, %zmm2
+[4,14]    .    .    .    .  D========================eeeeE--R    .    .    .    .    .   .   vpcmpneqw	%zmm4, %zmm2, %k0
+[4,15]    .    .    .    .  D============================eeeER   .    .    .    .    .   .   kortestd	%k0, %k0
+[4,16]    .    .    .    .   D==============================eER  .    .    .    .    .   .   jne	4666723172467343360
+[4,17]    .    .    .    .   D====================eE----------R  .    .    .    .    .   .   vmovdqa64	%zmm4, (%rax)
+[4,18]    .    .    .    .   DeeeE----------------------------R  .    .    .    .    .   .   imull	%edx, %ecx
+[4,19]    .    .    .    .    D====================eE---------R  .    .    .    .    .   .   movw	%cx, (%rax,%r15,2)
+[5,0]     .    .    .    .    D================eeeE-----------R  .    .    .    .    .   .   vpbroadcastw	%ecx, %zmm3
+[5,1]     .    .    .    .    D====================eeeeeE-----R  .    .    .    .    .   .   vpmullw	%zmm0, %zmm3, %zmm2
+[5,2]     .    .    .    .    D=====================eeeeeE----R  .    .    .    .    .   .   vpmulhw	%zmm0, %zmm3, %zmm3
+[5,3]     .    .    .    .    .D==========================eE--R  .    .    .    .    .   .   vpsraw	$15, %zmm2, %zmm4
+[5,4]     .    .    .    .    .D===========================eeeeER.    .    .    .    .   .   vpcmpneqw	%zmm3, %zmm4, %k0
+[5,5]     .    .    .    .    . D==============================eeeER  .    .    .    .   .   kortestd	%k0, %k0
+[5,6]     .    .    .    .    . DeeeeeeeeE-------------------------R  .    .    .    .   .   vmovdqa64	(%rax), %zmm4
+[5,7]     .    .    .    .    .  D==============eeeeeE-------------R  .    .    .    .   .   vpmullw	%zmm1, %zmm4, %zmm3
+[5,8]     .    .    .    .    .  D===============eeeeeE------------R  .    .    .    .   .   vpmulhw	%zmm1, %zmm4, %zmm4
+[5,9]     .    .    .    .    .  D===================eE------------R  .    .    .    .   .   vpsraw	$15, %zmm3, %zmm5
+[5,10]    .    .    .    .    .   D===================eeeeE--------R  .    .    .    .   .   vpcmpneqw	%zmm4, %zmm5, %k0
+[5,11]    .    .    .    .    .   D========================eeeE----R  .    .    .    .   .   kortestd	%k0, %k0
+[5,12]    .    .    .    .    .   D=====================eE---------R  .    .    .    .   .   vpaddw	%zmm2, %zmm3, %zmm4
+[5,13]    .    .    .    .    .    D========================eE-----R  .    .    .    .   .   vpaddsw	%zmm3, %zmm2, %zmm2
+[5,14]    .    .    .    .    .    D=========================eeeeE-R  .    .    .    .   .   vpcmpneqw	%zmm4, %zmm2, %k0
+[5,15]    .    .    .    .    .    .D============================eeeER.    .    .    .   .   kortestd	%k0, %k0
+[5,16]    .    .    .    .    .    .D===============================eER    .    .    .   .   jne	4666723172467343360
+[5,17]    .    .    .    .    .    . D===================eE-----------R    .    .    .   .   vmovdqa64	%zmm4, (%rax)
+[5,18]    .    .    .    .    .    . DeeeE----------------------------R    .    .    .   .   imull	%edx, %ecx
+[5,19]    .    .    .    .    .    . D====================eE----------R    .    .    .   .   movw	%cx, (%rax,%r15,2)
+[6,0]     .    .    .    .    .    . D=================eeeE-----------R    .    .    .   .   vpbroadcastw	%ecx, %zmm3
+[6,1]     .    .    .    .    .    .  D===================eeeeeE------R    .    .    .   .   vpmullw	%zmm0, %zmm3, %zmm2
+[6,2]     .    .    .    .    .    .  D=====================eeeeeE----R    .    .    .   .   vpmulhw	%zmm0, %zmm3, %zmm3
+[6,3]     .    .    .    .    .    .  D=========================eE----R    .    .    .   .   vpsraw	$15, %zmm2, %zmm4
+[6,4]     .    .    .    .    .    .  D==========================eeeeER    .    .    .   .   vpcmpneqw	%zmm3, %zmm4, %k0
+[6,5]     .    .    .    .    .    .   D=============================eeeER .    .    .   .   kortestd	%k0, %k0
+[6,6]     .    .    .    .    .    .   DeeeeeeeeE------------------------R .    .    .   .   vmovdqa64	(%rax), %zmm4
+[6,7]     .    .    .    .    .    .   D===============eeeeeE------------R .    .    .   .   vpmullw	%zmm1, %zmm4, %zmm3
+[6,8]     .    .    .    .    .    .    D===============eeeeeE-----------R .    .    .   .   vpmulhw	%zmm1, %zmm4, %zmm4
+[6,9]     .    .    .    .    .    .    D====================eE----------R .    .    .   .   vpsraw	$15, %zmm3, %zmm5
+[6,10]    .    .    .    .    .    .    D=====================eeeeE------R .    .    .   .   vpcmpneqw	%zmm4, %zmm5, %k0
+[6,11]    .    .    .    .    .    .    .D========================eeeE---R .    .    .   .   kortestd	%k0, %k0
+[6,12]    .    .    .    .    .    .    .D=====================eE--------R .    .    .   .   vpaddw	%zmm2, %zmm3, %zmm4
+[6,13]    .    .    .    .    .    .    .D=========================eE----R .    .    .   .   vpaddsw	%zmm3, %zmm2, %zmm2
+[6,14]    .    .    .    .    .    .    . D=========================eeeeER .    .    .   .   vpcmpneqw	%zmm4, %zmm2, %k0
+[6,15]    .    .    .    .    .    .    . D=============================eeeER   .    .   .   kortestd	%k0, %k0
+[6,16]    .    .    .    .    .    .    . D================================eER  .    .   .   jne	4666723172467343360
+[6,17]    .    .    .    .    .    .    .  D====================eE-----------R  .    .   .   vmovdqa64	%zmm4, (%rax)
+[6,18]    .    .    .    .    .    .    .  DeeeE-----------------------------R  .    .   .   imull	%edx, %ecx
+[6,19]    .    .    .    .    .    .    .  D=====================eE----------R  .    .   .   movw	%cx, (%rax,%r15,2)
+[7,0]     .    .    .    .    .    .    .   D============eeeE----------------R  .    .   .   vpbroadcastw	%ecx, %zmm3
+[7,1]     .    .    .    .    .    .    .   D=================eeeeeE---------R  .    .   .   vpmullw	%zmm0, %zmm3, %zmm2
+[7,2]     .    .    .    .    .    .    .   D==================eeeeeE--------R  .    .   .   vpmulhw	%zmm0, %zmm3, %zmm3
+[7,3]     .    .    .    .    .    .    .    D======================eE-------R  .    .   .   vpsraw	$15, %zmm2, %zmm4
+[7,4]     .    .    .    .    .    .    .    D=======================eeeeE---R  .    .   .   vpcmpneqw	%zmm3, %zmm4, %k0
+[7,5]     .    .    .    .    .    .    .    .D==========================eeeER  .    .   .   kortestd	%k0, %k0
+[7,6]     .    .    .    .    .    .    .    .DeeeeeeeeE---------------------R  .    .   .   vmovdqa64	(%rax), %zmm4
+[7,7]     .    .    .    .    .    .    .    .D=================eeeeeE-------R  .    .   .   vpmullw	%zmm1, %zmm4, %zmm3
+[7,8]     .    .    .    .    .    .    .    . D==================eeeeeE-----R  .    .   .   vpmulhw	%zmm1, %zmm4, %zmm4
+[7,9]     .    .    .    .    .    .    .    . D======================eE-----R  .    .   .   vpsraw	$15, %zmm3, %zmm5
+[7,10]    .    .    .    .    .    .    .    . D=======================eeeeE-R  .    .   .   vpcmpneqw	%zmm4, %zmm5, %k0
+[7,11]    .    .    .    .    .    .    .    .  D==========================eeeER.    .   .   kortestd	%k0, %k0
+[7,12]    .    .    .    .    .    .    .    .  D====================eE--------R.    .   .   vpaddw	%zmm2, %zmm3, %zmm4
+[7,13]    .    .    .    .    .    .    .    .   D=====================eE------R.    .   .   vpaddsw	%zmm3, %zmm2, %zmm2
+[7,14]    .    .    .    .    .    .    .    .   D======================eeeeE--R.    .   .   vpcmpneqw	%zmm4, %zmm2, %k0
+[7,15]    .    .    .    .    .    .    .    .   D==========================eeeER    .   .   kortestd	%k0, %k0
+[7,16]    .    .    .    .    .    .    .    .    D============================eER   .   .   jne	4666723172467343360
+[7,17]    .    .    .    .    .    .    .    .    D===================eE---------R   .   .   vmovdqa64	%zmm4, (%rax)
+[7,18]    .    .    .    .    .    .    .    .    DeeeE--------------------------R   .   .   imull	%edx, %ecx
+[7,19]    .    .    .    .    .    .    .    .    .D===================eE--------R   .   .   movw	%cx, (%rax,%r15,2)
+[8,0]     .    .    .    .    .    .    .    .    .D===============eeeE----------R   .   .   vpbroadcastw	%ecx, %zmm3
+[8,1]     .    .    .    .    .    .    .    .    .D==================eeeeeE-----R   .   .   vpmullw	%zmm0, %zmm3, %zmm2
+[8,2]     .    .    .    .    .    .    .    .    .D=====================eeeeeE--R   .   .   vpmulhw	%zmm0, %zmm3, %zmm3
+[8,3]     .    .    .    .    .    .    .    .    . D========================eE--R   .   .   vpsraw	$15, %zmm2, %zmm4
+[8,4]     .    .    .    .    .    .    .    .    . D=========================eeeeER .   .   vpcmpneqw	%zmm3, %zmm4, %k0
+[8,5]     .    .    .    .    .    .    .    .    .  D============================eeeER  .   kortestd	%k0, %k0
+[8,6]     .    .    .    .    .    .    .    .    .  DeeeeeeeeE-----------------------R  .   vmovdqa64	(%rax), %zmm4
+[8,7]     .    .    .    .    .    .    .    .    .  D====================eeeeeE------R  .   vpmullw	%zmm1, %zmm4, %zmm3
+[8,8]     .    .    .    .    .    .    .    .    .   D===================eeeeeE------R  .   vpmulhw	%zmm1, %zmm4, %zmm4
+[8,9]     .    .    .    .    .    .    .    .    .   D========================eE-----R  .   vpsraw	$15, %zmm3, %zmm5
+[8,10]    .    .    .    .    .    .    .    .    .   D=========================eeeeE-R  .   vpcmpneqw	%zmm4, %zmm5, %k0
+[8,11]    .    .    .    .    .    .    .    .    .    D============================eeeER.   kortestd	%k0, %k0
+[8,12]    .    .    .    .    .    .    .    .    .    D=======================eE-------R.   vpaddw	%zmm2, %zmm3, %zmm4
+[8,13]    .    .    .    .    .    .    .    .    .    .D=======================eE------R.   vpaddsw	%zmm3, %zmm2, %zmm2
+[8,14]    .    .    .    .    .    .    .    .    .    .D========================eeeeE--R.   vpcmpneqw	%zmm4, %zmm2, %k0
+[8,15]    .    .    .    .    .    .    .    .    .    .D============================eeeER   kortestd	%k0, %k0
+Truncated display due to cycle limit
+
+
+Average Wait times (based on the timeline view):
+[0]: Executions
+[1]: Average time spent waiting in a scheduler's queue
+[2]: Average time spent waiting in a scheduler's queue while ready
+[3]: Average time elapsed from WB until retire stage
+
+      [0]    [1]    [2]    [3]
+0.     10    11.1   7.9    11.7      vpbroadcastw	%ecx, %zmm3
+1.     10    15.1   1.1    6.1       vpmullw	%zmm0, %zmm3, %zmm2
+2.     10    16.6   2.8    4.4       vpmulhw	%zmm0, %zmm3, %zmm3
+3.     10    20.7   1.2    4.0       vpsraw	$15, %zmm2, %zmm4
+4.     10    21.6   0.0    1.0       vpcmpneqw	%zmm3, %zmm4, %k0
+5.     10    25.0   0.0    0.0       kortestd	%k0, %k0
+6.     10    1.0    1.0    18.8      vmovdqa64	(%rax), %zmm4
+7.     10    14.8   6.0    7.8       vpmullw	%zmm1, %zmm4, %zmm3
+8.     10    15.6   7.2    6.6       vpmulhw	%zmm1, %zmm4, %zmm4
+9.     10    19.4   0.2    6.6       vpsraw	$15, %zmm3, %zmm5
+10.    10    20.6   0.0    2.6       vpcmpneqw	%zmm4, %zmm5, %k0
+11.    10    24.1   0.1    0.9       kortestd	%k0, %k0
+12.    10    19.4   0.0    7.6       vpaddw	%zmm2, %zmm3, %zmm4
+13.    10    21.2   2.4    5.2       vpaddsw	%zmm3, %zmm2, %zmm2
+14.    10    22.2   0.1    1.3       vpcmpneqw	%zmm4, %zmm2, %k0
+15.    10    26.0   0.0    0.0       kortestd	%k0, %k0
+16.    10    28.6   0.0    0.0       jne	4666723172467343360
+17.    10    18.7   0.0    9.5       vmovdqa64	%zmm4, (%rax)
+18.    10    1.1    1.0    25.0      imull	%edx, %ecx
+19.    10    19.2   1.0    8.5       movw	%cx, (%rax,%r15,2)
+       10    18.1   1.6    6.4       <total>
