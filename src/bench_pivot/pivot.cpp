@@ -1,6 +1,5 @@
 #include <bench_pivot/pivot.h>
 #include <bench_pivot/MPInt.h>
-#include <x86intrin.h>
 #include <utils/int16_utils.cpp>
 
 // #include <utils/cfenv_local.cpp>
@@ -152,13 +151,14 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   T * pivotRowPtr = mat.getRowPtr(pivotRow);
   
   T tmp = pivotRowPtr[0];
-  pivotRowPtr[0] = -pivotRowPtr[pivotCol];
-  pivotRowPtr[pivotCol] = -tmp;
+  pivotRowPtr[0] = -pivotRowPtr[pivotCol];  // TODO: scalar negation
+  
+  pivotRowPtr[pivotCol] = -tmp; // TODO: scalar negation
 
-  auto pivotRowPtr_pivotCol = -tmp;
-  auto pivotRowPtr_0 = pivotRowPtr[0];
+  auto pivotRowPtr_pivotCol = -tmp; // TODO: scalar negation
+  auto pivotRowPtr_0 = pivotRowPtr[0]; // TODO: scalar assignment
 
-  Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
+  Zmm pivotRowVec = *(Zmm *)pivotRowPtr; 
 
   if (pivotRowPtr_0 < 0) { 
     #ifdef CHECK_OVERFLOW
@@ -171,9 +171,9 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
 
   T * rowPtr = mat.getRowPtr(0);
    
-  pivotRowVec[0] = 0;
-  Zmm ConstA = pivotRowPtr_0;
-  ConstA[0] = 1;
+  pivotRowVec[0] = 0; // TODO: scalar assign 0
+  Zmm ConstA = pivotRowPtr_0; 
+  ConstA[0] = 1; // TODO: scalar assign
   
   for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
     if (rowIndex == pivotRow) { rowPtr += mat.nColPadding; continue; }
@@ -183,19 +183,30 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
     Zmm ConstC = pivotColBackup;
     Zmm matRowVec = *(Zmm *)(rowPtr);
     #ifdef CHECK_OVERFLOW
-    Zmm result = add<true>(mul<true>(ConstC, pivotRowVec), mul<true>(matRowVec, ConstA));
+    __sync_synchronize();
+    Zmm result = mul<true>(pivotRowVec,matRowVec);
+    __sync_synchronize();
+    // auto mul0 = mul<true>(ConstC, pivotRowVec);
+    // __sync_synchronize();
+    // auto mul1 =  mul<true>(matRowVec, ConstA);
+    // __sync_synchronize();
+    // Zmm result = add<true>(mul0,mul1);
+    // __sync_synchronize();
     #else
-    Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
+    __sync_synchronize();
+    Zmm result = pivotRowVec * matRowVec;
+    __sync_synchronize();
+    // Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
     #endif
-    matRowVec[0] *= pivotRowPtr_0;
+    // matRowVec[0] *= pivotRowPtr_0;
     *(Zmm *)(rowPtr) =  result;
 
-    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
+    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol; // TODO: scalar multiply
     //mat.normalizerow2(rowPtr);
     rowPtr += mat.nColPadding;
   }
 
-  return true;
+  return false;
 
 }
 

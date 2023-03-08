@@ -35,8 +35,8 @@ int main () {
   START_TIMER
 
   for (int i = 0; i < 100000000; i += 1) {
-    a = no(a,b);
-    // a = yes(a,b);
+    // a = no(a,b);
+    a = yes(a,b);
   }
 
   STOP_TIMER

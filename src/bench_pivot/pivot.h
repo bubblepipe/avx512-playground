@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <bench_pivot/matrix.h>
+#include <x86intrin.h>
 
 template <typename T> 
 bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) ;
