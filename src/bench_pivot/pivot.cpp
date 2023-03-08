@@ -64,6 +64,7 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
 
     Zmm ConstC = pivotColBackup;
     Zmm matRowVec = *(Zmm *)(rowPtr);
+    matRowVec[0] *= pivotRowPtr_0; // TODO: https://grosser.zulipchat.com/#narrow/stream/240241-Presburger-.26-Polyhedral/topic/vectorized.20pivot/near/339397953
     Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
     *(Zmm *)(rowPtr) =  result;
 
@@ -135,7 +136,7 @@ template<> bool pivot<double>(matrix<double> & mat, unsigned pivotRow, unsigned 
   }
 
   if_fetestexcept_return_false_else
-  return false;
+  return true;
 
 }
 
