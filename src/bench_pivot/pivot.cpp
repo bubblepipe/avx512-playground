@@ -171,7 +171,7 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
     #ifdef CHECK_OVERFLOW
     negate<true>(pivotRowVec, overflow_accum);
     #else
-    negate<false>(pivotRowVec);
+    negate<false>(pivotRowVec, overflow_accum);
     #endif
   }
   //mat.normalizerow2(pivotRowPtr);

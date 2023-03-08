@@ -1,0 +1,58 @@
+uncheck/int16_t          18.5 ns         18.5 ns     39848948
+uncheck/int16_t          17.6 ns         17.6 ns     39190726
+uncheck/int16_t          17.6 ns         17.6 ns     39859158
+uncheck/int16_t          18.0 ns         18.0 ns     39609319
+uncheck/int16_t          16.3 ns         16.3 ns     42989954
+uncheck/int16_t          17.7 ns         17.7 ns     38591999
+uncheck/int16_t          17.3 ns         17.3 ns     40422311
+uncheck/int16_t          17.5 ns         17.5 ns     39605543
+uncheck/float            24.2 ns         24.2 ns     28963519
+uncheck/float            22.6 ns         22.6 ns     31647101
+uncheck/float            22.6 ns         22.6 ns     33286916
+uncheck/float            22.4 ns         22.4 ns     31548271
+uncheck/float            22.1 ns         22.1 ns     33570493
+uncheck/float            22.6 ns         22.6 ns     30929712
+uncheck/float            22.6 ns         22.6 ns     32793702
+uncheck/float            22.4 ns         22.4 ns     32149463
+uncheck/double           22.5 ns         22.5 ns     31096140
+uncheck/double           30.8 ns         30.8 ns     24121180
+uncheck/double           23.5 ns         23.5 ns     31097423
+uncheck/double           25.6 ns         25.6 ns     23270352
+uncheck/double           31.3 ns         31.3 ns     25081217
+uncheck/double           23.2 ns         23.2 ns     31373323
+uncheck/double           25.1 ns         25.1 ns     25902388
+uncheck/double           31.3 ns         31.3 ns     23267031
+
+
+check/int16_t          24.2 ns         24.2 ns     29005128
+check/int16_t          24.1 ns         24.1 ns     29001721
+check/int16_t          24.2 ns         24.2 ns     28988171
+check/int16_t          24.1 ns         24.1 ns     29105418
+check/int16_t          24.2 ns         24.2 ns     28903363
+check/int16_t          24.1 ns         24.1 ns     29012509
+check/int16_t          24.1 ns         24.1 ns     29140834
+check/int16_t          24.1 ns         24.1 ns     29024021
+check/float            29.1 ns         29.1 ns     24417693
+check/float            29.2 ns         29.1 ns     24655638
+check/float            28.3 ns         28.3 ns     24647864
+check/float            28.7 ns         28.7 ns     24785725
+check/float            28.3 ns         28.3 ns     24711985
+check/float            28.5 ns         28.5 ns     24806138
+check/float            28.5 ns         28.5 ns     24812565
+check/float            28.8 ns         28.8 ns     24719225
+check/double           28.6 ns         28.6 ns     23877319
+check/double           28.7 ns         28.7 ns     24611626
+check/double           28.7 ns         28.7 ns     23772349
+check/double           29.4 ns         29.4 ns     23681948
+check/double           28.3 ns         28.3 ns     24553080
+check/double           29.1 ns         29.1 ns     23696553
+check/double           29.4 ns         29.4 ns     23330712
+check/double           28.4 ns         28.4 ns     24649141
+-- check/MPInt             589 ns          589 ns      1188752
+-- check/MPInt             589 ns          589 ns      1187917
+-- check/MPInt             589 ns          589 ns      1188378
+-- check/MPInt             589 ns          589 ns      1187203
+-- check/MPInt             589 ns          589 ns      1187578
+-- check/MPInt             589 ns          589 ns      1189240
+-- check/MPInt             589 ns          589 ns      1188454
+-- check/MPInt             589 ns          589 ns      1187660
