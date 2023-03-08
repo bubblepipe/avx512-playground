@@ -17,6 +17,7 @@ void prepare_mat(matrix<T> & mat){
 
 template <typename T>
 bool validate(matrix<T> & mat){
+  printf("mat.row = %d, mat.col = %d, mat.nColPadding = %d \n", mat.nRow, mat.nCol, mat.nColPadding);
   bool ret = true;
   for (int rowIndex = 0; rowIndex < mat.nRow; rowIndex += 1) {
     for (int colIndex = 0; colIndex < mat.nCol; colIndex += 1) {
@@ -34,14 +35,10 @@ bool validate(matrix<T> & mat){
   return ret; 
 }
 
-static void PivotCol16Bench(benchmark::State& state) {
-    
-  auto nRow = input_mat_row;
-  auto nCol = input_mat_col;
-  auto pivotRow = input_mat_pivot_row;
-  auto pivotCol = input_mat_pivot_col;
 
-#define BENCH(TYPE)    {                                    \
+
+
+#define BENCH(TYPE)   \
     matrix<TYPE> mat(nRow,nCol);                            \
     prepare_mat(mat);                                       \
     if (pivot<TYPE>(mat, pivotRow, pivotCol)) {                  \
@@ -51,7 +48,13 @@ static void PivotCol16Bench(benchmark::State& state) {
     for (auto _ : state) {                                  \
       pivot<TYPE>(mat, pivotRow, pivotCol);                 \
     }                                                       \
-  }
+
+static void PivotCol16Bench(benchmark::State& state) {
+    
+  auto nRow = input_mat_row;
+  auto nCol = input_mat_col;
+  auto pivotRow = input_mat_pivot_row;
+  auto pivotCol = input_mat_pivot_col;
 
 #ifdef USE_INT64
   BENCH(int64_t)
@@ -68,6 +71,7 @@ static void PivotCol16Bench(benchmark::State& state) {
 # else
   printf("neither USE_INT23 not USE_INT52 is defined in pivot"); exit(0);
 # endif
+    
 
 }
 
