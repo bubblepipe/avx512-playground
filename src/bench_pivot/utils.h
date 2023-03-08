@@ -17,7 +17,7 @@
 // #define USE_INT23
 // #define USE_INT52
 // #define EMPTY_PIVOT
-// #define CHECK_OVERFLOW
+#define CHECK_OVERFLOW
 
 #define TRIVIAL 0
 #define INFO 114
