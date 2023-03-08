@@ -1,0 +1,150 @@
+Iterations:        100
+Instructions:      700
+Total Cycles:      317
+Total uOps:        1000
+
+Dispatch Width:    6
+uOps Per Cycle:    3.15
+IPC:               2.21
+Block RThroughput: 2.0
+
+
+Instruction Info:
+[1]: #uOps
+[2]: Latency
+[3]: RThroughput
+[4]: MayLoad
+[5]: MayStore
+[6]: HasSideEffects (U)
+
+[1]    [2]    [3]    [4]    [5]    [6]    Instructions:
+ 1      3     1.00                        vpbroadcastw	%ecx, %zmm2
+ 1      5     0.50                        vpmullw	%zmm0, %zmm2, %zmm2
+ 2      12    0.50    *                   vpmullw	(%rax), %zmm1, %zmm3
+ 1      1     0.33                        vpaddw	%zmm2, %zmm3, %zmm2
+ 2      1     1.00           *            vmovdqa64	%zmm2, (%rax)
+ 2      8     1.00    *                   imull	60(%rsp), %ecx
+ 1      1     1.00           *            movw	%cx, (%rax,%r15,2)
+
+
+Resources:
+[0]   - ICXDivider
+[1]   - ICXFPDivider
+[2]   - ICXPort0
+[3]   - ICXPort1
+[4]   - ICXPort2
+[5]   - ICXPort3
+[6]   - ICXPort4
+[7]   - ICXPort5
+[8]   - ICXPort6
+[9]   - ICXPort7
+[10]  - ICXPort8
+[11]  - ICXPort9
+
+
+Resource pressure per iteration:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    [10]   [11]   
+ -      -     1.61   1.61   1.34   1.35   2.00   1.78    -     1.31    -      -     
+
+Resource pressure by instruction:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    [10]   [11]   Instructions:
+ -      -      -      -      -      -      -     1.00    -      -      -      -     vpbroadcastw	%ecx, %zmm2
+ -      -     0.64    -      -      -      -     0.36    -      -      -      -     vpmullw	%zmm0, %zmm2, %zmm2
+ -      -     0.61    -     0.48   0.52    -     0.39    -      -      -      -     vpmullw	(%rax), %zmm1, %zmm3
+ -      -     0.36   0.61    -      -      -     0.03    -      -      -      -     vpaddw	%zmm2, %zmm3, %zmm2
+ -      -      -      -     0.02   0.13   1.00    -      -     0.85    -      -     vmovdqa64	%zmm2, (%rax)
+ -      -      -     1.00   0.83   0.17    -      -      -      -      -      -     imull	60(%rsp), %ecx
+ -      -      -      -     0.01   0.53   1.00    -      -     0.46    -      -     movw	%cx, (%rax,%r15,2)
+
+
+Timeline view:
+                    0123456789          0123456789       
+Index     0123456789          0123456789          0123456
+
+[0,0]     DeeeER    .    .    .    .    .    .    .    ..   vpbroadcastw	%ecx, %zmm2
+[0,1]     D===eeeeeER    .    .    .    .    .    .    ..   vpmullw	%zmm0, %zmm2, %zmm2
+[0,2]     DeeeeeeeeeeeeER.    .    .    .    .    .    ..   vpmullw	(%rax), %zmm1, %zmm3
+[0,3]     D============eER    .    .    .    .    .    ..   vpaddw	%zmm2, %zmm3, %zmm2
+[0,4]     .D============eER   .    .    .    .    .    ..   vmovdqa64	%zmm2, (%rax)
+[0,5]     .DeeeeeeeeE-----R   .    .    .    .    .    ..   imull	60(%rsp), %ecx
+[0,6]     .D=============eER  .    .    .    .    .    ..   movw	%cx, (%rax,%r15,2)
+[1,0]     .D========eeeE---R  .    .    .    .    .    ..   vpbroadcastw	%ecx, %zmm2
+[1,1]     . D==========eeeeeER.    .    .    .    .    ..   vpmullw	%zmm0, %zmm2, %zmm2
+[1,2]     . DeeeeeeeeeeeeE---R.    .    .    .    .    ..   vpmullw	(%rax), %zmm1, %zmm3
+[1,3]     . D===============eER    .    .    .    .    ..   vpaddw	%zmm2, %zmm3, %zmm2
+[1,4]     . D================eER   .    .    .    .    ..   vmovdqa64	%zmm2, (%rax)
+[1,5]     .  D=eeeeeeeeE-------R   .    .    .    .    ..   imull	60(%rsp), %ecx
+[1,6]     .  D================eER  .    .    .    .    ..   movw	%cx, (%rax,%r15,2)
+[2,0]     .  D=========eeeE-----R  .    .    .    .    ..   vpbroadcastw	%ecx, %zmm2
+[2,1]     .  D============eeeeeER  .    .    .    .    ..   vpmullw	%zmm0, %zmm2, %zmm2
+[2,2]     .   DeeeeeeeeeeeeE----R  .    .    .    .    ..   vpmullw	(%rax), %zmm1, %zmm3
+[2,3]     .   D================eER .    .    .    .    ..   vpaddw	%zmm2, %zmm3, %zmm2
+[2,4]     .   D=================eER.    .    .    .    ..   vmovdqa64	%zmm2, (%rax)
+[2,5]     .    D==eeeeeeeeE-------R.    .    .    .    ..   imull	60(%rsp), %ecx
+[2,6]     .    D=================eER    .    .    .    ..   movw	%cx, (%rax,%r15,2)
+[3,0]     .    D==========eeeE-----R    .    .    .    ..   vpbroadcastw	%ecx, %zmm2
+[3,1]     .    D=============eeeeeER    .    .    .    ..   vpmullw	%zmm0, %zmm2, %zmm2
+[3,2]     .    .DeeeeeeeeeeeeE-----R    .    .    .    ..   vpmullw	(%rax), %zmm1, %zmm3
+[3,3]     .    .D=================eER   .    .    .    ..   vpaddw	%zmm2, %zmm3, %zmm2
+[3,4]     .    .D==================eER  .    .    .    ..   vmovdqa64	%zmm2, (%rax)
+[3,5]     .    . D===eeeeeeeeE-------R  .    .    .    ..   imull	60(%rsp), %ecx
+[3,6]     .    . D==================eER .    .    .    ..   movw	%cx, (%rax,%r15,2)
+[4,0]     .    . D============eeeE----R .    .    .    ..   vpbroadcastw	%ecx, %zmm2
+[4,1]     .    . D===============eeeeeER.    .    .    ..   vpmullw	%zmm0, %zmm2, %zmm2
+[4,2]     .    .  DeeeeeeeeeeeeE-------R.    .    .    ..   vpmullw	(%rax), %zmm1, %zmm3
+[4,3]     .    .  D===================eER    .    .    ..   vpaddw	%zmm2, %zmm3, %zmm2
+[4,4]     .    .  D====================eER   .    .    ..   vmovdqa64	%zmm2, (%rax)
+[4,5]     .    .   D====eeeeeeeeE--------R   .    .    ..   imull	60(%rsp), %ecx
+[4,6]     .    .   D====================eER  .    .    ..   movw	%cx, (%rax,%r15,2)
+[5,0]     .    .   D============eeeE------R  .    .    ..   vpbroadcastw	%ecx, %zmm2
+[5,1]     .    .   D===============eeeeeE-R  .    .    ..   vpmullw	%zmm0, %zmm2, %zmm2
+[5,2]     .    .    DeeeeeeeeeeeeE--------R  .    .    ..   vpmullw	(%rax), %zmm1, %zmm3
+[5,3]     .    .    D===================eER  .    .    ..   vpaddw	%zmm2, %zmm3, %zmm2
+[5,4]     .    .    D====================eER .    .    ..   vmovdqa64	%zmm2, (%rax)
+[5,5]     .    .    .D=====eeeeeeeeE-------R .    .    ..   imull	60(%rsp), %ecx
+[5,6]     .    .    .D====================eER.    .    ..   movw	%cx, (%rax,%r15,2)
+[6,0]     .    .    .D==============eeeE----R.    .    ..   vpbroadcastw	%ecx, %zmm2
+[6,1]     .    .    .D=================eeeeeER    .    ..   vpmullw	%zmm0, %zmm2, %zmm2
+[6,2]     .    .    . D=eeeeeeeeeeeeE--------R    .    ..   vpmullw	(%rax), %zmm1, %zmm3
+[6,3]     .    .    . D=====================eER   .    ..   vpaddw	%zmm2, %zmm3, %zmm2
+[6,4]     .    .    . D======================eER  .    ..   vmovdqa64	%zmm2, (%rax)
+[6,5]     .    .    .  D======eeeeeeeeE--------R  .    ..   imull	60(%rsp), %ecx
+[6,6]     .    .    .  D======================eER .    ..   movw	%cx, (%rax,%r15,2)
+[7,0]     .    .    .  D==============eeeE------R .    ..   vpbroadcastw	%ecx, %zmm2
+[7,1]     .    .    .  D=================eeeeeE-R .    ..   vpmullw	%zmm0, %zmm2, %zmm2
+[7,2]     .    .    .   DeeeeeeeeeeeeE----------R .    ..   vpmullw	(%rax), %zmm1, %zmm3
+[7,3]     .    .    .   D=====================eER .    ..   vpaddw	%zmm2, %zmm3, %zmm2
+[7,4]     .    .    .   D======================eER.    ..   vmovdqa64	%zmm2, (%rax)
+[7,5]     .    .    .    D=======eeeeeeeeE-------R.    ..   imull	60(%rsp), %ecx
+[7,6]     .    .    .    D======================eER    ..   movw	%cx, (%rax,%r15,2)
+[8,0]     .    .    .    D===============eeeE-----R    ..   vpbroadcastw	%ecx, %zmm2
+[8,1]     .    .    .    D==================eeeeeER    ..   vpmullw	%zmm0, %zmm2, %zmm2
+[8,2]     .    .    .    .DeeeeeeeeeeeeE----------R    ..   vpmullw	(%rax), %zmm1, %zmm3
+[8,3]     .    .    .    .D======================eER   ..   vpaddw	%zmm2, %zmm3, %zmm2
+[8,4]     .    .    .    .D=======================eER  ..   vmovdqa64	%zmm2, (%rax)
+[8,5]     .    .    .    . D========eeeeeeeeE-------R  ..   imull	60(%rsp), %ecx
+[8,6]     .    .    .    . D=======================eER ..   movw	%cx, (%rax,%r15,2)
+[9,0]     .    .    .    . D================eeeE-----R ..   vpbroadcastw	%ecx, %zmm2
+[9,1]     .    .    .    . D===================eeeeeER ..   vpmullw	%zmm0, %zmm2, %zmm2
+[9,2]     .    .    .    .  DeeeeeeeeeeeeE-----------R ..   vpmullw	(%rax), %zmm1, %zmm3
+[9,3]     .    .    .    .  D=======================eER..   vpaddw	%zmm2, %zmm3, %zmm2
+[9,4]     .    .    .    .  D========================eER.   vmovdqa64	%zmm2, (%rax)
+[9,5]     .    .    .    .   D=========eeeeeeeeE-------R.   imull	60(%rsp), %ecx
+[9,6]     .    .    .    .   D========================eER   movw	%cx, (%rax,%r15,2)
+
+
+Average Wait times (based on the timeline view):
+[0]: Executions
+[1]: Average time spent waiting in a scheduler's queue
+[2]: Average time spent waiting in a scheduler's queue while ready
+[3]: Average time elapsed from WB until retire stage
+
+      [0]    [1]    [2]    [3]
+0.     10    12.0   0.3    4.3       vpbroadcastw	%ecx, %zmm2
+1.     10    14.9   0.0    0.2       vpmullw	%zmm0, %zmm2, %zmm2
+2.     10    1.1    1.1    6.6       vpmullw	(%rax), %zmm1, %zmm3
+3.     10    19.5   0.0    0.0       vpaddw	%zmm2, %zmm3, %zmm2
+4.     10    20.4   0.0    0.0       vmovdqa64	%zmm2, (%rax)
+5.     10    5.5    0.1    7.0       imull	60(%rsp), %ecx
+6.     10    20.5   1.0    0.0       movw	%cx, (%rax,%r15,2)
+       10    13.4   0.4    2.6       <total>

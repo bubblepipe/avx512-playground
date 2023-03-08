@@ -1,10 +1,8 @@
 #include <bench_pivot/pivot.h>
-#include <bench_pivot/utils.h>
 #include <bench_pivot/MPInt.h>
-#include <cstdint>
-#include <x86intrin.h>
 #include <utils/int16_utils.cpp>
-#include <utils/cfenv_local.cpp>
+
+// #include <utils/cfenv_local.cpp>
 
 #define START_TIMER     unsigned int dummy;  \
     unsigned long t1 = __rdtscp(&dummy);
@@ -15,7 +13,7 @@
 #ifdef CHECK_OVERFLOW
   #define FECLEAREXCEPT feclearexcept_local_sse (FE_INEXACT | FE_INVALID);
   #define if_fetestexcept_return_false_else \
-    if (fetestexcept_local(FE_INEXACT | FE_INVALID)) { \
+    if (fetestexcept_local_sse(FE_INEXACT | FE_INVALID)) { \
       return false; \
     } else  
 #else 
@@ -144,6 +142,8 @@ template<> bool pivot<double>(matrix<double> & mat, unsigned pivotRow, unsigned 
 
 template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigned pivotCol) {
 
+  bool overflow_accum = false;
+
   typedef int16_t T;
   typedef int16Zmm Zmm;
 
@@ -153,17 +153,23 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   T * pivotRowPtr = mat.getRowPtr(pivotRow);
   
   T tmp = pivotRowPtr[0];
-  pivotRowPtr[0] = -pivotRowPtr[pivotCol];
-  pivotRowPtr[pivotCol] = -tmp;
+  T tmq = pivotRowPtr[pivotCol];
 
-  auto pivotRowPtr_pivotCol = -tmp;
+  #ifdef CHECK_OVERFLOW
+  overflow_accum |=  std::numeric_limits<int16_t>::min() == tmq;
+  overflow_accum |= std::numeric_limits<int16_t>::min() == tmp;
+  #endif
+
+  pivotRowPtr[0] = -tmq;  
+  pivotRowPtr[pivotCol] = -tmp; 
+  auto pivotRowPtr_pivotCol = -tmp; 
   auto pivotRowPtr_0 = pivotRowPtr[0];
 
-  Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
+  Zmm pivotRowVec = *(Zmm *)pivotRowPtr; 
 
   if (pivotRowPtr_0 < 0) { 
     #ifdef CHECK_OVERFLOW
-    negate<true>(pivotRowVec);
+    negate<true>(pivotRowVec, overflow_accum);
     #else
     negate<false>(pivotRowVec);
     #endif
@@ -172,9 +178,9 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
 
   T * rowPtr = mat.getRowPtr(0);
    
-  pivotRowVec[0] = 0;
-  Zmm ConstA = pivotRowPtr_0;
-  ConstA[0] = 1;
+  pivotRowVec[0] = 0; 
+  Zmm ConstA = pivotRowPtr_0; 
+  ConstA[0] = 1; 
   
   for (unsigned rowIndex = 0; rowIndex < nRow; rowIndex += 1) {
     if (rowIndex == pivotRow) { rowPtr += mat.nColPadding; continue; }
@@ -184,20 +190,26 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
     Zmm ConstC = pivotColBackup;
     Zmm matRowVec = *(Zmm *)(rowPtr);
     #ifdef CHECK_OVERFLOW
-    Zmm result = add<true>(mul<true>(ConstC, pivotRowVec), mul<true>(matRowVec, ConstA));
+    auto mul0 = mul<true>(ConstC, pivotRowVec, overflow_accum);
+    auto mul1 =  mul<true>(matRowVec, ConstA, overflow_accum);
+    Zmm result = add<true>(mul0,mul1, overflow_accum);
     #else
     Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
     #endif
-    matRowVec[0] *= pivotRowPtr_0;
     *(Zmm *)(rowPtr) =  result;
 
-    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
+    int16_t lo = pivotColBackup * pivotRowPtr_pivotCol; 
+    rowPtr[pivotCol] = lo;
+    #ifdef CHECK_OVERFLOW
+    int32_t hi_lo = pivotColBackup * pivotRowPtr_pivotCol;
+    overflow_accum |= lo != hi_lo;
+    #endif
+
     //mat.normalizerow2(rowPtr);
     rowPtr += mat.nColPadding;
   }
 
-  return true;
-
+  return !overflow_accum;
 }
 
 

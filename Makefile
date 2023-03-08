@@ -3,7 +3,7 @@ CC=clang++-17
 # CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -Wno-format 
 CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g 
 CFLAGS_no_vec=-O3 -mno-avx -mno-sse -march=native -I src/ -fno-omit-frame-pointer -std=c++17
-# CFLAGS=-O0 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g
+# CFLAGS=-O1 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g
 
 INC_GBENCH=-isystem include/benchmark/include
 INC_LIBSIMDPP=-I ./include/libsimdpp
@@ -40,6 +40,8 @@ pivot_main_compile_cmd=$(CC) $(CFLAGS) $(xs_out) src/bench_pivot/main.cpp -o $(O
 bench-pivot: $(xs)
 	$(pivot_main_compile_cmd)
 
+singlemul: $(xs)
+	$(CC) $(CFLAGS) $(xs_out) src/x/singlemul.cpp -o $(OUT)singlemul $(INC) $(LINK)
 # float toys
 ################################################################################
 
@@ -153,26 +155,43 @@ plot-align-unalign: flat-align flat-unalign
 	codium $@ 
 
 
-plot-pivot-unchecked: $(xs)
-	$(pivot_main_compile_cmd) -U CHECK_OVERFLOW -D USE_INT16
+plot-pivot: $(xs)
+	$(pivot_main_compile_cmd)  -D USE_INT16
 	./build/pivot | tee -a $@
-	$(pivot_main_compile_cmd) -U CHECK_OVERFLOW -D USE_INT23
 	./build/pivot | tee -a $@
-	$(pivot_main_compile_cmd) -U CHECK_OVERFLOW -D USE_INT52
 	./build/pivot | tee -a $@
-	$(pivot_main_compile_cmd) -U CHECK_OVERFLOW -D USE_INT64
 	./build/pivot | tee -a $@
-
-# note: manually flip CHECK_OVERFLOW
-plot-pivot-checked: $(xs)
-	$(pivot_main_compile_cmd) -D CHECK_OVERFLOW -D USE_INT16
 	./build/pivot | tee -a $@
-	$(pivot_main_compile_cmd) -D CHECK_OVERFLOW -D USE_INT23
 	./build/pivot | tee -a $@
-	$(pivot_main_compile_cmd) -D CHECK_OVERFLOW -D USE_INT52
 	./build/pivot | tee -a $@
-	$(pivot_main_compile_cmd) -D CHECK_OVERFLOW -D USE_MPInt
 	./build/pivot | tee -a $@
+	$(pivot_main_compile_cmd)  -D USE_INT23
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	$(pivot_main_compile_cmd)  -D USE_INT52
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	./build/pivot | tee -a $@
+	# $(pivot_main_compile_cmd)  -D USE_MPInt
+	# ./build/pivot | tee -a $@
+	# ./build/pivot | tee -a $@
+	# ./build/pivot | tee -a $@
+	# ./build/pivot | tee -a $@
+	# ./build/pivot | tee -a $@
+	# ./build/pivot | tee -a $@
+	# ./build/pivot | tee -a $@
+	# ./build/pivot | tee -a $@
 
 
 ################################################################################
