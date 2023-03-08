@@ -65,7 +65,6 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
     Zmm ConstC = pivotColBackup;
     Zmm matRowVec = *(Zmm *)(rowPtr);
     Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
-    matRowVec[0] *= pivotRowPtr_0;
     *(Zmm *)(rowPtr) =  result;
 
     rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
