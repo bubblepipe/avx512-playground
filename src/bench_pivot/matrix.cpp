@@ -64,7 +64,10 @@ unsigned int matrix<T>::compute_nCol_padding(unsigned int nCol) {
     printf("compute_nCol_padding\n");
     exit(0); // TODO: 
   }
-  return nCol + (vector_size - (nCol % vector_size));
+  if (nCol % vector_size == 0) 
+    return nCol;
+  else 
+    return nCol + (vector_size -(nCol % vector_size) );
   // return nCol + (vector_size - (nCol % vector_size)) + 1;
 }
 
