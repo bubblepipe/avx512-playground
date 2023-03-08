@@ -17,14 +17,10 @@
 // #define USE_INT23
 // #define USE_INT52
 // #define EMPTY_PIVOT
-#define CHECK_OVERFLOW
+// #define CHECK_OVERFLOW
 
-#define TRIVIAL 0
-#define INFO 114
-#define WARNING 514
-#define ERROR 1919
 
-void printx(int priority, const char *__restrict format, ...);
+#define NROW 30
 
 #define ZmmDoubleVecSize 8
 #define ZmmInt64VecSize 8
@@ -37,6 +33,12 @@ typedef int64_t int64Zmm __attribute__((ext_vector_type(ZmmInt64VecSize)));
 typedef int16_t int16Zmm __attribute__((ext_vector_type(ZmmInt16VecSize)));
 
 void trigger_FPE();
+
+#define TRIVIAL 0
+#define INFO 114
+#define WARNING 514
+#define ERROR 1919
+void printx(int priority, const char *__restrict format, ...);
 
 
 // Copied from https://github.com/openbsd/src/blob/master/lib/libm/arch/amd64/fenv.c
