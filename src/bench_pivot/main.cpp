@@ -45,7 +45,7 @@ static void PivotCol16Bench(benchmark::State& state) {
     matrix<TYPE> mat(nRow,nCol);                            \
     prepare_mat(mat);                                       \
     if (pivot<TYPE>(mat, pivotRow, pivotCol)) {                  \
-      if (!validate(mat)) {mat.print(); exit(0);} \
+      if (!validate(mat)) {mat.print(); } \
     }                         \
     prepare_mat(mat);                                       \
     for (auto _ : state) {                                  \
