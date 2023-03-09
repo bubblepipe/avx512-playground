@@ -6,7 +6,8 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import sys
 import numpy as np
 
-filename = './verified-plot/plot-pivot-checked_check_unchecked'
+# filename = './verified-plot/plot-pivot-checked_check_unchecked'
+filename = 'StartFromEmptyPivot-0'
 # size = int(sys.argv[2])
 
 f = open(filename, "r")

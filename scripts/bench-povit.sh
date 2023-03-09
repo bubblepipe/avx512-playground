@@ -11,7 +11,7 @@ do
         fi
         export PIVOT_SETTING=$flags
         make bench-pivot -j8 > /dev/null 
-        for x in {1..8}
+        for x in {1..3}
         do
             OUTPUT=$(./build/pivot 2>/dev/null | tail -1) 
             OUTPUT=$overflow/$OUTPUT

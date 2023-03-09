@@ -57,20 +57,20 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
   Zmm ConstA = pivotRowPtr_0;
   ConstA[0] = 1;
   
-  for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
-    T pivotColBackup = rowPtr[pivotCol];
-    if (pivotColBackup == 0) { rowPtr += ZmmFloatVecSize; continue; }
+  // for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
+  //   T pivotColBackup = rowPtr[pivotCol];
+  //   if (pivotColBackup == 0) { rowPtr += ZmmFloatVecSize; continue; }
 
-    Zmm ConstC = pivotColBackup;
-    Zmm matRowVec = *(Zmm *)(rowPtr);
-    matRowVec[0] *= pivotRowPtr_0; // TODO: https://grosser.zulipchat.com/#narrow/stream/240241-Presburger-.26-Polyhedral/topic/vectorized.20pivot/near/339397953
-    Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
-    *(Zmm *)(rowPtr) =  result;
+  //   Zmm ConstC = pivotColBackup;
+  //   Zmm matRowVec = *(Zmm *)(rowPtr);
+  //   matRowVec[0] *= pivotRowPtr_0; // TODO: https://grosser.zulipchat.com/#narrow/stream/240241-Presburger-.26-Polyhedral/topic/vectorized.20pivot/near/339397953
+  //   Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
+  //   *(Zmm *)(rowPtr) =  result;
 
-    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
-    //mat.normalizerow2(rowPtr);
-    rowPtr += ZmmFloatVecSize;
-  }
+  //   rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
+  //   //mat.normalizerow2(rowPtr);
+  //   rowPtr += ZmmFloatVecSize;
+  // }
 
   if_fetestexcept_return_false_else
   return true;
@@ -112,28 +112,28 @@ template<> bool pivot<double>(matrix<double> & mat, unsigned pivotRow, unsigned 
   Zmm ConstA_head = pivotRowPtr_0;
   ConstA_head[0] = 1;
   
-  for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
+  // for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
     
-    T pivotColBackup = rowPtr[pivotCol];
-    if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
+  //   T pivotColBackup = rowPtr[pivotCol];
+  //   if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
 
-    Zmm ConstC = pivotColBackup;
-    Zmm matRowVec_head = *(Zmm *)(rowPtr);
-    Zmm result = ConstC * pivotRowVec_head + matRowVec_head * ConstA_head;
-    matRowVec_head[0] *= pivotRowPtr_0;
-    *(Zmm *)(rowPtr) =  result;
+  //   Zmm ConstC = pivotColBackup;
+  //   Zmm matRowVec_head = *(Zmm *)(rowPtr);
+  //   Zmm result = ConstC * pivotRowVec_head + matRowVec_head * ConstA_head;
+  //   matRowVec_head[0] *= pivotRowPtr_0;
+  //   *(Zmm *)(rowPtr) =  result;
 
-    for (unsigned colIndex = ZmmDoubleVecSize; colIndex < mat.nColPadding; colIndex += ZmmDoubleVecSize) {
-      Zmm matRowVec = *(Zmm *)(rowPtr + colIndex);
-      Zmm pivotRowVec = *(Zmm *)(pivotRowPtr + colIndex);
-      Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
-      *(Zmm *)(rowPtr + colIndex) = result;
-    }
+  //   for (unsigned colIndex = ZmmDoubleVecSize; colIndex < mat.nColPadding; colIndex += ZmmDoubleVecSize) {
+  //     Zmm matRowVec = *(Zmm *)(rowPtr + colIndex);
+  //     Zmm pivotRowVec = *(Zmm *)(pivotRowPtr + colIndex);
+  //     Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
+  //     *(Zmm *)(rowPtr + colIndex) = result;
+  //   }
 
-    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
-    //mat.normalizerow2(rowPtr);
-    rowPtr += mat.nColPadding;
-  }
+  //   rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
+  //   //mat.normalizerow2(rowPtr);
+  //   rowPtr += mat.nColPadding;
+  // }
 
   if_fetestexcept_return_false_else
   return true;
@@ -182,31 +182,31 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   Zmm ConstA = pivotRowPtr_0; 
   ConstA[0] = 1; 
   
-  for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
-    T pivotColBackup = rowPtr[pivotCol];
-    if (pivotColBackup == 0) { rowPtr += ZmmInt16VecSize; continue; }
+  // for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
+  //   T pivotColBackup = rowPtr[pivotCol];
+  //   if (pivotColBackup == 0) { rowPtr += ZmmInt16VecSize; continue; }
 
-    Zmm ConstC = pivotColBackup;
-    Zmm matRowVec = *(Zmm *)(rowPtr);
-    #ifdef CHECK_OVERFLOW
-    auto mul0 = mul<true>(ConstC, pivotRowVec, overflow_accum);
-    auto mul1 =  mul<true>(matRowVec, ConstA, overflow_accum);
-    Zmm result = add<true>(mul0,mul1, overflow_accum);
-    #else
-    Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
-    #endif
-    *(Zmm *)(rowPtr) =  result;
+  //   Zmm ConstC = pivotColBackup;
+  //   Zmm matRowVec = *(Zmm *)(rowPtr);
+  //   #ifdef CHECK_OVERFLOW
+  //   auto mul0 = mul<true>(ConstC, pivotRowVec, overflow_accum);
+  //   auto mul1 =  mul<true>(matRowVec, ConstA, overflow_accum);
+  //   Zmm result = add<true>(mul0,mul1, overflow_accum);
+  //   #else
+  //   Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
+  //   #endif
+  //   *(Zmm *)(rowPtr) =  result;
 
-    int16_t lo = pivotColBackup * pivotRowPtr_pivotCol; 
-    rowPtr[pivotCol] = lo;
-    #ifdef CHECK_OVERFLOW
-    int32_t hi_lo = pivotColBackup * pivotRowPtr_pivotCol;
-    overflow_accum |= lo != hi_lo;
-    #endif
+  //   int16_t lo = pivotColBackup * pivotRowPtr_pivotCol; 
+  //   rowPtr[pivotCol] = lo;
+  //   #ifdef CHECK_OVERFLOW
+  //   int32_t hi_lo = pivotColBackup * pivotRowPtr_pivotCol;
+  //   overflow_accum |= lo != hi_lo;
+  //   #endif
 
-    //mat.normalizerow2(rowPtr);
-    rowPtr += ZmmInt16VecSize;
-  }
+  //   //mat.normalizerow2(rowPtr);
+  //   rowPtr += ZmmInt16VecSize;
+  // }
 
   return !overflow_accum;
 }
