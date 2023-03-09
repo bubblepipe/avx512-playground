@@ -197,12 +197,12 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   //   #endif
   //   *(Zmm *)(rowPtr) =  result;
 
-  //   int16_t lo = pivotColBackup * pivotRowPtr_pivotCol; 
-  //   rowPtr[pivotCol] = lo;
-  //   #ifdef CHECK_OVERFLOW
-  //   int32_t hi_lo = pivotColBackup * pivotRowPtr_pivotCol;
-  //   overflow_accum |= lo != hi_lo;
-  //   #endif
+    int16_t lo = pivotColBackup * pivotRowPtr_pivotCol; 
+    rowPtr[pivotCol] = lo;
+    #ifdef CHECK_OVERFLOW
+    int32_t hi_lo = pivotColBackup * pivotRowPtr_pivotCol;
+    overflow_accum |= lo != hi_lo;
+    #endif
 
     //mat.normalizerow2(rowPtr);
     rowPtr += ZmmInt16VecSize;
