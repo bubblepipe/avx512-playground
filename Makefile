@@ -27,6 +27,9 @@ CFLAGS+=${AVX512_ENABLED}
 # export PIVOT_SCALAR="-mno-avx -mno-sse -DSCALAR"
 CFLAGS+=${PIVOT_SCALAR}
 
+# export PIVOT_SETTING="-DCHECK_OVERFLOW -DUSE_INT16"
+CFLAGS+=${PIVOT_SETTING}
+
 OUT=build/
 
 
@@ -153,45 +156,6 @@ plot-align-unalign: flat-align flat-unalign
 	./build/flat-unalign --benchmark_filter="flat/fma_iu/" | tee -a $@
 	./build/flat-align --benchmark_filter="flat/fma_ia/" | tee -a $@
 	codium $@ 
-
-
-plot-pivot: $(xs)
-	$(pivot_main_compile_cmd)  -D USE_INT16
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	$(pivot_main_compile_cmd)  -D USE_INT23
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	$(pivot_main_compile_cmd)  -D USE_INT52
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	./build/pivot | tee -a $@
-	# $(pivot_main_compile_cmd)  -D USE_MPInt
-	# ./build/pivot | tee -a $@
-	# ./build/pivot | tee -a $@
-	# ./build/pivot | tee -a $@
-	# ./build/pivot | tee -a $@
-	# ./build/pivot | tee -a $@
-	# ./build/pivot | tee -a $@
-	# ./build/pivot | tee -a $@
-	# ./build/pivot | tee -a $@
 
 
 ################################################################################
