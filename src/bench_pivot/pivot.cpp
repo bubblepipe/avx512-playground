@@ -28,7 +28,7 @@ bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
 
 template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pivotCol) {
 
-  FECLEAREXCEPT
+  // FECLEAREXCEPT
 
   typedef float T;
   typedef floatZmm Zmm;
@@ -80,7 +80,7 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
 
 template<> bool pivot<double>(matrix<double> & mat, unsigned pivotRow, unsigned pivotCol) {
 
-  FECLEAREXCEPT
+  // FECLEAREXCEPT
 
   typedef double T;
   typedef doubleZmm Zmm;
