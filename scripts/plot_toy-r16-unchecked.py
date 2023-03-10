@@ -6,7 +6,7 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import sys
 import numpy as np
 
-filename = sys.argv[1]
+filename = "./verified-plot/unchecked-bar"
 # size = int(sys.argv[2])
 
 f = open(filename, "r")
