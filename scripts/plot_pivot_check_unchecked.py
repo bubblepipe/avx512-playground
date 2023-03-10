@@ -7,7 +7,12 @@ import sys
 import numpy as np
 
 # filename = './verified-plot/plot-pivot-checked_check_unchecked'
-filename = 'StartFromEmptyPivot-0'
+filename = 'StartFromEmptyPivot-2'
+# filename='StartFromEmptyPivot-only-test-no-clear'
+# title = 'pivot, row 30, col 16, loop empty'
+# title='StartFromEmptyPivot-only-test-no-clear'
+# title = 'pivot, row 30, col 16, loop only scalar op'
+title = 'pivot, row 30, col 16, full'
 # size = int(sys.argv[2])
 
 f = open(filename, "r")
@@ -50,7 +55,6 @@ errss = []
 xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)', 'MPInt (scalcar)']
 xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)']
 legends = ['overflow check disabled', 'overflow check enabled']
-title = 'pivot, row 30, col 16, no normalize, fast FPE'
 for bench_name, bench_vals in d.items():
 
     xss.append([x + barWidth for x in xss[-1]])
@@ -73,17 +77,17 @@ for rect, label in zip(rects, labels):
     height = rect.get_height()
     txt = height
     ax.text(
-        rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize="xx-large"
+        rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize="large"
     )
 
-ax.legend(labels=legends, fontsize="x-large")
-
+ax.legend(labels=legends, fontsize="large", loc="upper left")
+ax.set_ylim(ymin=0,ymax=35)
 for (xs,ys,errs) in zip(xss,yss,errss):
     color = next(color_iter)
     ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2)
 
 
-plt.xticks([ x-0.5*barWidth for x in xss[1]], list(xlabel), fontsize="x-large")
-ax.set_ylabel("time (ns), lower is better", fontsize="x-large")
-ax.set_title(title, fontsize="xx-large")
+plt.xticks([ x-0.5*barWidth for x in xss[1]], list(xlabel), fontsize="large")
+ax.set_ylabel("time (ns), lower is better", fontsize="large")
+ax.set_title(title, fontsize="large")
 plt.show()
