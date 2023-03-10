@@ -96,12 +96,9 @@ void mat_add_intrinsic ( unsigned int row, unsigned int col,
 void mat_fma_intrinsic_check ( unsigned int row, unsigned int col, 
     matrix<float> & mat_src1, matrix<float> & mat_src2, matrix<float> & mat_src3, matrix<float> & mat_dst ) {
 
-    std::feclearexcept (FE_ALL_EXCEPT);
-    feenableexcept (FE_INEXACT | FE_INVALID);
-
     mat_fma_intrinsic( row, col, mat_src1, mat_src2, mat_src3, mat_dst ) ;
-
-    fedisableexcept (FE_INEXACT | FE_INVALID);
+    volatile bool ofl = fetestexcept_local(FE_INEXACT | FE_INVALID);
+    
 }
 
 

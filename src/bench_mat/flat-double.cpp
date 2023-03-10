@@ -90,12 +90,8 @@ void mat_fma_check ( unsigned int row, unsigned int col,
 void mat_fma_intrinsic_check ( unsigned int row, unsigned int col, 
     matrix<double> & mat_src1, matrix<double> & mat_src2, matrix<double> & mat_src3, matrix<double> & mat_dst ) {
 
-    std::feclearexcept (FE_ALL_EXCEPT);
-    feenableexcept (FE_INEXACT | FE_INVALID);
-
     mat_fma_intrinsic( row, col, mat_src1, mat_src2, mat_src3, mat_dst ) ;
-
-    fedisableexcept (FE_INEXACT | FE_INVALID);
+    volatile bool ofl = fetestexcept_local(FE_INEXACT | FE_INVALID);
 }
 
 // void mat_2m1a_manual_check ( unsigned int row, unsigned int col, 
