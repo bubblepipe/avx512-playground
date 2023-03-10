@@ -70,11 +70,11 @@ for rect, label in zip(rects, labels):
     ax.text(
         rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize="large"
     )
-# ax.legend(labels=['int16', 'int32', 'float', 'double'], fontsize="x-large")
+ax.legend(labels=['int16', 'int32', 'float', 'double'], fontsize="x-large")
 # ax.legend(labels=['int16', 'int32', 'int16 with overflow checking', 'int32 with overflow checking'], fontsize="x-large")
 # ax.legend(labels=['float', 'double', 'float with overflow checking', 'double with overflow checking'], fontsize="x-large")
 # ax.legend(labels=['unaligned', 'aligned'], fontsize="x-large")
-ax.legend(labels=['int16', 'float', 'double', 'MPInt'], fontsize="x-large")
+# ax.legend(labels=['int16', 'float', 'double', 'MPInt'], fontsize="x-large")
 
 for (xs,ys,errs) in zip(xss,yss,errss):
     color = next(color_iter)
