@@ -6,7 +6,7 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import sys
 import numpy as np
 
-filename = "./verified-plot/unchecked-bar"
+filename = "./verified-plot/checked-bar"
 # size = int(sys.argv[2])
 
 f = open(filename, "r")
@@ -70,7 +70,7 @@ for rect, label in zip(rects, labels):
     ax.text(
         rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize="large"
     )
-ax.legend(labels=['int16', 'int32', 'float', 'double'], fontsize="x-large")
+ax.legend(labels=['int16', 'float', 'double'], fontsize="x-large")
 
 for (xs,ys,errs) in zip(xss,yss,errss):
     color = next(color_iter)
@@ -80,9 +80,8 @@ for (xs,ys,errs) in zip(xss,yss,errss):
 ax.set_ylim([0, 65])
 
 
-plt.xticks([ x+0.5*barWidth for x in xss[1]], list(xlabel), fontsize="x-large")
-# plt.xticks([ x-0.5*barWidth for x in xss[1]], list(xlabel), fontsize="x-large")
+plt.xticks([ x for x in xss[1]], list(xlabel), fontsize="x-large")
 ax.set_ylabel("time (ns), lower is better", fontsize="x-large")
-title = 'Toy FMA Example, Row Size = 16, Overflow Check Disabled'
+title = 'Toy FMA Example, Row Size = 16, Overflow Check Enabled'
 ax.set_title(title, fontsize="xx-large")
 plt.show()

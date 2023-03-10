@@ -6,7 +6,7 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import sys
 import numpy as np
 
-filename = "./verified-plot/unchecked-bar"
+filename = 'verified-plot/plot-flat-vecvec-bar'
 # size = int(sys.argv[2])
 
 f = open(filename, "r")
@@ -70,19 +70,19 @@ for rect, label in zip(rects, labels):
     ax.text(
         rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize="large"
     )
-ax.legend(labels=['int16', 'int32', 'float', 'double'], fontsize="x-large")
+ax.legend(labels=['flat', 'nested', ], fontsize="x-large")
 
 for (xs,ys,errs) in zip(xss,yss,errss):
     color = next(color_iter)
     ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2)
 
 
-ax.set_ylim([0, 65])
+# exit(0)
 
 
-plt.xticks([ x+0.5*barWidth for x in xss[1]], list(xlabel), fontsize="x-large")
+plt.xticks([ x-0.5*barWidth for x in xss[1]], list(xlabel), fontsize="x-large")
 # plt.xticks([ x-0.5*barWidth for x in xss[1]], list(xlabel), fontsize="x-large")
 ax.set_ylabel("time (ns), lower is better", fontsize="x-large")
-title = 'Toy FMA Example, Row Size = 16, Overflow Check Disabled'
+title = 'Nested and Flat Matrix, Float, Toy FMA Example, Row Size = 16, Overflow Check Disabled'
 ax.set_title(title, fontsize="xx-large")
 plt.show()

@@ -65,11 +65,11 @@ for bench_name, bench_vals in d.items():
         for i in range(0,size):
             start, end = size*i, size*(i+1)
             line = z[start:end]
-            linewidth = 1 if sorted(line) == line else 4
+            linewidth = 1 if sorted(line) == line else 1
             ax.plot(rows[start:end],cols[start:end],line, linewidth=linewidth)
         for i in range(0,size):
             line = z[i::size]
-            linewidth = 1 if sorted(line) == line else 4
+            linewidth = 1 if sorted(line) == line else 1
             ax.plot(rows[i::size],cols[i::size],line, linewidth=linewidth )
 
     else: 
@@ -82,7 +82,9 @@ for bench_name, bench_vals in d.items():
             line = z[i::size]
             ax.plot(rows[i::size],cols[i::size],line,  color=color)
 
-ax.legend(fontsize="x-large")
-ax.set_title(filename)
+ax.legend(fontsize="large")
+# ax.set_title(filename)
+ax.set_title('Nested and Flat Matrix Performance Difference')
+# ax.set_title('Clang Auto Vectorization Inconsistent Performance')
 plt.show()
 # plt.savefig(f'{filename}.png', dpi=300)

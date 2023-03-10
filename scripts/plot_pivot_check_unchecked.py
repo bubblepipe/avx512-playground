@@ -42,12 +42,12 @@ fig, ax = plt.subplots(figsize =(16, 9))
 
 barWidth = 0.2
 xss = []
-# xss.append(np.arange(4))
-xss.append(np.arange(3))
+xss.append(np.arange(4))
+# xss.append(np.arange(3))
 yss = []
 errss = []
 xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)', 'MPInt (scalcar)']
-xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)']
+# xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)']
 legends = ['overflow check disabled', 'overflow check enabled']
 title = 'pivot, row 30, col 16, no normalize, fast FPE'
 for bench_name, bench_vals in d.items():
@@ -71,11 +71,12 @@ labels = [f"label{i}" for i in range(len(rects))]
 for rect, label in zip(rects, labels):
     height = rect.get_height()
     txt = height
-    ax.text(
-        rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize="xx-large"
-    )
+    if txt != 0:
+        ax.text(
+            rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize="xx-large"
+        )
 
-ax.legend(labels=legends, fontsize="x-large")
+ax.legend(labels=legends, fontsize="x-large", loc='upper left')
 
 for (xs,ys,errs) in zip(xss,yss,errss):
     color = next(color_iter)
