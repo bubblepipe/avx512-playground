@@ -61,6 +61,15 @@ for bench_name, bench_vals in d.items():
 
 for (xs,ys,errs) in zip(xss,yss,errss):
     ax.bar(xs,ys,width=barWidth)
+
+rects = ax.patches
+labels = [f"label{i}" for i in range(len(rects))]
+for rect, label in zip(rects, labels):
+    height = rect.get_height()
+    txt = height
+    ax.text(
+        rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize="large"
+    )
 # ax.legend(labels=['int16', 'int32', 'float', 'double'], fontsize="x-large")
 # ax.legend(labels=['int16', 'int32', 'int16 with overflow checking', 'int32 with overflow checking'], fontsize="x-large")
 # ax.legend(labels=['float', 'double', 'float with overflow checking', 'double with overflow checking'], fontsize="x-large")
@@ -75,8 +84,9 @@ for (xs,ys,errs) in zip(xss,yss,errss):
 # exit(0)
 
 
-# plt.xticks([ x+0.5*barWidth for x in xss[1]], list(xlabel), fontsize="x-large")
-plt.xticks([ x-0.5*barWidth for x in xss[1]], list(xlabel), fontsize="x-large")
+plt.xticks([ x+0.5*barWidth for x in xss[1]], list(xlabel), fontsize="x-large")
+# plt.xticks([ x-0.5*barWidth for x in xss[1]], list(xlabel), fontsize="x-large")
 ax.set_ylabel("time (ns), lower is better", fontsize="x-large")
-ax.set_title(filename, fontsize="xx-large")
+title = 'Toy FMA Example, Row Size = 16, Overflow Check Disabled'
+ax.set_title(title, fontsize="xx-large")
 plt.show()
