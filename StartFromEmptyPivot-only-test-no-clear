@@ -16,3 +16,42 @@ check/float 18.5 ns 18.5 ns 35845633
 check/double 21.4 ns 21.4 ns 32637619
 check/double 21.4 ns 21.4 ns 32527194
 check/double 21.8 ns 21.8 ns 32490110
+
+
+uncheck/int16_t 15.8 ns 15.8 ns 47683194
+uncheck/int16_t 16.9 ns 16.9 ns 43646642
+uncheck/int16_t 14.8 ns 14.8 ns 47191412
+uncheck/float 16.4 ns 16.4 ns 42575811
+uncheck/float 16.9 ns 16.9 ns 44625692
+uncheck/float 15.8 ns 15.8 ns 44939933
+uncheck/double 20.0 ns 20.0 ns 36801795
+uncheck/double 20.4 ns 20.4 ns 35981003
+uncheck/double 19.0 ns 19.0 ns 35962959
+check/int16_t 22.7 ns 22.7 ns 30700389
+check/int16_t 22.7 ns 22.7 ns 30636878
+check/int16_t 22.8 ns 22.8 ns 30655149
+check/float 18.6 ns 18.6 ns 36783282
+check/float 18.6 ns 18.6 ns 37553882
+check/float 18.6 ns 18.6 ns 37479547
+check/double 21.8 ns 21.8 ns 32152151
+check/double 21.4 ns 21.4 ns 32709908
+check/double 21.4 ns 21.4 ns 32765285
+
+uncheck/int16_t 14.6 ns 14.6 ns 48057672
+uncheck/int16_t 14.8 ns 14.8 ns 48270394
+uncheck/int16_t 16.6 ns 16.6 ns 39681322
+uncheck/float 16.4 ns 16.4 ns 43714842
+uncheck/float 16.4 ns 16.4 ns 43149314
+uncheck/float 16.4 ns 16.4 ns 42580245
+uncheck/double 19.7 ns 19.7 ns 36458399
+uncheck/double 19.6 ns 19.6 ns 35661909
+uncheck/double 19.2 ns 19.2 ns 36646709
+check/int16_t 22.8 ns 22.8 ns 30612999
+check/int16_t 22.8 ns 22.8 ns 30725590
+check/int16_t 22.8 ns 22.8 ns 30902864
+check/float 18.6 ns 18.6 ns 37767162
+check/float 18.7 ns 18.7 ns 37643718
+check/float 18.6 ns 18.6 ns 37543233
+check/double 23.6 ns 23.6 ns 29988819
+check/double 21.3 ns 21.3 ns 32431254
+check/double 21.3 ns 21.3 ns 32959989
