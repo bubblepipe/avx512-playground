@@ -57,7 +57,9 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
   Zmm ConstA = pivotRowPtr_0;
   ConstA[0] = 1;
   
+  #ifdef UNROLL
   #pragma clang loop unroll(full)
+  #endif
   for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
     T pivotColBackup = rowPtr[pivotCol];
     if (pivotColBackup == 0) { rowPtr += ZmmFloatVecSize; continue; }
@@ -113,7 +115,9 @@ template<> bool pivot<double>(matrix<double> & mat, unsigned pivotRow, unsigned 
   Zmm ConstA_head = pivotRowPtr_0;
   ConstA_head[0] = 1;
   
+  #ifdef UNROLL
   #pragma clang loop unroll(full)
+  #endif
   for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
     
     T pivotColBackup = rowPtr[pivotCol];
@@ -184,7 +188,9 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   Zmm ConstA = pivotRowPtr_0; 
   ConstA[0] = 1; 
   
+  #ifdef UNROLL
   #pragma clang loop unroll(full)
+  #endif
   for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
     T pivotColBackup = rowPtr[pivotCol];
     if (pivotColBackup == 0) { rowPtr += ZmmInt16VecSize; continue; }
