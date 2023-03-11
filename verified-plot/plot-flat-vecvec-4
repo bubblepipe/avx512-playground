@@ -1,38 +1,38 @@
 ----------------------------------------------------------------------------
 Benchmark                                  Time             CPU   Iterations
 ----------------------------------------------------------------------------
-bench_mat_vecvec/fma_manual/8/8         8.76 ns         8.76 ns     78540730
-bench_mat_vecvec/fma_manual/8/16        13.4 ns         13.4 ns     51973200
-bench_mat_vecvec/fma_manual/8/24        16.8 ns         16.8 ns     43486068
-bench_mat_vecvec/fma_manual/8/32        19.9 ns         19.9 ns     34794268
-bench_mat_vecvec/fma_manual/16/8        15.4 ns         15.4 ns     45066189
-bench_mat_vecvec/fma_manual/16/16       23.9 ns         23.9 ns     26193950
-bench_mat_vecvec/fma_manual/16/24       30.5 ns         30.5 ns     23063291
-bench_mat_vecvec/fma_manual/16/32       39.3 ns         39.3 ns     15226420
-bench_mat_vecvec/fma_manual/24/8        22.3 ns         22.3 ns     31152643
-bench_mat_vecvec/fma_manual/24/16       34.0 ns         34.0 ns     19432062
-bench_mat_vecvec/fma_manual/24/24       45.5 ns         45.5 ns     15456319
-bench_mat_vecvec/fma_manual/24/32       57.5 ns         57.5 ns     12188109
-bench_mat_vecvec/fma_manual/32/8        31.1 ns         31.1 ns     24338530
-bench_mat_vecvec/fma_manual/32/16       44.2 ns         44.2 ns     15960724
-bench_mat_vecvec/fma_manual/32/24       61.7 ns         61.7 ns     11596677
-bench_mat_vecvec/fma_manual/32/32       79.9 ns         79.9 ns      8385462
+nested/fma/8/8         8.76 ns         8.76 ns     78540730
+nested/fma/8/16        13.4 ns         13.4 ns     51973200
+nested/fma/8/24        16.8 ns         16.8 ns     43486068
+nested/fma/8/32        19.9 ns         19.9 ns     34794268
+nested/fma/16/8        15.4 ns         15.4 ns     45066189
+nested/fma/16/16       23.9 ns         23.9 ns     26193950
+nested/fma/16/24       30.5 ns         30.5 ns     23063291
+nested/fma/16/32       39.3 ns         39.3 ns     15226420
+nested/fma/24/8        22.3 ns         22.3 ns     31152643
+nested/fma/24/16       34.0 ns         34.0 ns     19432062
+nested/fma/24/24       45.5 ns         45.5 ns     15456319
+nested/fma/24/32       57.5 ns         57.5 ns     12188109
+nested/fma/32/8        31.1 ns         31.1 ns     24338530
+nested/fma/32/16       44.2 ns         44.2 ns     15960724
+nested/fma/32/24       61.7 ns         61.7 ns     11596677
+nested/fma/32/32       79.9 ns         79.9 ns      8385462
 -----------------------------------------------------------
 Benchmark                 Time             CPU   Iterations
 -----------------------------------------------------------
-flat/fma_m/8/8         5.38 ns         5.38 ns    130714614
-flat/fma_m/8/16        8.44 ns         8.44 ns     83167383
-flat/fma_m/8/24        12.2 ns         12.2 ns     56510100
-flat/fma_m/8/32        16.0 ns         16.0 ns     44011954
-flat/fma_m/16/8        8.52 ns         8.52 ns     82884600
-flat/fma_m/16/16       15.9 ns         15.9 ns     43714229
-flat/fma_m/16/24       23.1 ns         23.1 ns     30341391
-flat/fma_m/16/32       30.3 ns         30.3 ns     23090520
-flat/fma_m/24/8        12.2 ns         12.2 ns     57810143
-flat/fma_m/24/16       23.0 ns         23.0 ns     30214587
-flat/fma_m/24/24       34.3 ns         34.3 ns     20475153
-flat/fma_m/24/32       44.8 ns         44.8 ns     15636471
-flat/fma_m/32/8        15.8 ns         15.8 ns     44063632
-flat/fma_m/32/16       30.3 ns         30.3 ns     23090450
-flat/fma_m/32/24       44.9 ns         44.9 ns     15307350
-flat/fma_m/32/32       59.0 ns         59.0 ns     11891353
+flat/fma/8/8         5.38 ns         5.38 ns    130714614
+flat/fma/8/16        8.44 ns         8.44 ns     83167383
+flat/fma/8/24        12.2 ns         12.2 ns     56510100
+flat/fma/8/32        16.0 ns         16.0 ns     44011954
+flat/fma/16/8        8.52 ns         8.52 ns     82884600
+flat/fma/16/16       15.9 ns         15.9 ns     43714229
+flat/fma/16/24       23.1 ns         23.1 ns     30341391
+flat/fma/16/32       30.3 ns         30.3 ns     23090520
+flat/fma/24/8        12.2 ns         12.2 ns     57810143
+flat/fma/24/16       23.0 ns         23.0 ns     30214587
+flat/fma/24/24       34.3 ns         34.3 ns     20475153
+flat/fma/24/32       44.8 ns         44.8 ns     15636471
+flat/fma/32/8        15.8 ns         15.8 ns     44063632
+flat/fma/32/16       30.3 ns         30.3 ns     23090450
+flat/fma/32/24       44.9 ns         44.9 ns     15307350
+flat/fma/32/32       59.0 ns         59.0 ns     11891353

@@ -1,0 +1,14 @@
+flat/fma/16/8        8.47 ns         8.47 ns     82132327
+flat/fma/16/16       15.0 ns         15.0 ns     46834996
+flat/fma/16/32       28.8 ns         28.8 ns     24251807
+nested/fma/16/8        14.5 ns         14.5 ns     49781318
+nested/fma/16/16       20.8 ns         20.8 ns     33391289
+nested/fma/16/32       35.1 ns         35.0 ns     20191278
+flat/fma/16/8        8.44 ns         8.44 ns     80645856
+flat/fma/16/16       14.9 ns         14.9 ns     46911130
+flat/fma/16/32       28.9 ns         28.9 ns     24132760
+nested/fma/16/8        14.4 ns         14.4 ns     50120138
+nested/fma/16/16       20.7 ns         20.7 ns     32912167
+nested/fma/16/32       37.4 ns         37.4 ns     18765129
+
+
