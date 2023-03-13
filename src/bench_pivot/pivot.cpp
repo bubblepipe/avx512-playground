@@ -63,7 +63,7 @@ template<> bool pivot<float>(matrix<float> & mat_src, matrix<float> & mat_dst, u
   for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
     T pivotColBackup = srcRowPtr[pivotCol];
 
-    #ifdef rowPtr_pivotCol_eq_0
+    #ifdef SKIP_rowPtr_pivotCol_eq_0
     if (pivotColBackup == 0) { // skip calculation, cp src dst
       Zmm matRowVec = *(Zmm *)(srcRowPtr);
       *(Zmm *)(dstRowPtr) = matRowVec;
@@ -136,7 +136,7 @@ template<> bool pivot<double>(matrix<double> & mat_src, matrix<double> & mat_dst
     
     T pivotColBackup = srcRowPtr[pivotCol];
     
-    #ifdef rowPtr_pivotCol_eq_0
+    #ifdef SKIP_rowPtr_pivotCol_eq_0
     if (pivotColBackup == 0) { 
       for (unsigned colIndex = 0; colIndex < mat_src.nCol; colIndex += ZmmDoubleVecSize) {
         Zmm row_segment = *(Zmm *)(srcRowPtr + colIndex);
@@ -221,7 +221,7 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat_src, matrix<int16_t> & mat_
   for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
     T pivotColBackup = srcRowPtr[pivotCol];
 
-    #ifdef rowPtr_pivotCol_eq_0
+    #ifdef SKIP_rowPtr_pivotCol_eq_0
     if (pivotColBackup == 0) { // skip calculation, cp src dst
       Zmm matRowVec = *(Zmm *)(srcRowPtr);
       *(Zmm *)(dstRowPtr) = matRowVec;
