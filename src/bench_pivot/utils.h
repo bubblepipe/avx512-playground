@@ -18,7 +18,10 @@
 // #define USE_INT52
 // #define EMPTY_PIVOT
 #define CHECK_OVERFLOW
-// #define UNROLL
+#define UNROLL
+
+#define rowPtr_pivotCol_eq_0
+
 
 #define NROW 30
 

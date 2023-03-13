@@ -62,8 +62,11 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
   #endif
   for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
     T pivotColBackup = rowPtr[pivotCol];
-    if (pivotColBackup == 0) { rowPtr += ZmmFloatVecSize; continue; }
 
+    #ifdef rowPtr_pivotCol_eq_0
+    if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
+    #endif
+    
     Zmm ConstC = pivotColBackup;
     Zmm matRowVec = *(Zmm *)(rowPtr);
     matRowVec[0] *= pivotRowPtr_0; // TODO: https://grosser.zulipchat.com/#narrow/stream/240241-Presburger-.26-Polyhedral/topic/vectorized.20pivot/near/339397953
@@ -121,7 +124,10 @@ template<> bool pivot<double>(matrix<double> & mat, unsigned pivotRow, unsigned 
   for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
     
     T pivotColBackup = rowPtr[pivotCol];
+    
+    #ifdef rowPtr_pivotCol_eq_0
     if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
+    #endif
 
     Zmm ConstC = pivotColBackup;
     Zmm matRowVec_head = *(Zmm *)(rowPtr);
@@ -193,8 +199,11 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   #endif
   for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
     T pivotColBackup = rowPtr[pivotCol];
-    if (pivotColBackup == 0) { rowPtr += ZmmInt16VecSize; continue; }
 
+    #ifdef rowPtr_pivotCol_eq_0
+    if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
+    #endif
+    
     Zmm ConstC = pivotColBackup;
     Zmm matRowVec = *(Zmm *)(rowPtr);
     #ifdef CHECK_OVERFLOW
