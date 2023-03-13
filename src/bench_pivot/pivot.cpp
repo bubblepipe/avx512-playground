@@ -32,50 +32,57 @@ template<> bool pivot<float>(matrix<float> & mat_src, matrix<float> & mat_dst, u
 
   typedef float T;
   typedef floatZmm Zmm;
+  auto nColPadding = mat_src.nColPadding;
 
-  // unsigned nRow, nCol;
-  // nRow = mat.nRow;
-  // nCol = mat.nCol;
-  T * pivotRowPtr = mat_src.getRowPtr(pivotRow);
+  T * srcPivotRowPtr = mat_src.getRowPtr(pivotRow);
+  T * dstPivotRowPtr = mat_dst.getRowPtr(pivotRow);
+  Zmm pivotRowVec = *(Zmm *)srcPivotRowPtr;
   
-  T tmp = pivotRowPtr[0];
-  pivotRowPtr[0] = -pivotRowPtr[pivotCol];
-  pivotRowPtr[pivotCol] = -tmp;
+  T tmp = pivotRowVec[0];
+  pivotRowVec[0] = -pivotRowVec[pivotCol];
+  pivotRowVec[pivotCol] = -tmp;
 
-  auto pivotRowPtr_pivotCol = -tmp;
-  auto pivotRowPtr_0 = pivotRowPtr[0];
+  auto pivotRow_pivotCol = -tmp;
+  auto pivotRow_0 = pivotRowVec[0];
 
-  if (pivotRowPtr_0 < 0) { 
-    mat_src.negateRowVectorized(pivotRow);
+  if (pivotRow_0 < 0) {  // negate pivot row
+    pivotRowVec = _mm512_xor_ps(pivotRowVec, _mm512_set1_ps(-0.0));
   }
-  //mat.normalizerow2(pivotRowPtr);
+  *(Zmm *)(dstPivotRowPtr) = pivotRowVec;
 
-  T * rowPtr = mat_src.getRowPtr(1); // first row[0] is pivot row
+  T * srcRowPtr = srcPivotRowPtr + nColPadding; // row[0] is pivot row
+  T * dstRowPtr = dstPivotRowPtr + nColPadding; // row[1] is ...
 
-  Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
   pivotRowVec[0] = 0;
-  Zmm ConstA = pivotRowPtr_0;
+  Zmm ConstA = pivotRow_0;
   ConstA[0] = 1;
   
   #ifdef UNROLL
   #pragma clang loop unroll(full)
   #endif
   for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
-    T pivotColBackup = rowPtr[pivotCol];
+    T pivotColBackup = srcRowPtr[pivotCol];
 
     #ifdef rowPtr_pivotCol_eq_0
-    if (pivotColBackup == 0) { rowPtr += mat_src.nColPadding; continue; }
+    if (pivotColBackup == 0) { // skip calculation, cp src dst
+      Zmm matRowVec = *(Zmm *)(srcRowPtr);
+      *(Zmm *)(dstRowPtr) = matRowVec;
+      srcRowPtr += nColPadding; 
+      dstRowPtr += nColPadding; 
+      continue; 
+    }
     #endif
     
     Zmm ConstC = pivotColBackup;
-    Zmm matRowVec = *(Zmm *)(rowPtr);
-    matRowVec[0] *= pivotRowPtr_0; // TODO: https://grosser.zulipchat.com/#narrow/stream/240241-Presburger-.26-Polyhedral/topic/vectorized.20pivot/near/339397953
+    Zmm matRowVec = *(Zmm *)(srcRowPtr);
+    matRowVec[0] *= pivotRow_0; // TODO: https://grosser.zulipchat.com/#narrow/stream/240241-Presburger-.26-Polyhedral/topic/vectorized.20pivot/near/339397953
     Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
-    *(Zmm *)(rowPtr) =  result;
+    *(Zmm *)(dstRowPtr) = result;
 
-    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
+    dstRowPtr[pivotCol] = pivotColBackup * pivotRow_pivotCol;
     //mat.normalizerow2(rowPtr);
-    rowPtr += ZmmFloatVecSize;
+    srcRowPtr += ZmmFloatVecSize;
+    dstRowPtr += ZmmFloatVecSize;
   }
 
   if_fetestexcept_return_false_else

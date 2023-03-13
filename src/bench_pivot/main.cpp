@@ -43,7 +43,7 @@ bool validate(matrix<T> & mat){
     matrix<TYPE> mat_dst(nRow,nCol);                            \
     prepare_mat(mat);                                       \
     if (pivot<TYPE>(mat, mat_dst, pivotRow, pivotCol)) {                  \
-      if (!validate(mat)) {mat.print(); } \
+      if (!validate(mat_dst)) {mat_dst.print(); } \
     }                         \
     for (auto _ : state) {                                  \
       pivot<TYPE>(mat, mat_dst, pivotRow, pivotCol);                 \
