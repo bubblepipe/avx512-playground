@@ -22,11 +22,11 @@
 #endif
 
 template <typename T>
-bool pivot(matrix<T> & mat, unsigned pivotRow, unsigned pivotCol) {
+bool pivot(matrix<T> & mat_src, matrix<T> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
   return false;
 }
 
-template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<float>(matrix<float> & mat_src, matrix<float> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
   // FECLEAREXCEPT
 
@@ -36,7 +36,7 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
   // unsigned nRow, nCol;
   // nRow = mat.nRow;
   // nCol = mat.nCol;
-  T * pivotRowPtr = mat.getRowPtr(pivotRow);
+  T * pivotRowPtr = mat_src.getRowPtr(pivotRow);
   
   T tmp = pivotRowPtr[0];
   pivotRowPtr[0] = -pivotRowPtr[pivotCol];
@@ -46,11 +46,11 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
   auto pivotRowPtr_0 = pivotRowPtr[0];
 
   if (pivotRowPtr_0 < 0) { 
-    mat.negateRowVectorized(pivotRow);
+    mat_src.negateRowVectorized(pivotRow);
   }
   //mat.normalizerow2(pivotRowPtr);
 
-  T * rowPtr = mat.getRowPtr(1); // first row[0] is pivot row
+  T * rowPtr = mat_src.getRowPtr(1); // first row[0] is pivot row
 
   Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
   pivotRowVec[0] = 0;
@@ -64,7 +64,7 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
     T pivotColBackup = rowPtr[pivotCol];
 
     #ifdef rowPtr_pivotCol_eq_0
-    if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
+    if (pivotColBackup == 0) { rowPtr += mat_src.nColPadding; continue; }
     #endif
     
     Zmm ConstC = pivotColBackup;
@@ -84,7 +84,7 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
 }
 
 
-template<> bool pivot<double>(matrix<double> & mat, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<double>(matrix<double> & mat, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
   // FECLEAREXCEPT
 
@@ -152,7 +152,7 @@ template<> bool pivot<double>(matrix<double> & mat, unsigned pivotRow, unsigned 
 
 }
 
-template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<int16_t>(matrix<int16_t> & mat_src, matrix<int16_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
   bool overflow_accum = false;
 
@@ -162,7 +162,7 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   // unsigned nRow, nCol;
   // nRow = mat.nRow;
   // nCol = mat.nCol;
-  T * pivotRowPtr = mat.getRowPtr(pivotRow);
+  T * pivotRowPtr = mat_src.getRowPtr(pivotRow);
   
   T tmp = pivotRowPtr[0];
   T tmq = pivotRowPtr[pivotCol];
@@ -188,7 +188,7 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   }
   //mat.normalizerow2(pivotRowPtr);
 
-  T * rowPtr = mat.getRowPtr(1); // first row[0] is pivot row
+  T * rowPtr = mat_src.getRowPtr(1); // first row[0] is pivot row
    
   pivotRowVec[0] = 0; 
   Zmm ConstA = pivotRowPtr_0; 
@@ -201,9 +201,9 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
     T pivotColBackup = rowPtr[pivotCol];
 
     #ifdef rowPtr_pivotCol_eq_0
-    if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
+    if (pivotColBackup == 0) { rowPtr += mat_src.nColPadding; continue; }
     #endif
-    
+
     Zmm ConstC = pivotColBackup;
     Zmm matRowVec = *(Zmm *)(rowPtr);
     #ifdef CHECK_OVERFLOW
@@ -231,7 +231,7 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
 
 
 
-template<> bool pivot<MPInt>(matrix<MPInt> & mat, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<MPInt>(matrix<MPInt> & mat, matrix<MPInt> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
   typedef MPInt T;
 
@@ -275,7 +275,7 @@ template<> bool pivot<MPInt>(matrix<MPInt> & mat, unsigned pivotRow, unsigned pi
 
 
 
-template<> bool pivot<int64_t>(matrix<int64_t> & mat, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<int64_t>(matrix<int64_t> & mat, matrix<int64_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
   typedef int64_t T;
 
@@ -323,5 +323,5 @@ template<> bool pivot<int64_t>(matrix<int64_t> & mat, unsigned pivotRow, unsigne
 // template bool pivot <float>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
 // template bool pivot <int64_t>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
 // template bool pivot <int16_t>(matrix<int16_t> & tableau, unsigned pivotRow, unsigned pivotCol);
-template bool pivot <uint64_t>(matrix<uint64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
+template bool pivot <uint64_t>(matrix<uint64_t> & mat, matrix<uint64_t> & mat_dst, unsigned pivotRow, unsigned pivotCol);
 

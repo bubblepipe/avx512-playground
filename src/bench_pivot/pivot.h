@@ -3,7 +3,7 @@
 #include <x86intrin.h>
 
 template <typename T> 
-bool pivot(matrix<T> & tableau, unsigned pivotRow, unsigned pivotCol) ;
+bool pivot(matrix<T> & tableau_src, matrix<T> & tableau_dst, unsigned pivotRow, unsigned pivotCol) ;
 
 #define F32_64_OP(__m512X, _mm512_load_pX) \
     __m512X mat_row_ymm = _mm512_load_pX((const T *)(rowPtr + colIndex)); \

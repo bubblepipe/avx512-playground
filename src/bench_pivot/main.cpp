@@ -40,13 +40,13 @@ bool validate(matrix<T> & mat){
 
 #define BENCH(TYPE)   \
     matrix<TYPE> mat(nRow,nCol);                            \
+    matrix<TYPE> mat_dst(nRow,nCol);                            \
     prepare_mat(mat);                                       \
-    if (pivot<TYPE>(mat, pivotRow, pivotCol)) {                  \
+    if (pivot<TYPE>(mat, mat_dst, pivotRow, pivotCol)) {                  \
       if (!validate(mat)) {mat.print(); } \
     }                         \
-    prepare_mat(mat);                                       \
     for (auto _ : state) {                                  \
-      pivot<TYPE>(mat, pivotRow, pivotCol);                 \
+      pivot<TYPE>(mat, mat_dst, pivotRow, pivotCol);                 \
     }                                                       \
 
 static void PivotCol16Bench(benchmark::State& state) {
