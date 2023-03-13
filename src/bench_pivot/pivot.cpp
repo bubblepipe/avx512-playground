@@ -50,8 +50,8 @@ template<> bool pivot<float>(matrix<float> & mat_src, matrix<float> & mat_dst, u
   }
   *(Zmm *)(dstPivotRowPtr) = pivotRowVec;
 
-  T * srcRowPtr = srcPivotRowPtr + nColPadding; // row[0] is pivot row
-  T * dstRowPtr = dstPivotRowPtr + nColPadding; // row[1] is ...
+  T * srcRowPtr = srcPivotRowPtr + ZmmFloatVecSize; // row[0] is pivot row
+  T * dstRowPtr = dstPivotRowPtr + ZmmFloatVecSize; // row[1] is ...
 
   pivotRowVec[0] = 0;
   Zmm ConstA = pivotRow_0;
@@ -165,72 +165,80 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat_src, matrix<int16_t> & mat_
 
   typedef int16_t T;
   typedef int16Zmm Zmm;
+  auto nColPadding = mat_src.nColPadding;
 
-  // unsigned nRow, nCol;
-  // nRow = mat.nRow;
-  // nCol = mat.nCol;
-  T * pivotRowPtr = mat_src.getRowPtr(pivotRow);
-  
-  T tmp = pivotRowPtr[0];
-  T tmq = pivotRowPtr[pivotCol];
+  T * srcPivotRowPtr = mat_src.getRowPtr(pivotRow);
+  T * dstPivotRowPtr = mat_dst.getRowPtr(pivotRow);
+  Zmm pivotRowVec = *(Zmm *)srcPivotRowPtr;
+
+  T tmp = pivotRowVec[0];
+  T tmq = pivotRowVec[pivotCol];
 
   #ifdef CHECK_OVERFLOW
   overflow_accum |=  std::numeric_limits<int16_t>::min() == tmq;
   overflow_accum |= std::numeric_limits<int16_t>::min() == tmp;
   #endif
 
-  pivotRowPtr[0] = -tmq;  
-  pivotRowPtr[pivotCol] = -tmp; 
-  auto pivotRowPtr_pivotCol = -tmp; 
-  auto pivotRowPtr_0 = pivotRowPtr[0];
+  pivotRowVec[0] = -tmq;  
+  pivotRowVec[pivotCol] = -tmp; 
+  auto pivotRow_pivotCol = -tmp; 
+  auto pivotRow_0 = pivotRowVec[0];
 
-  Zmm pivotRowVec = *(Zmm *)pivotRowPtr; 
-
-  if (pivotRowPtr_0 < 0) { 
+  if (pivotRow_0 < 0) { 
     #ifdef CHECK_OVERFLOW
     negate<true>(pivotRowVec, overflow_accum);
     #else
     negate<false>(pivotRowVec, overflow_accum);
     #endif
   }
+  *(Zmm *)(dstPivotRowPtr) = pivotRowVec;
+
   //mat.normalizerow2(pivotRowPtr);
 
-  T * rowPtr = mat_src.getRowPtr(1); // first row[0] is pivot row
-   
+  T * srcRowPtr = srcPivotRowPtr + ZmmInt16VecSize; // row[0] is pivot row
+  T * dstRowPtr = dstPivotRowPtr + ZmmInt16VecSize; // row[1] is ...
+
   pivotRowVec[0] = 0; 
-  Zmm ConstA = pivotRowPtr_0; 
+  Zmm ConstA = pivotRow_0; 
   ConstA[0] = 1; 
   
   #ifdef UNROLL
   #pragma clang loop unroll(full)
   #endif
   for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
-    T pivotColBackup = rowPtr[pivotCol];
+    T pivotColBackup = srcRowPtr[pivotCol];
 
     #ifdef rowPtr_pivotCol_eq_0
-    if (pivotColBackup == 0) { rowPtr += mat_src.nColPadding; continue; }
+    if (pivotColBackup == 0) { // skip calculation, cp src dst
+      Zmm matRowVec = *(Zmm *)(srcRowPtr);
+      *(Zmm *)(dstRowPtr) = matRowVec;
+      srcRowPtr += nColPadding; 
+      dstRowPtr += nColPadding; 
+      continue; 
+    }      
     #endif
 
     Zmm ConstC = pivotColBackup;
-    Zmm matRowVec = *(Zmm *)(rowPtr);
+    Zmm matRowVec = *(Zmm *)(srcRowPtr);
     #ifdef CHECK_OVERFLOW
     auto mul0 = mul<true>(ConstC, pivotRowVec, overflow_accum);
-    auto mul1 =  mul<true>(matRowVec, ConstA, overflow_accum);
+    auto mul1 = mul<true>(matRowVec, ConstA, overflow_accum);
     Zmm result = add<true>(mul0,mul1, overflow_accum);
     #else
     Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
     #endif
-    *(Zmm *)(rowPtr) =  result;
+    *(Zmm *)(dstRowPtr) =  result;
 
-    int16_t lo = pivotColBackup * pivotRowPtr_pivotCol; 
-    rowPtr[pivotCol] = lo;
+    int16_t lo = pivotColBackup * pivotRow_pivotCol; 
+    dstRowPtr[pivotCol] = lo;
     #ifdef CHECK_OVERFLOW
-    int32_t hi_lo = pivotColBackup * pivotRowPtr_pivotCol;
+    int32_t hi_lo = pivotColBackup * pivotRow_pivotCol;
     overflow_accum |= lo != hi_lo;
     #endif
 
     //mat.normalizerow2(rowPtr);
-    rowPtr += ZmmInt16VecSize;
+    srcRowPtr += ZmmInt16VecSize;
+    dstRowPtr += ZmmInt16VecSize;
   }
 
   return !overflow_accum;
