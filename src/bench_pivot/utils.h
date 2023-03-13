@@ -15,10 +15,10 @@
 // #define USE_MPInt
 // #define USE_INT16
 // #define USE_INT23
-// #define USE_INT52
+#define USE_INT52
 // #define EMPTY_PIVOT
-// #define CHECK_OVERFLOW
-#define UNROLL
+#define CHECK_OVERFLOW
+// #define UNROLL
 
 #define SKIP_rowPtr_pivotCol_eq_0
 

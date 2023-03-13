@@ -90,6 +90,12 @@ template<> bool pivot<float>(matrix<float> & mat_src, matrix<float> & mat_dst, u
 
 }
 
+inline void copy_row(double * dstRowPtr, double * srcRowPtr , unsigned nCol){
+  typedef doubleZmm Zmm;
+  for (unsigned colIndex = 0; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
+      *(Zmm *)(dstRowPtr + colIndex) = *(Zmm *)(srcRowPtr + colIndex);
+  }
+}
 
 template<> bool pivot<double>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
@@ -98,15 +104,13 @@ template<> bool pivot<double>(matrix<double> & mat_src, matrix<double> & mat_dst
   typedef double T;
   typedef doubleZmm Zmm;
   auto nColPadding = mat_src.nColPadding;
+  auto nCol = mat_src.nCol;
 
   T * srcPivotRowPtr = mat_src.getRowPtr(pivotRow);
   T * dstPivotRowPtr = mat_dst.getRowPtr(pivotRow);
   
   // copy pivot row
-  for (unsigned colIndex = 0; colIndex < mat_src.nCol; colIndex += ZmmDoubleVecSize) {
-      Zmm row_segment = *(Zmm *)(srcPivotRowPtr + colIndex);
-      *(Zmm *)(dstPivotRowPtr + colIndex) = row_segment;
-  }
+  copy_row(dstPivotRowPtr, srcPivotRowPtr, nColPadding);
 
   T tmp = dstPivotRowPtr[0];
   dstPivotRowPtr[0] = -dstPivotRowPtr[pivotCol];
@@ -132,16 +136,15 @@ template<> bool pivot<double>(matrix<double> & mat_src, matrix<double> & mat_dst
   #ifdef UNROLL
   #pragma clang loop unroll(full)
   #endif
+  
   for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
     
     T pivotColBackup = srcRowPtr[pivotCol];
     
     #ifdef SKIP_rowPtr_pivotCol_eq_0
     if (pivotColBackup == 0) { 
-      for (unsigned colIndex = 0; colIndex < mat_src.nCol; colIndex += ZmmDoubleVecSize) {
-        Zmm row_segment = *(Zmm *)(srcRowPtr + colIndex);
-        *(Zmm *)(dstRowPtr + colIndex) = row_segment;
-      }
+      // memcpy(dstRowPtr, srcRowPtr, nCol * 8);
+      copy_row(dstRowPtr, srcRowPtr, nColPadding);
       srcRowPtr += nColPadding; 
       dstRowPtr += nColPadding;
       continue; 
