@@ -64,7 +64,7 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
     T pivotColBackup = rowPtr[pivotCol];
 
     #ifdef rowPtr_pivotCol_eq_0
-    if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
+    if (pivotColBackup == 0) { rowPtr += ZmmFloatVecSize; continue; }
     #endif
     
     Zmm ConstC = pivotColBackup;
@@ -201,7 +201,7 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
     T pivotColBackup = rowPtr[pivotCol];
 
     #ifdef rowPtr_pivotCol_eq_0
-    if (pivotColBackup == 0) { rowPtr += mat.nColPadding; continue; }
+    if (pivotColBackup == 0) { rowPtr += ZmmInt16VecSize; continue; }
     #endif
     
     Zmm ConstC = pivotColBackup;
