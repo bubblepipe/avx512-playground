@@ -16,18 +16,18 @@ void prepare_mat(matrix<T> & mat){
 }
 
 template <typename T>
-bool validate(matrix<T> & mat){
+bool compare(matrix<T> & mat, const int reference [30] [16]){
   printf("mat.row = %d, mat.col = %d, mat.nColPadding = %d \n", mat.nRow, mat.nCol, mat.nColPadding);
   bool ret = true;
   for (int rowIndex = 0; rowIndex < mat.nRow; rowIndex += 1) {
     for (int colIndex = 0; colIndex < mat.nCol; colIndex += 1) {
-      if (! (mat(rowIndex, colIndex) == expected_out_mat_arr[rowIndex][colIndex])){
+      if (! (mat(rowIndex, colIndex) == reference[rowIndex][colIndex])){
         if constexpr (std::is_same<T, int16_t>::value){
-          printf("mismatch at %d,%d: %hd, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), expected_out_mat_arr[rowIndex][colIndex]);
+          printf("mismatch at %d,%d: %hd, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), reference[rowIndex][colIndex]);
         } else if constexpr (std::is_same<T, MPInt>::value || std::is_same<T, int64_t>::value){
-          printf("mismatch at %d,%d: %ld, %d\n", rowIndex, colIndex, (int64_t)mat(rowIndex, colIndex), expected_out_mat_arr[rowIndex][colIndex]);
+          printf("mismatch at %d,%d: %ld, %d\n", rowIndex, colIndex, (int64_t)mat(rowIndex, colIndex), reference[rowIndex][colIndex]);
         } else {
-          printf("mismatch at %d,%d: %f, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), expected_out_mat_arr[rowIndex][colIndex]);        }
+          printf("mismatch at %d,%d: %f, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), reference[rowIndex][colIndex]);        }
         ret = false;
       }
     }
@@ -43,7 +43,8 @@ bool validate(matrix<T> & mat){
     matrix<TYPE> mat_dst(nRow,nCol);                            \
     prepare_mat(mat);                                       \
     if (pivot<TYPE>(mat, mat_dst, pivotRow, pivotCol)) {                  \
-      if (!validate(mat_dst)) {mat_dst.print(); } \
+      if (!compare(mat, input_mat_arr)) {mat.print(); } \
+      if (!compare(mat_dst, expected_out_mat_arr)) {mat_dst.print(); } \
     }                         \
     for (auto _ : state) {                                  \
       pivot<TYPE>(mat, mat_dst, pivotRow, pivotCol);                 \
