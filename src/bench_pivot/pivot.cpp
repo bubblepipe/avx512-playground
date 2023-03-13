@@ -37,24 +37,24 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
   // nRow = mat.nRow;
   // nCol = mat.nCol;
   T * pivotRowPtr = mat.getRowPtr(pivotRow);
+  Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
   
-  T tmp = pivotRowPtr[0];
-  pivotRowPtr[0] = -pivotRowPtr[pivotCol];
-  pivotRowPtr[pivotCol] = -tmp;
+  T tmp = pivotRowVec[0];
+  pivotRowVec[0] = -pivotRowVec[pivotCol];
+  pivotRowVec[pivotCol] = -tmp;
 
-  auto pivotRowPtr_pivotCol = -tmp;
-  auto pivotRowPtr_0 = pivotRowPtr[0];
+  auto pivotRow_pivotCol = -tmp;
+  auto pivotRow_0 = pivotRowVec[0];
 
-  if (pivotRowPtr_0 < 0) { 
-    mat.negateRowVectorized(pivotRow);
+  if (pivotRow_0 < 0) { 
+    pivotRowVec = _mm512_xor_ps(pivotRowVec, _mm512_set1_ps(-0.0));
   }
   //mat.normalizerow2(pivotRowPtr);
 
   T * rowPtr = mat.getRowPtr(1); // first row[0] is pivot row
 
-  Zmm pivotRowVec = *(Zmm *)pivotRowPtr;
   pivotRowVec[0] = 0;
-  Zmm ConstA = pivotRowPtr_0;
+  Zmm ConstA = pivotRow_0;
   ConstA[0] = 1;
   
   #ifdef UNROLL
@@ -69,11 +69,11 @@ template<> bool pivot<float>(matrix<float> & mat, unsigned pivotRow, unsigned pi
     
     Zmm ConstC = pivotColBackup;
     Zmm matRowVec = *(Zmm *)(rowPtr);
-    matRowVec[0] *= pivotRowPtr_0; // TODO: https://grosser.zulipchat.com/#narrow/stream/240241-Presburger-.26-Polyhedral/topic/vectorized.20pivot/near/339397953
+    matRowVec[0] *= pivotRow_0; // TODO: https://grosser.zulipchat.com/#narrow/stream/240241-Presburger-.26-Polyhedral/topic/vectorized.20pivot/near/339397953
     Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
     *(Zmm *)(rowPtr) =  result;
 
-    rowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
+    rowPtr[pivotCol] = pivotColBackup * pivotRow_pivotCol;
     //mat.normalizerow2(rowPtr);
     rowPtr += ZmmFloatVecSize;
   }
@@ -163,23 +163,23 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   // nRow = mat.nRow;
   // nCol = mat.nCol;
   T * pivotRowPtr = mat.getRowPtr(pivotRow);
+  Zmm pivotRowVec = *(Zmm *)pivotRowPtr; 
   
-  T tmp = pivotRowPtr[0];
-  T tmq = pivotRowPtr[pivotCol];
+  T tmp = pivotRowVec[0];
+  T tmq = pivotRowVec[pivotCol];
 
   #ifdef CHECK_OVERFLOW
   overflow_accum |=  std::numeric_limits<int16_t>::min() == tmq;
   overflow_accum |= std::numeric_limits<int16_t>::min() == tmp;
   #endif
 
-  pivotRowPtr[0] = -tmq;  
-  pivotRowPtr[pivotCol] = -tmp; 
-  auto pivotRowPtr_pivotCol = -tmp; 
-  auto pivotRowPtr_0 = pivotRowPtr[0];
+  pivotRowVec[0] = -tmq;  
+  pivotRowVec[pivotCol] = -tmp; 
+  auto pivotRow_pivotCol = -tmp; 
+  auto pivotRow_0 = pivotRowVec[0];
 
-  Zmm pivotRowVec = *(Zmm *)pivotRowPtr; 
 
-  if (pivotRowPtr_0 < 0) { 
+  if (pivotRow_0 < 0) { 
     #ifdef CHECK_OVERFLOW
     negate<true>(pivotRowVec, overflow_accum);
     #else
@@ -191,7 +191,7 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
   T * rowPtr = mat.getRowPtr(1); // first row[0] is pivot row
    
   pivotRowVec[0] = 0; 
-  Zmm ConstA = pivotRowPtr_0; 
+  Zmm ConstA = pivotRow_0; 
   ConstA[0] = 1; 
   
   #ifdef UNROLL
@@ -215,10 +215,10 @@ template<> bool pivot<int16_t>(matrix<int16_t> & mat, unsigned pivotRow, unsigne
     #endif
     *(Zmm *)(rowPtr) =  result;
 
-    int16_t lo = pivotColBackup * pivotRowPtr_pivotCol; 
+    int16_t lo = pivotColBackup * pivotRow_pivotCol; 
     rowPtr[pivotCol] = lo;
     #ifdef CHECK_OVERFLOW
-    int32_t hi_lo = pivotColBackup * pivotRowPtr_pivotCol;
+    int32_t hi_lo = pivotColBackup * pivotRow_pivotCol;
     overflow_accum |= lo != hi_lo;
     #endif
 
