@@ -8,12 +8,26 @@ import numpy as np
 
 # filename = './verified-plot/plot-pivot-checked_check_unchecked'
 filename = 'StartFromEmptyPivot-2'
-# filename='StartFromEmptyPivot-only-test-no-clear'
+filename='StartFromEmptyPivot-only-test-no-clear'
+filename='StartFromEmptyPivot-unroll-indexVec'
+filename='DoubleBuffering'
+
 # title = 'pivot, row 30, col 16, loop empty'
 # title='StartFromEmptyPivot-only-test-no-clear'
 # title = 'pivot, row 30, col 16, loop only scalar op'
-title = 'pivot, row 30, col 16, full'
+title = 'pivot, row 30, col 16, (no normalize) ' + filename 
 # size = int(sys.argv[2])
+
+size = "xx-large"
+size = "large"
+
+# xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)', 'Upstream Impl (scalcar)']
+xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)']
+
+
+xss = []
+# xss.append(np.arange(4))
+xss.append(np.arange(3))
 
 f = open(filename, "r")
 xs = f.readlines()
@@ -47,13 +61,10 @@ color_iter = iter(['slateblue', 'crimson', 'lightseagreen', 'darkred'])
 fig, ax = plt.subplots(figsize =(16, 9))
 
 barWidth = 0.2
-xss = []
-# xss.append(np.arange(4))
-xss.append(np.arange(3))
+
 yss = []
 errss = []
-xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)', 'MPInt (scalcar)']
-xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)']
+
 legends = ['overflow check disabled', 'overflow check enabled']
 for bench_name, bench_vals in d.items():
 
@@ -76,18 +87,19 @@ labels = [f"label{i}" for i in range(len(rects))]
 for rect, label in zip(rects, labels):
     height = rect.get_height()
     txt = height
-    ax.text(
-        rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize="large"
-    )
+    if txt != 0:
+        ax.text(
+            rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize=size
+        )
 
-ax.legend(labels=legends, fontsize="large", loc="upper left")
-ax.set_ylim(ymin=0,ymax=35)
+ax.legend(labels=legends, fontsize=size, loc="upper center")
+ax.set_ylim(ymin=0,ymax=40)
 for (xs,ys,errs) in zip(xss,yss,errss):
     color = next(color_iter)
     ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2)
 
 
-plt.xticks([ x-0.5*barWidth for x in xss[1]], list(xlabel), fontsize="large")
-ax.set_ylabel("time (ns), lower is better", fontsize="large")
-ax.set_title(title, fontsize="large")
+plt.xticks([ x-0.5*barWidth for x in xss[1]], list(xlabel), fontsize=size)
+ax.set_ylabel("time (ns), lower is better", fontsize=size)
+ax.set_title(title, fontsize=size)
 plt.show()
