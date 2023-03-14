@@ -13,3 +13,6 @@
 [submodule "fpl_report"]
 	path = report
 	url = git@github.com:AOIDUO/fpl_report.git
+[submodule "avx512-poster"]
+	path = poster
+	url = git@github.com:AOIDUO/avx512-poster.git
