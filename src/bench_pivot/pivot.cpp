@@ -90,16 +90,9 @@ template<> bool pivot<float>(matrix<float> & mat_src, matrix<float> & mat_dst, u
 
 }
 
-inline void copy_row(double * dstRowPtr, double * srcRowPtr , unsigned nCol){
-  // return;
-  typedef doubleZmm Zmm;
-  *(Zmm *)(dstRowPtr + 0) = *(Zmm *)(srcRowPtr + 0);
-  *(Zmm *)(dstRowPtr + ZmmDoubleVecSize) = *(Zmm *)(srcRowPtr + ZmmDoubleVecSize);
-
-  // for (unsigned colIndex = 0; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
-  //     // memcpy(dstRowPtr, srcRowPtr, nCol * 8);
-  //     *(Zmm *)(dstRowPtr + colIndex) = *(Zmm *)(srcRowPtr + colIndex);
-  // }
+inline __attribute__((always_inline)) void copy_row(double * dstRowPtr, double * srcRowPtr , unsigned nCol){
+  *(doubleZmm *)(dstRowPtr + 0) = *(doubleZmm *)(srcRowPtr + 0);
+  *(doubleZmm *)(dstRowPtr + ZmmDoubleVecSize) = *(doubleZmm *)(srcRowPtr + ZmmDoubleVecSize);
 }
 
 template<> bool pivot<double>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
@@ -108,8 +101,8 @@ template<> bool pivot<double>(matrix<double> & mat_src, matrix<double> & mat_dst
 
   typedef double T;
   typedef doubleZmm Zmm;
-  auto nColPadding = mat_src.nColPadding;
-  auto nCol = mat_src.nCol;
+  auto const nColPadding = mat_src.nColPadding;
+  auto const nCol = mat_src.nCol;
 
   T * srcPivotRowPtr = mat_src.getRowPtr(pivotRow);
   T * dstPivotRowPtr = mat_dst.getRowPtr(pivotRow);
@@ -121,7 +114,7 @@ template<> bool pivot<double>(matrix<double> & mat_src, matrix<double> & mat_dst
   dstPivotRowPtr[0] = -dstPivotRowPtr[pivotCol];
   dstPivotRowPtr[pivotCol] = -tmp;
 
-  auto pivotRowPtr_pivotCol = -tmp;
+  auto pivotRow_pivotCol = -tmp;
   auto pivotRow_0 = dstPivotRowPtr[0];
 
   if (pivotRow_0 < 0) {
@@ -129,8 +122,8 @@ template<> bool pivot<double>(matrix<double> & mat_src, matrix<double> & mat_dst
   }
   //mat.normalizerow2(pivotRowPtr);
 
-  T * srcRowPtr = srcPivotRowPtr + nColPadding; // first row[0] is pivot row
-  T * dstRowPtr = dstPivotRowPtr + nColPadding; // first row[0] is pivot row
+  T * srcRowPtr = srcPivotRowPtr + nColPadding; 
+  T * dstRowPtr = dstPivotRowPtr + nColPadding; 
    
   Zmm pivotRow_head = *(Zmm *)dstPivotRowPtr;
   pivotRow_head[0] = 0;
@@ -156,19 +149,18 @@ template<> bool pivot<double>(matrix<double> & mat_src, matrix<double> & mat_dst
     #endif
 
     Zmm ConstC = pivotColBackup;
-    Zmm matRowVec_head = *(Zmm *)(srcRowPtr);
-    Zmm result = ConstC * pivotRow_head + matRowVec_head * ConstA_head;
-    matRowVec_head[0] *= pivotRow_0;
-    *(Zmm *)(dstRowPtr) =  result;
+    Zmm rowVec_head = *(Zmm *)(srcRowPtr);
+    Zmm result_head = ConstC * pivotRow_head + rowVec_head * ConstA_head;
+    rowVec_head[0] *= pivotRow_0;
+    *(Zmm *)(dstRowPtr) =  result_head;
 
-    for (unsigned colIndex = ZmmDoubleVecSize; colIndex < mat_src.nColPadding; colIndex += ZmmDoubleVecSize) {
-      Zmm matRowVec = *(Zmm *)(srcRowPtr + colIndex);
-      Zmm pivotRowVec = *(Zmm *)(srcPivotRowPtr + colIndex);
-      Zmm result = ConstC * pivotRowVec + matRowVec * ConstA;
-      *(Zmm *)(dstRowPtr + colIndex) = result;
-    }
+    auto colIndex = ZmmDoubleVecSize;
+    Zmm rowVec_tail = *(Zmm *)(srcRowPtr + colIndex);
+    Zmm pivotRow_tail = *(Zmm *)(dstPivotRowPtr + colIndex);
+    Zmm result_tail = ConstC * pivotRow_tail + rowVec_tail * ConstA;
+    *(Zmm *)(dstRowPtr + colIndex) = result_tail;
 
-    dstRowPtr[pivotCol] = pivotColBackup * pivotRowPtr_pivotCol;
+    dstRowPtr[pivotCol] = pivotColBackup * pivotRow_pivotCol;
     //mat.normalizerow2(rowPtr);
     srcRowPtr += nColPadding;
     dstRowPtr += nColPadding;
