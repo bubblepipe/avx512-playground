@@ -106,26 +106,34 @@ template<> bool pivot<double>(matrix<double> & mat_src, matrix<double> & mat_dst
 
   T * srcPivotRowPtr = mat_src.getRowPtr(pivotRow);
   T * dstPivotRowPtr = mat_dst.getRowPtr(pivotRow);
-  
-  // copy pivot row
-  copy_row(dstPivotRowPtr, srcPivotRowPtr, nColPadding);
 
-  T tmp = dstPivotRowPtr[0];
-  dstPivotRowPtr[0] = -dstPivotRowPtr[pivotCol];
-  dstPivotRowPtr[pivotCol] = -tmp;
+  Zmm pivotRow_head = *(Zmm *)srcPivotRowPtr;
+  Zmm pivotRow_tail = *(Zmm *)(srcPivotRowPtr + ZmmDoubleVecSize);
+
+  T tmp = pivotRow_head[0];
+  if (pivotCol < ZmmDoubleVecSize) { // head
+    pivotRow_head[0] = -pivotRow_head[pivotCol];
+    pivotRow_head[pivotCol] = -tmp;
+  } else { // pivotCol in tail
+    pivotRow_head[0] = -pivotRow_tail[pivotCol];
+    pivotRow_tail[pivotCol] = -tmp;
+  }
 
   auto pivotRow_pivotCol = -tmp;
-  auto pivotRow_0 = dstPivotRowPtr[0];
+  auto pivotRow_0 = pivotRow_head[0];
 
   if (pivotRow_0 < 0) {
-    mat_dst.negateRowVectorized(pivotRow);
-  }
+    // mat_dst.negateRowVectorized(pivotRow);
+    __m512 pivotRow_head = _mm512_xor_ps(pivotRow_head, _mm512_set1_pd(-0.0)); // from https://stackoverflow.com/questions/20083997/how-to-negate-change-sign-of-the-floating-point-elements-in-a-m128-type-vari
+    __m512 pivotRow_tail = _mm512_xor_ps(pivotRow_tail, _mm512_set1_pd(-0.0)); // from https://stackoverflow.com/questions/20083997/how-to-negate-change-sign-of-the-floating-point-elements-in-a-m128-type-vari
+  }  
   //mat.normalizerow2(pivotRowPtr);
-
+  *(Zmm *)dstPivotRowPtr = pivotRow_head;
+  *(Zmm *)(dstPivotRowPtr + ZmmDoubleVecSize) = pivotRow_tail;
+  
   T * srcRowPtr = srcPivotRowPtr + nColPadding; 
   T * dstRowPtr = dstPivotRowPtr + nColPadding; 
    
-  Zmm pivotRow_head = *(Zmm *)dstPivotRowPtr;
   pivotRow_head[0] = 0;
   Zmm ConstA = pivotRow_0;
   Zmm ConstA_head = pivotRow_0;
