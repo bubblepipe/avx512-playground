@@ -38,7 +38,38 @@ void mat_fma_manual ( unsigned int row, unsigned int col,
         simdpp::store(dst_ptr + i, dst_ymm );                                         
     }
 }
+void mat_fma_clang_builtin ( unsigned int row, unsigned int col, 
+    matrix<float> & mat_src1, matrix<float> & mat_src2, matrix<float> & mat_src3, matrix<float> & mat_dst ) {
+    auto size = mat_src1.m.size();
+    float * src1_ptr = (float *) mat_src1.m.data();
+    float * src2_ptr = (float *) mat_src2.m.data();
+    float * src3_ptr = (float *) mat_src3.m.data();
+    float * dst_ptr  = (float *) mat_dst.m.data();
 
+#define AVX512_ENABLED
+
+    typedef float FloatZmm __attribute__((ext_vector_type(32)));
+    typedef float FloatYmm __attribute__((ext_vector_type(16)));
+
+#ifdef AVX512_ENABLED
+    typedef FloatZmm Vector;
+    auto stepsize = 16;
+#elif defined AVX2_ENABLED
+    typedef FloatYmm Vector;
+    auto stepsize = 8;
+#else
+    typedef float Vector;
+    auto stepsize = 1;
+#endif
+    for (int i = 0; i < size; i += stepsize ){
+        Vector src1Vec = *(Vector *)(src1_ptr + i);
+        Vector src2Vec = *(Vector *)(src2_ptr + i);
+        Vector src3Vec = *(Vector *)(src3_ptr + i);
+        Vector result = src1Vec * src2Vec + src3Vec;
+        *(Vector *)(dst_ptr + i) = result;
+    }
+
+}
 void mat_fma_intrinsic ( unsigned int row, unsigned int col, 
     matrix<float> & mat_src1, matrix<float> & mat_src2, matrix<float> & mat_src3, matrix<float> & mat_dst ) {
     auto size = mat_src1.m.size();

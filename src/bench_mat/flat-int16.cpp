@@ -43,7 +43,7 @@ void mat_fma_intrinsic_checked(unsigned int row, unsigned int col,
     int16_t *src3_ptr = (int16_t *) mat_src3.m.data();
     int16_t *dst_ptr  = (int16_t *)mat_dst.m.data();
 
-    bool ofl;
+    bool ofl = false;
 
     for (int64_t i = 0; i < size; i += 32) {
         __m512 src1 = _mm512_loadu_si512((int16_t *)(src1_ptr + i));
@@ -53,5 +53,7 @@ void mat_fma_intrinsic_checked(unsigned int row, unsigned int col,
         __m512 result = add<true>(mul_result, src3, ofl);
         _mm512_storeu_si512((int16_t *)(dst_ptr + i), result);
     }
+
+    if (ofl) {exit(0);}
 }
 #endif
