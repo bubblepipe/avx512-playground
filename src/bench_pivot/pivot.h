@@ -3,7 +3,8 @@
 #include <x86intrin.h>
 #include <string.h>
 
-template <typename T> 
+
+template <typename T, MatColSize matColSize> 
 bool pivot(matrix<T> & tableau_src, matrix<T> & tableau_dst, unsigned pivotRow, unsigned pivotCol) ;
 
 #define F32_64_OP(__m512X, _mm512_load_pX) \

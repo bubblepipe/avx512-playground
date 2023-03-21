@@ -10,7 +10,11 @@ template <typename T>
 void prepare_mat(matrix<T> & mat){
   for (int rowIndex = 0; rowIndex < mat.nRow; rowIndex += 1) {
     for (int colIndex = 0; colIndex < mat.nCol; colIndex += 1) {
-      mat(rowIndex, colIndex) = input_mat_arr[rowIndex][colIndex];
+      if (rowIndex < input_mat_col) {
+        mat(rowIndex, colIndex) = input_mat_arr[rowIndex][colIndex];
+      } else {
+        mat(rowIndex, colIndex) = 0;
+      }
     }
   }
 }
@@ -39,15 +43,15 @@ bool compare(matrix<T> & mat, const int reference [30] [16]){
 
 
 #define BENCH(TYPE)   \
-    matrix<TYPE> mat(nRow,nCol);                            \
-    matrix<TYPE> mat_dst(nRow,nCol);                            \
+    matrix<TYPE> mat(NROW,lookup(NCOL));                            \
+    matrix<TYPE> mat_dst(NROW,lookup(NCOL));                            \
     prepare_mat(mat);                                       \
-    if (pivot<TYPE>(mat, mat_dst, pivotRow, pivotCol)) {                  \
+    if (pivot<TYPE, _16>(mat, mat_dst, pivotRow, pivotCol)) {                  \
       if (!compare(mat, input_mat_arr)) {mat.print(); } \
       if (!compare(mat_dst, expected_out_mat_arr)) {mat_dst.print(); } \
     }                         \
     for (auto _ : state) {                                  \
-      pivot<TYPE>(mat, mat_dst, pivotRow, pivotCol);                 \
+      pivot<TYPE, _16>(mat, mat_dst, pivotRow, pivotCol);                 \
     }                                                       \
 
 static void PivotCol16Bench(benchmark::State& state) {

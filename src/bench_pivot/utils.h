@@ -13,17 +13,22 @@
 // #define NO_LOG
 // #define USE_INT64
 // #define USE_MPInt
-// #define USE_INT16
+#define USE_INT16
 // #define USE_INT23
 // #define USE_INT52
 // #define EMPTY_PIVOT
-// #define CHECK_OVERFLOW
+#define CHECK_OVERFLOW
+
+#define NCOL _32
 
 #define UNROLL
 #define SKIP_rowPtr_pivotCol_eq_0
 
 
 #define NROW 30
+
+enum MatColSize { _0, _8, _16, _24, _32,  };
+int lookup(MatColSize matColSize);
 
 #define ZmmDoubleVecSize 8
 #define ZmmInt64VecSize 8

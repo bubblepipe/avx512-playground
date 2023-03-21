@@ -10,6 +10,17 @@
 #include <immintrin.h>
 #include <bench_pivot/utils.h>
 
+int lookup(MatColSize matColSize) {
+
+    switch (matColSize) {
+        case MatColSize::_0:   return 0;
+        case MatColSize::_8:   return 8;
+        case MatColSize::_16:  return 16;
+        case MatColSize::_24:  return 24;
+        case MatColSize::_32:  return 32;
+    }
+}
+
 void printx(int priority, const char *__restrict format, ...) {
 
 #ifdef NO_LOG
