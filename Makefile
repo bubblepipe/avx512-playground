@@ -1,4 +1,4 @@
-CC=clang++-17
+CC=clang++-15
 
 # CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -Wno-format 
 CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g 

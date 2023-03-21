@@ -33,11 +33,20 @@ static void fetestexcept_lib(benchmark::State &state) {
 static void fetestexcept_mxcsr(benchmark::State &state) {
   std::feclearexcept (FE_ALL_EXCEPT);
   for (auto _ : state) {
-    if  (! fetestexcept_local(FE_INEXACT)) {
+    if  (! fetestexcept_mxcsr(FE_INEXACT)) {
       exit(0);
     }
   }
 }
+static void fetestexcept_x87(benchmark::State &state) {
+  std::feclearexcept (FE_ALL_EXCEPT);
+  for (auto _ : state) {
+    if  ( fetestexcept_x87(FE_INEXACT)) {
+      exit(0);
+    }
+  }
+}
+
 static void feclearexcept_lib(benchmark::State &state) {
   for (auto _ : state) {
   std::feclearexcept (FE_ALL_EXCEPT);
@@ -65,19 +74,20 @@ static void fetestexcept_feclearexcept_mxcsr(benchmark::State &state) {
   std::feclearexcept (FE_ALL_EXCEPT);
   for (auto _ : state) {
     feclearexcept_local_sse(FE_ALL_EXCEPT);
-    if  (fetestexcept_local(FE_INEXACT)) {
+    if  (fetestexcept_mxcsr(FE_INEXACT)) {
       exit(0);
     }
   }
 }
 
-// BENCHMARK(except_on_off);
-// BENCHMARK(except_on_off_local);
+BENCHMARK(except_on_off);
+BENCHMARK(except_on_off_local);
 BENCHMARK(fetestexcept_lib);
+BENCHMARK(fetestexcept_x87);
 BENCHMARK(fetestexcept_mxcsr);
 BENCHMARK(feclearexcept_lib);
-// BENCHMARK(feclearexcept_local);
-// BENCHMARK(feclearexcept_local_x87);
+BENCHMARK(feclearexcept_local);
+BENCHMARK(feclearexcept_local_x87);
 BENCHMARK(feclearexcept_mxcsr);
 BENCHMARK(fetestexcept_feclearexcept_mxcsr);
 BENCHMARK_MAIN();

@@ -46,7 +46,7 @@ template<> bool pivot<float>(matrix<float> & mat_src, matrix<float> & mat_dst, u
   auto pivotRow_0 = pivotRowVec[0];
 
   if (pivotRow_0 < 0) {  // negate pivot row
-    pivotRowVec = _mm512_xor_ps(pivotRowVec, _mm512_set1_ps(-0.0));
+    pivotRowVec = -pivotRowVec; _mm512_xor_ps(pivotRowVec, _mm512_set1_ps(-0.0));
   }
   *(Zmm *)(dstPivotRowPtr) = pivotRowVec;
 
@@ -124,8 +124,8 @@ template<> bool pivot<double>(matrix<double> & mat_src, matrix<double> & mat_dst
 
   if (pivotRow_0 < 0) {
     // mat_dst.negateRowVectorized(pivotRow);
-    __m512 pivotRow_head = _mm512_xor_ps(pivotRow_head, _mm512_set1_pd(-0.0)); // from https://stackoverflow.com/questions/20083997/how-to-negate-change-sign-of-the-floating-point-elements-in-a-m128-type-vari
-    __m512 pivotRow_tail = _mm512_xor_ps(pivotRow_tail, _mm512_set1_pd(-0.0)); // from https://stackoverflow.com/questions/20083997/how-to-negate-change-sign-of-the-floating-point-elements-in-a-m128-type-vari
+    __m512 pivotRow_head = -pivotRow_head; // _mm512_xor_ps(pivotRow_head, _mm512_set1_pd(-0.0)); // from https://stackoverflow.com/questions/20083997/how-to-negate-change-sign-of-the-floating-point-elements-in-a-m128-type-vari
+    __m512 pivotRow_tail = -pivotRow_head; // _mm512_xor_ps(pivotRow_tail, _mm512_set1_pd(-0.0)); // from https://stackoverflow.com/questions/20083997/how-to-negate-change-sign-of-the-floating-point-elements-in-a-m128-type-vari
   }  
   //mat.normalizerow2(pivotRowPtr);
   *(Zmm *)dstPivotRowPtr = pivotRow_head;
