@@ -1,6 +1,7 @@
 #include <bench_pivot/matrix.h>
 #include <bench_pivot/MPInt.h>
 #include <cstdint>
+#include <cstdlib>
 
 template <typename T>
 matrix<T>::matrix(unsigned int r, unsigned int c) {
@@ -54,16 +55,35 @@ unsigned int matrix<T>::compute_nCol_padding(unsigned int nCol) {
   auto vector_size = 4;
   if (std::is_same<T, double>::value) {
     vector_size = ZmmDoubleVecSize;
-  } else if constexpr (std::is_same<T, float>::value) {
-    vector_size = ZmmFloatVecSize;
-  } else if constexpr (std::is_same<T, int64_t>::value | std::is_same<T, uint64_t>::value | std::is_same<T, MPInt>::value ) {
+  } 
+  
+  else if constexpr (std::is_same<T, float>::value) {
+    if (nCol == lookup(_8) || nCol == lookup(_16)) {
+      vector_size = 16;
+    } else if (nCol == lookup(_24) || nCol == lookup(_32)) {
+      vector_size = 32;
+    } else {
+      printf("this should not happen\n"); exit(0); // TODO: 
+    }
+  } 
+  
+  else if constexpr (std::is_same<T, int64_t>::value | std::is_same<T, uint64_t>::value | std::is_same<T, MPInt>::value ) {
+    printf("compute_nCol_padding\n");
+    exit(0); 
     vector_size = ZmmInt64VecSize;
-  } else if constexpr (std::is_same<T, int16_t>::value) {
+  } 
+  
+  else if constexpr (std::is_same<T, int16_t>::value) {
     vector_size = ZmmInt16VecSize;
-  } else {
+  } 
+  
+  else {
     printf("compute_nCol_padding\n");
     exit(0); // TODO: 
   }
+  // printf("nCol: %d, nCol_padding: %d\n", nCol, vector_size);
+  // exit(0);
+
   if (nCol % vector_size == 0) 
     return nCol;
   else 

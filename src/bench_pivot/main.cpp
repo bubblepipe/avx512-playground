@@ -10,7 +10,7 @@ template <typename T>
 void prepare_mat(matrix<T> & mat){
   for (int rowIndex = 0; rowIndex < mat.nRow; rowIndex += 1) {
     for (int colIndex = 0; colIndex < mat.nCol; colIndex += 1) {
-      if (rowIndex < input_mat_col) {
+      if (colIndex < input_mat_col) {
         mat(rowIndex, colIndex) = input_mat_arr[rowIndex][colIndex];
       } else {
         mat(rowIndex, colIndex) = 0;
@@ -25,14 +25,17 @@ bool compare(matrix<T> & mat, const int reference [30] [16]){
   bool ret = true;
   for (int rowIndex = 0; rowIndex < mat.nRow; rowIndex += 1) {
     for (int colIndex = 0; colIndex < mat.nCol; colIndex += 1) {
-      if (! (mat(rowIndex, colIndex) == reference[rowIndex][colIndex])){
-        if constexpr (std::is_same<T, int16_t>::value){
-          printf("mismatch at %d,%d: %hd, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), reference[rowIndex][colIndex]);
-        } else if constexpr (std::is_same<T, MPInt>::value || std::is_same<T, int64_t>::value){
-          printf("mismatch at %d,%d: %ld, %d\n", rowIndex, colIndex, (int64_t)mat(rowIndex, colIndex), reference[rowIndex][colIndex]);
-        } else {
-          printf("mismatch at %d,%d: %f, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), reference[rowIndex][colIndex]);        }
-        ret = false;
+      if (colIndex < input_mat_col) {
+
+        if (! (mat(rowIndex, colIndex) == reference[rowIndex][colIndex])){
+          if constexpr (std::is_same<T, int16_t>::value){
+            printf("mismatch at %d,%d: %hd, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), reference[rowIndex][colIndex]);
+          } else if constexpr (std::is_same<T, MPInt>::value || std::is_same<T, int64_t>::value){
+            printf("mismatch at %d,%d: %ld, %d\n", rowIndex, colIndex, (int64_t)mat(rowIndex, colIndex), reference[rowIndex][colIndex]);
+          } else {
+            printf("mismatch at %d,%d: %f, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), reference[rowIndex][colIndex]);        }
+          ret = false;
+        }
       }
     }
   }
@@ -46,12 +49,12 @@ bool compare(matrix<T> & mat, const int reference [30] [16]){
     matrix<TYPE> mat(NROW,lookup(NCOL));                            \
     matrix<TYPE> mat_dst(NROW,lookup(NCOL));                            \
     prepare_mat(mat);                                       \
-    if (pivot<TYPE, _16>(mat, mat_dst, pivotRow, pivotCol)) {                  \
-      if (!compare(mat, input_mat_arr)) {mat.print(); } \
-      if (!compare(mat_dst, expected_out_mat_arr)) {mat_dst.print(); } \
+    if (pivot<TYPE, NCOL>(mat, mat_dst, pivotRow, pivotCol)) {                  \
+      if (!compare(mat, input_mat_arr)) { mat.print(); exit(0); } \
+      if (!compare(mat_dst, expected_out_mat_arr)) {mat_dst.print(); exit(0);} \
     }                         \
     for (auto _ : state) {                                  \
-      pivot<TYPE, _16>(mat, mat_dst, pivotRow, pivotCol);                 \
+      pivot<TYPE, NCOL>(mat, mat_dst, pivotRow, pivotCol);                 \
     }                                                       \
 
 static void PivotCol16Bench(benchmark::State& state) {
