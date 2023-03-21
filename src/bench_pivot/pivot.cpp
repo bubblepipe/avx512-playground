@@ -47,7 +47,7 @@ template<> bool pivot<float, _16>(matrix<float> & mat_src, matrix<float> & mat_d
   auto pivotRow_0 = pivotRowVec[0];
 
   if (pivotRow_0 < 0) {  // negate pivot row
-    pivotRowVec = -pivotRowVec; _mm512_xor_ps(pivotRowVec, _mm512_set1_ps(-0.0));
+    pivotRowVec = -pivotRowVec;
   }
   *(Zmm *)(dstPivotRowPtr) = pivotRowVec;
 
@@ -95,13 +95,14 @@ template<> bool pivot<float, _8>(matrix<float> & mat_src, matrix<float> & mat_ds
   return pivot<float, _16>(mat_src, mat_dst, pivotRow, pivotCol);
 }
 
-inline __attribute__((always_inline)) void copy_row(double * dstRowPtr, double * srcRowPtr , unsigned nCol){
-  *(doubleZmm *)(dstRowPtr + 0) = *(doubleZmm *)(srcRowPtr + 0);
-  *(doubleZmm *)(dstRowPtr + ZmmDoubleVecSize) = *(doubleZmm *)(srcRowPtr + ZmmDoubleVecSize);
-}
 inline __attribute__((always_inline)) void copy_row(float * dstRowPtr, float * srcRowPtr , unsigned nCol){
   *(floatZmm *)(dstRowPtr + 0) = *(floatZmm *)(srcRowPtr + 0);
   *(floatZmm *)(dstRowPtr + ZmmFloatVecSize) = *(floatZmm *)(srcRowPtr + ZmmFloatVecSize);
+}
+
+inline __attribute__((always_inline)) void copy_row(double * dstRowPtr, double * srcRowPtr , unsigned nCol){
+  *(doubleZmm *)(dstRowPtr + 0) = *(doubleZmm *)(srcRowPtr + 0);
+  *(doubleZmm *)(dstRowPtr + ZmmDoubleVecSize) = *(doubleZmm *)(srcRowPtr + ZmmDoubleVecSize);
 }
 
 template<> bool pivot<float, _32>(matrix<float> & mat_src, matrix<float> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
@@ -190,7 +191,9 @@ template<> bool pivot<float, _24>(matrix<float> & mat_src, matrix<float> & mat_d
   return pivot<float, _32>(mat_src, mat_dst, pivotRow, pivotCol);
 }
 
-
+template<> bool pivot<double, _8>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+  exit(0);
+}
 
 template<> bool pivot<double, _16>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
@@ -275,6 +278,17 @@ template<> bool pivot<double, _16>(matrix<double> & mat_src, matrix<double> & ma
   return true;
 
 }
+
+template<> bool pivot<double, _24>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+  exit(0);
+  return pivot<double, _16>(mat_src, mat_dst, pivotRow, pivotCol);
+}
+
+template<> bool pivot<double, _32>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+  exit(0);
+  return pivot<double, _16>(mat_src, mat_dst, pivotRow, pivotCol);
+}
+
 
 template<> bool pivot<int16_t, _32>(matrix<int16_t> & mat_src, matrix<int16_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
