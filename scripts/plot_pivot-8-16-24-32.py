@@ -15,12 +15,13 @@ size = "xx-large"
 size = "large"
 
 # xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)', 'Upstream Impl (scalcar)']
-xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)']
+xlabel = ['int16, no', 'float, no' ,'i16 checked', 'float checked']
 
+legends = ['8', '16', '24', '32']
 
 xss = []
-# xss.append(np.arange(4))
-xss.append(np.arange(3))
+xss.append(np.arange(4))
+# xss.append(np.arange(3))
 
 f = open(filename, "r")
 xs = f.readlines()
@@ -49,7 +50,6 @@ for x in xs:
             d[bench_name][arg] = [cpu_time]
 
 print(d)
-exit(0)
 
 color_iter = iter(['slateblue', 'crimson', 'lightseagreen', 'darkred'])
 
@@ -60,7 +60,6 @@ barWidth = 0.2
 yss = []
 errss = []
 
-legends = ['overflow check disabled', 'overflow check enabled']
 for bench_name, bench_vals in d.items():
 
     xss.append([x + barWidth for x in xss[-1]])
@@ -94,7 +93,7 @@ for (xs,ys,errs) in zip(xss,yss,errss):
     ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2)
 
 
-plt.xticks([ x-0.5*barWidth for x in xss[1]], list(xlabel), fontsize=size)
+plt.xticks([ x+0.5*barWidth for x in xss[1]], list(xlabel), fontsize=size)
 ax.set_ylabel("time (ns), lower is better", fontsize=size)
 ax.set_title(title, fontsize=size)
 plt.show()
