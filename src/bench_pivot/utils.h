@@ -36,10 +36,12 @@ int lookup(MatColSize matColSize);
 #define ZmmDoubleVecSize 8
 #define ZmmInt64VecSize 8
 #define ZmmInt16VecSize 32
-#define ZmmFloatVecSize 16
+// #define ZmmFloatVecSize 16
+#define YmmFloatVecSize 8
 
 typedef double doubleZmm __attribute__((ext_vector_type(ZmmDoubleVecSize)));
-typedef float floatZmm __attribute__((ext_vector_type(ZmmFloatVecSize)));
+// typedef float floatZmm __attribute__((ext_vector_type(ZmmFloatVecSize)));
+typedef float floatYmm __attribute__((ext_vector_type(YmmFloatVecSize)));
 typedef int64_t int64Zmm __attribute__((ext_vector_type(ZmmInt64VecSize)));
 typedef int16_t int16Zmm __attribute__((ext_vector_type(ZmmInt16VecSize)));
 

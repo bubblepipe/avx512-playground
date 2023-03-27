@@ -34,7 +34,8 @@ bool compare(matrix<T> & mat, const int reference [30] [16]){
             printf("mismatch at %d,%d: %ld, %d\n", rowIndex, colIndex, (int64_t)mat(rowIndex, colIndex), reference[rowIndex][colIndex]);
           } else {
             printf("mismatch at %d,%d: %f, %d\n", rowIndex, colIndex, mat(rowIndex, colIndex), reference[rowIndex][colIndex]);        }
-          ret = false;
+            exit(0);
+            ret = false;
         }
       }
     }

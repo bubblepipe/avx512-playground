@@ -5,7 +5,7 @@ do
     # echo "Size: $NCOL"
     for overflow in uncheck check
     do
-        for datatype in -DUSE_INT16 -DUSE_INT23 # -DUSE_INT52
+        for datatype in -DUSE_INT23 #-DUSE_INT16 # -DUSE_INT52
         do
             flags=$datatype 
             flags+=" -DNCOL=$NCOL"

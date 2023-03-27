@@ -58,9 +58,13 @@ unsigned int matrix<T>::compute_nCol_padding(unsigned int nCol) {
   } 
   
   else if constexpr (std::is_same<T, float>::value) {
-    if (nCol == lookup(_8) || nCol == lookup(_16)) {
+    if (nCol == lookup(_8)) {
+      vector_size = 8;
+    } else if (nCol == lookup(_16) ) {
       vector_size = 16;
-    } else if (nCol == lookup(_24) || nCol == lookup(_32)) {
+    } else if (nCol == lookup(_24) ) {
+      vector_size = 24;
+    } else if (nCol == lookup(_32) ) {
       vector_size = 32;
     } else {
       printf("this should not happen\n"); exit(0); // TODO: 
@@ -124,7 +128,7 @@ void matrix<T>::negateRowVectorized(unsigned int row) {
       _mm512_storeu_pd((double *)(rowPtr + colIndex), result);
     }
   } else if constexpr (std::is_same<T, float>::value) {
-    for (unsigned colIndex = 0; colIndex < nCol; colIndex += ZmmFloatVecSize) {
+    for (unsigned colIndex = 0; colIndex < nCol; colIndex += YmmFloatVecSize) {
       __m512 mat_row_ymm = _mm512_loadu_ps((const float *)(rowPtr + colIndex));
       __m512 result = _mm512_xor_ps(mat_row_ymm, _mm512_set1_ps(-0.0));
       _mm512_storeu_ps((float *)(rowPtr + colIndex), result);
