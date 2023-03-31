@@ -49,12 +49,12 @@ bool compare(matrix<T> & mat, const int reference [30] [16]){
     matrix<TYPE> mat(NROW,lookup(NCOL));                            \
     matrix<TYPE> mat_dst(NROW,lookup(NCOL));                            \
     prepare_mat(mat);                                       \
-    if (pivot<TYPE, NCOL>(mat, mat_dst, pivotRow, pivotCol)) {                  \
+    if (pivot<TYPE, NCOL, VECTOR_SIZE>(mat, mat_dst, pivotRow, pivotCol)) {                  \
       if (!compare(mat, input_mat_arr)) { mat.print(); exit(0); } \
       if (!compare(mat_dst, expected_out_mat_arr)) {mat_dst.print(); exit(0);} \
     }                         \
     for (auto _ : state) {                                  \
-      pivot<TYPE, NCOL>(mat, mat_dst, pivotRow, pivotCol);                 \
+      pivot<TYPE, NCOL, VECTOR_SIZE>(mat, mat_dst, pivotRow, pivotCol);                 \
     }                                                       \
 
 static void PivotCol16Bench(benchmark::State& state) {

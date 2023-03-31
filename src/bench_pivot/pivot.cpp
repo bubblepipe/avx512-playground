@@ -21,13 +21,13 @@
   #define if_fetestexcept_return_false_else 
 #endif
 
-template <typename T, MatColSize matColSize>
+template <typename T, MatColSize matColSize, VectorSize vectorSize>
 bool pivot(matrix<T> & mat_src, matrix<T> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
   return false;
 }
 
 
-template<> bool pivot<float, _16>(matrix<float> & mat_src, matrix<float> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<float, _16, ZMM>(matrix<float> & mat_src, matrix<float> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
   // FECLEAREXCEPT
 
@@ -91,8 +91,8 @@ template<> bool pivot<float, _16>(matrix<float> & mat_src, matrix<float> & mat_d
 
 }
 
-template<> bool pivot<float, _8>(matrix<float> & mat_src, matrix<float> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
-  return pivot<float, _16>(mat_src, mat_dst, pivotRow, pivotCol);
+template<> bool pivot<float, _8, ZMM>(matrix<float> & mat_src, matrix<float> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+  return pivot<float, _16, ZMM>(mat_src, mat_dst, pivotRow, pivotCol);
 }
 
 inline __attribute__((always_inline)) void copy_row(float * dstRowPtr, float * srcRowPtr , unsigned nCol){
@@ -105,7 +105,7 @@ inline __attribute__((always_inline)) void copy_row(double * dstRowPtr, double *
   *(doubleZmm *)(dstRowPtr + ZmmDoubleVecSize) = *(doubleZmm *)(srcRowPtr + ZmmDoubleVecSize);
 }
 
-template<> bool pivot<float, _32>(matrix<float> & mat_src, matrix<float> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<float, _32, ZMM>(matrix<float> & mat_src, matrix<float> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
   // FECLEAREXCEPT
 
   typedef float T;
@@ -187,15 +187,15 @@ template<> bool pivot<float, _32>(matrix<float> & mat_src, matrix<float> & mat_d
   return true;
 }
 
-template<> bool pivot<float, _24>(matrix<float> & mat_src, matrix<float> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
-  return pivot<float, _32>(mat_src, mat_dst, pivotRow, pivotCol);
+template<> bool pivot<float, _24, ZMM>(matrix<float> & mat_src, matrix<float> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+  return pivot<float, _32, ZMM>(mat_src, mat_dst, pivotRow, pivotCol);
 }
 
-template<> bool pivot<double, _8>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<double, _8, ZMM>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
   exit(0);
 }
 
-template<> bool pivot<double, _16>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<double, _16, ZMM>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
   // FECLEAREXCEPT
 
@@ -279,18 +279,18 @@ template<> bool pivot<double, _16>(matrix<double> & mat_src, matrix<double> & ma
 
 }
 
-template<> bool pivot<double, _24>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<double, _24, ZMM>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
   exit(0);
-  return pivot<double, _16>(mat_src, mat_dst, pivotRow, pivotCol);
+  return pivot<double, _16, ZMM>(mat_src, mat_dst, pivotRow, pivotCol);
 }
 
-template<> bool pivot<double, _32>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<double, _32, ZMM>(matrix<double> & mat_src, matrix<double> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
   exit(0);
-  return pivot<double, _16>(mat_src, mat_dst, pivotRow, pivotCol);
+  return pivot<double, _16, ZMM>(mat_src, mat_dst, pivotRow, pivotCol);
 }
 
 
-template<> bool pivot<int16_t, _32>(matrix<int16_t> & mat_src, matrix<int16_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<int16_t, _32, ZMM>(matrix<int16_t> & mat_src, matrix<int16_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
   bool overflow_accum = false;
 
@@ -375,17 +375,17 @@ template<> bool pivot<int16_t, _32>(matrix<int16_t> & mat_src, matrix<int16_t> &
   return !overflow_accum;
 }
 
-template<> bool pivot<int16_t, _8>(matrix<int16_t> & mat_src, matrix<int16_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
-  return pivot<int16_t, _32>(mat_src, mat_dst, pivotRow, pivotCol);
+template<> bool pivot<int16_t, _8, ZMM>(matrix<int16_t> & mat_src, matrix<int16_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+  return pivot<int16_t, _32, ZMM>(mat_src, mat_dst, pivotRow, pivotCol);
 }
-template<> bool pivot<int16_t, _16>(matrix<int16_t> & mat_src, matrix<int16_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
-  return pivot<int16_t, _32>(mat_src, mat_dst, pivotRow, pivotCol);
+template<> bool pivot<int16_t, _16, ZMM>(matrix<int16_t> & mat_src, matrix<int16_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+  return pivot<int16_t, _32, ZMM>(mat_src, mat_dst, pivotRow, pivotCol);
 }
-template<> bool pivot<int16_t, _24>(matrix<int16_t> & mat_src, matrix<int16_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
-  return pivot<int16_t, _32>(mat_src, mat_dst, pivotRow, pivotCol);
+template<> bool pivot<int16_t, _24, ZMM>(matrix<int16_t> & mat_src, matrix<int16_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+  return pivot<int16_t, _32, ZMM>(mat_src, mat_dst, pivotRow, pivotCol);
 }
 
-template<> bool pivot<MPInt, _0>(matrix<MPInt> & mat, matrix<MPInt> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<MPInt, _0, ZMM>(matrix<MPInt> & mat, matrix<MPInt> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
   typedef MPInt T;
 
@@ -429,7 +429,7 @@ template<> bool pivot<MPInt, _0>(matrix<MPInt> & mat, matrix<MPInt> & mat_dst, u
 
 
 
-template<> bool pivot<int64_t, _0>(matrix<int64_t> & mat, matrix<int64_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
+template<> bool pivot<int64_t, _0, ZMM>(matrix<int64_t> & mat, matrix<int64_t> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
 
   typedef int64_t T;
 
@@ -472,10 +472,4 @@ template<> bool pivot<int64_t, _0>(matrix<int64_t> & mat, matrix<int64_t> & mat_
 }
 
 
-
-// template bool pivot <double>(matrix<double> & tableau, unsigned pivotRow, unsigned pivotCol);
-// template bool pivot <float>(matrix<float> & tableau, unsigned pivotRow, unsigned pivotCol);
-// template bool pivot <int64_t>(matrix<int64_t> & tableau, unsigned pivotRow, unsigned pivotCol);
-// template bool pivot <int16_t>(matrix<int16_t> & tableau, unsigned pivotRow, unsigned pivotCol);
-// template bool pivot <uint64_t>(matrix<uint64_t> & mat, matrix<uint64_t> & mat_dst, unsigned pivotRow, unsigned pivotCol);
 

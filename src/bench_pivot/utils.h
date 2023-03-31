@@ -24,12 +24,17 @@
 // #define NCOL _24
 // #define NCOL _32
 
+// #define VECTOR_SIZE XMM
+// #define VECTOR_SIZE YMM
+#define VECTOR_SIZE ZMM
+
 #define UNROLL
 #define SKIP_rowPtr_pivotCol_eq_0
 
 
 #define NROW 30
 
+enum VectorSize { XMM, YMM, ZMM };
 enum MatColSize { _0, _8, _16, _24, _32,  };
 int lookup(MatColSize matColSize);
 
