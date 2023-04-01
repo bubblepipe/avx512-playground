@@ -2,7 +2,9 @@
 #include <bench_pivot/pivot_f32_zmm.cpp>
 #include <bench_pivot/pivot_f32_ymm.cpp>
 #include <bench_pivot/pivot_f64.cpp>
-#include <bench_pivot/pivot_i16.cpp>
+#include <bench_pivot/pivot_i16_zmm.cpp>
+#include <bench_pivot/pivot_i16_ymm.cpp>
+#include <bench_pivot/pivot_i16_xmm.cpp>
 #include <bench_pivot/pivot_MPInt.cpp>
 
 

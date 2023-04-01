@@ -16,8 +16,8 @@
 // #define NO_LOG
 // #define USE_INT64
 // #define USE_MPInt
-// #define USE_INT16
-#define USE_INT23
+#define USE_INT16
+// #define USE_INT23
 // #define USE_INT52
 // #define EMPTY_PIVOT
 // #define CHECK_OVERFLOW
@@ -28,7 +28,7 @@
 // #define NCOL _32
 
 // #define VECTOR_SIZE XMM
-#define VECTOR_SIZE YMM
+// #define VECTOR_SIZE YMM
 // #define VECTOR_SIZE ZMM
 
 #define UNROLL
@@ -43,17 +43,24 @@ int lookup(MatColSize matColSize);
 
 #define ZmmDoubleVecSize 8
 #define ZmmInt64VecSize 8
+
 #define ZmmInt16VecSize 32
 #define YmmInt16VecSize 16
 #define XmmInt16VecSize 8
+
 #define ZmmFloatVecSize 16
 #define YmmFloatVecSize 8
 
 typedef double doubleZmm __attribute__((ext_vector_type(ZmmDoubleVecSize)));
+
 typedef float floatYmm __attribute__((ext_vector_type(YmmFloatVecSize)));
 typedef float floatZmm __attribute__((ext_vector_type(ZmmFloatVecSize)));
+
 typedef int64_t int64Zmm __attribute__((ext_vector_type(ZmmInt64VecSize)));
+
 typedef int16_t int16Zmm __attribute__((ext_vector_type(ZmmInt16VecSize)));
+typedef int16_t int16Ymm __attribute__((ext_vector_type(YmmInt16VecSize)));
+typedef int16_t int16Xmm __attribute__((ext_vector_type(XmmInt16VecSize)));
 
 void trigger_FPE();
 

@@ -1,10 +1,11 @@
+#ifndef INT16_UTILS_H
+#define INT16_UTILS_H
+
 #include <cstdint>
 #include <limits>
 #include <stdexcept>
 #include <immintrin.h>
-
-#define AVX512_ENABLED
-#ifdef AVX512_ENABLED
+#include <bench_pivot/utils.h>
 
 typedef int16_t Vector16x32 __attribute__((ext_vector_type(32)));
 
@@ -24,6 +25,32 @@ inline __attribute__((always_inline)) __mmask32 negs(Vector16x32 x) {
 
 template <bool isChecked>
 inline __attribute__((always_inline)) Vector16x32 negate(Vector16x32 x, bool & overflow_accum) {
+  if constexpr (isChecked) {
+    bool overflow = equalMask(x, std::numeric_limits<int16_t>::min());
+    overflow_accum |= overflow;
+  }
+  return -x;
+}
+
+inline __attribute__((always_inline)) __mmask32 equalMask(int16Ymm x, int16Ymm y) {
+  return _mm256_cmp_epi16_mask(x, y, _MM_CMPINT_EQ);
+}
+
+template <bool isChecked>
+inline __attribute__((always_inline)) int16Ymm negate(int16Ymm x, bool & overflow_accum) {
+  if constexpr (isChecked) {
+    bool overflow = equalMask(x, std::numeric_limits<int16_t>::min());
+    overflow_accum |= overflow;
+  }
+  return -x;
+}
+
+inline __attribute__((always_inline)) __mmask32 equalMask(int16Xmm x, int16Xmm y) {
+  return _mm_cmp_epi16_mask(x, y, _MM_CMPINT_EQ);
+}
+
+template <bool isChecked>
+inline __attribute__((always_inline)) int16Xmm negate(int16Xmm x, bool & overflow_accum) {
   if constexpr (isChecked) {
     bool overflow = equalMask(x, std::numeric_limits<int16_t>::min());
     overflow_accum |= overflow;
@@ -52,4 +79,5 @@ inline __attribute__((always_inline)) Vector16x32 mul(Vector16x32 x, Vector16x32
   }
   return lo;
 }
+
 #endif
