@@ -1,11 +1,42 @@
+#ifndef PIVOT_H
+#define PIVOT_H
+
 #include <cstdint>
 #include <bench_pivot/matrix.h>
 #include <x86intrin.h>
 #include <string.h>
 
+#define START_TIMER     unsigned int dummy;  \
+    unsigned long t1 = __rdtscp(&dummy);
+#define STOP_TIMER     unsigned long t2 = __rdtscp(&dummy); \
+    printf("Time: %ld\n",  t2 - t1); \
+    exit(0);
+
+#ifdef CHECK_OVERFLOW
+  #define FECLEAREXCEPT feclearexcept_local_sse (FE_INEXACT | FE_INVALID);
+  #define if_fetestexcept_return_false_else \
+    if (fetestexcept_local_sse(FE_INEXACT | FE_INVALID)) { \
+      return false; \
+    } else  
+#else 
+  #define FECLEAREXCEPT 
+  #define if_fetestexcept_return_false_else 
+#endif
+
+
+inline __attribute__((always_inline)) void copy_row(float * dstRowPtr, float * srcRowPtr , unsigned nCol){
+  *(floatZmm *)(dstRowPtr + 0) = *(floatZmm *)(srcRowPtr + 0);
+  *(floatZmm *)(dstRowPtr + ZmmFloatVecSize) = *(floatZmm *)(srcRowPtr + ZmmFloatVecSize);
+}
+
+inline __attribute__((always_inline)) void copy_row(double * dstRowPtr, double * srcRowPtr , unsigned nCol){
+  *(doubleZmm *)(dstRowPtr + 0) = *(doubleZmm *)(srcRowPtr + 0);
+  *(doubleZmm *)(dstRowPtr + ZmmDoubleVecSize) = *(doubleZmm *)(srcRowPtr + ZmmDoubleVecSize);
+}
+
 
 template <typename T, MatColSize matColSize, VectorSize vectorSize> 
-bool pivot(matrix<T> & tableau_src, matrix<T> & tableau_dst, unsigned pivotRow, unsigned pivotCol) ;
+bool pivot(matrix<T, vectorSize> & tableau_src, matrix<T, vectorSize> & tableau_dst, unsigned pivotRow, unsigned pivotCol) ;
 
 #define F32_64_OP(__m512X, _mm512_load_pX) \
     __m512X mat_row_ymm = _mm512_load_pX((const T *)(rowPtr + colIndex)); \
@@ -36,3 +67,5 @@ bool pivot(matrix<T> & tableau_src, matrix<T> & tableau_dst, unsigned pivotRow, 
 
 #define I16_TORE \
     _mm512_store_si512((T *)(rowPtr + colIndex), result2);
+
+#endif

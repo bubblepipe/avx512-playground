@@ -36,7 +36,7 @@ struct AlignedAllocator {
   void deallocate(T *Pointer, std::size_t) noexcept { std::free(Pointer); }
 };
 
-template <typename T>
+template <typename T, VectorSize vectorSize>
 class matrix {
 
 public:
@@ -52,7 +52,7 @@ public:
   // colsize = nRow
   matrix(unsigned int r, unsigned int c);
 
-  matrix(matrix<T> & other);
+  matrix(matrix<T, vectorSize> & other);
 
   T get(unsigned int x, unsigned int y) const;
   T &get(unsigned int x, unsigned int y);

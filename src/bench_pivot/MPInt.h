@@ -1,3 +1,6 @@
+#ifndef MPINT_H
+#define MPINT_H
+
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -231,3 +234,5 @@ inline bool operator==(const MPInt &a, int64_t b) {
 inline bool operator<(const MPInt &a, int64_t b) {
     return a.getSmall() < b;
 }
+
+#endif

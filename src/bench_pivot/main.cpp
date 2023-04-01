@@ -1,3 +1,4 @@
+#include "bench_pivot/utils.h"
 #include <benchmark/benchmark.h>
 #include <bench_pivot/pivot.h>
 #include <bench_pivot/input_matrix_16.cpp>
@@ -6,8 +7,8 @@
 #include <bench_pivot/MPInt.h>
 #include <utils/int16_utils.cpp>
 
-template <typename T>
-void prepare_mat(matrix<T> & mat){
+template <typename T, VectorSize vectorSize>
+void prepare_mat(matrix<T, vectorSize> & mat){
   for (int rowIndex = 0; rowIndex < mat.nRow; rowIndex += 1) {
     for (int colIndex = 0; colIndex < mat.nCol; colIndex += 1) {
       if (colIndex < input_mat_col) {
@@ -19,8 +20,8 @@ void prepare_mat(matrix<T> & mat){
   }
 }
 
-template <typename T>
-bool compare(matrix<T> & mat, const int reference [30] [16]){
+template <typename T, VectorSize vectorSize>
+bool compare(matrix<T, vectorSize> & mat, const int reference [30] [16]){
   printf("mat.row = %d, mat.col = %d, mat.nColPadding = %d \n", mat.nRow, mat.nCol, mat.nColPadding);
   bool ret = true;
   for (int rowIndex = 0; rowIndex < mat.nRow; rowIndex += 1) {
@@ -46,8 +47,8 @@ bool compare(matrix<T> & mat, const int reference [30] [16]){
 
 
 #define BENCH(TYPE)   \
-    matrix<TYPE> mat(NROW,lookup(NCOL));                            \
-    matrix<TYPE> mat_dst(NROW,lookup(NCOL));                            \
+    matrix<TYPE, VECTOR_SIZE> mat(NROW,lookup(NCOL));                            \
+    matrix<TYPE, VECTOR_SIZE> mat_dst(NROW,lookup(NCOL));                            \
     prepare_mat(mat);                                       \
     if (pivot<TYPE, NCOL, VECTOR_SIZE>(mat, mat_dst, pivotRow, pivotCol)) {                  \
       if (!compare(mat, input_mat_arr)) { mat.print(); exit(0); } \

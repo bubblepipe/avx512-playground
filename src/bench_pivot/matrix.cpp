@@ -1,18 +1,19 @@
+#include "bench_pivot/utils.h"
 #include <bench_pivot/matrix.h>
 #include <bench_pivot/MPInt.h>
 #include <cstdint>
 #include <cstdlib>
 
-template <typename T>
-matrix<T>::matrix(unsigned int r, unsigned int c) {
+template <typename T, VectorSize vectorSize>
+matrix<T, vectorSize>::matrix(unsigned int r, unsigned int c) {
   nRow = r;
   nCol = c;
   nColPadding = compute_nCol_padding(nCol);
   m.resize(nRow * nColPadding);
 }
 
-template <typename T>
-matrix<T>::matrix(matrix<T> & other) {
+template <typename T, VectorSize vectorSize>
+matrix<T, vectorSize>::matrix(matrix<T, vectorSize> & other) {
   nRow = other.nRow;
   nCol = other.nCol;
   nColPadding = other.nColPadding;
@@ -25,74 +26,119 @@ matrix<T>::matrix(matrix<T> & other) {
   }
 } 
 
-template <typename T>
-inline T matrix<T>::get(unsigned int x, unsigned int y) const { return m[nColPadding * x + y]; }
+template <typename T, VectorSize vectorSize>
+inline T matrix<T, vectorSize>::get(unsigned int x, unsigned int y) const { return m[nColPadding * x + y]; }
 
-template <typename T>
-inline T &matrix<T>::get(unsigned int x, unsigned int y) { return m[nColPadding * x + y]; }
+template <typename T, VectorSize vectorSize>
+inline T &matrix<T, vectorSize>::get(unsigned int x, unsigned int y) { return m[nColPadding * x + y]; }
 
-template <typename T>
-inline void matrix<T>::set(unsigned int x, unsigned int y, T val) { m[nColPadding * x + y] = val; }
+template <typename T, VectorSize vectorSize>
+inline void matrix<T, vectorSize>::set(unsigned int x, unsigned int y, T val) { m[nColPadding * x + y] = val; }
 
-template <typename T>
-inline T matrix<T>::operator()(unsigned int row, unsigned int column) const { return get(row, column); }
+template <typename T, VectorSize vectorSize>
+inline T matrix<T, vectorSize>::operator()(unsigned int row, unsigned int column) const { return get(row, column); }
 
-template <typename T>
-inline T &matrix<T>::operator()(unsigned int row, unsigned int column) { return get(row, column); }
+template <typename T, VectorSize vectorSize>
+inline T &matrix<T, vectorSize>::operator()(unsigned int row, unsigned int column) { return get(row, column); }
 
-template <typename T>
-inline T* matrix<T>::getPtr(){
+template <typename T, VectorSize vectorSize>
+inline T* matrix<T, vectorSize>::getPtr(){
   return m.data();
 }
 
-template <typename T>
-inline T* matrix<T>::getRowPtr(unsigned int row){
+template <typename T, VectorSize vectorSize>
+inline T* matrix<T, vectorSize>::getRowPtr(unsigned int row){
   return m.data() + nColPadding * row;
 }
 
-template <typename T>
-unsigned int matrix<T>::compute_nCol_padding(unsigned int nCol) {
-  auto vector_size = 4;
-  if (std::is_same<T, double>::value) {
-    vector_size = ZmmDoubleVecSize;
-  } 
-  
-  else if constexpr (std::is_same<T, float>::value) {
-    if (nCol == lookup(_8) || nCol == lookup(_16)) {
-      vector_size = 16;
-    } else if (nCol == lookup(_24) || nCol == lookup(_32)) {
-      vector_size = 32;
-    } else {
-      printf("this should not happen\n"); exit(0); // TODO: 
-    }
-  } 
-  
-  else if constexpr (std::is_same<T, int64_t>::value | std::is_same<T, uint64_t>::value | std::is_same<T, MPInt>::value ) {
-    printf("compute_nCol_padding\n");
-    exit(0); 
-    vector_size = ZmmInt64VecSize;
-  } 
-  
-  else if constexpr (std::is_same<T, int16_t>::value) {
-    vector_size = ZmmInt16VecSize;
-  } 
-  
-  else {
-    printf("compute_nCol_padding\n");
-    exit(0); // TODO: 
-  }
-  // printf("nCol: %d, nCol_padding: %d\n", nCol, vector_size);
-  // exit(0);
 
+template <>
+unsigned int matrix<float, ZMM>::compute_nCol_padding(unsigned int nCol) {
+  if (nCol == lookup(_8) || nCol == lookup(_16)) {
+    return ZmmFloatVecSize;
+  } else if (nCol == lookup(_24) || nCol == lookup(_32)) {
+    return ZmmFloatVecSize * 2;
+  } else {
+    printf("this should not happen\n"); exit(0); 
+  }
+}
+
+template <>
+unsigned int matrix<float, YMM>::compute_nCol_padding(unsigned int nCol) {
+  if (nCol == lookup(_8) || nCol == lookup(_16) || nCol == lookup(_24) || nCol == lookup(_32)) {
+    return YmmFloatVecSize;
+  } else {
+    printf("this should not happen\n"); exit(0); 
+  }
+}
+
+template <>
+unsigned int matrix<double, ZMM>::compute_nCol_padding(unsigned int nCol) {
+  if (nCol == lookup(_8) || nCol == lookup(_16) || nCol == lookup(_24) || nCol == lookup(_32)) {
+    return ZmmDoubleVecSize;
+  } else {
+    printf("this should not happen\n"); exit(0); 
+  }
+}
+
+template <>
+unsigned int matrix<float, XMM>::compute_nCol_padding(unsigned int nCol) {
+  printf("float, why XMM?\n"); exit(0); 
+}
+
+template <>
+unsigned int matrix<double, YMM>::compute_nCol_padding(unsigned int nCol) {
+  printf("double, why YMM?\n"); exit(0); 
+}
+
+template <>
+unsigned int matrix<double, XMM>::compute_nCol_padding(unsigned int nCol) {
+  printf("double, why XMM?\n"); exit(0); 
+}
+
+template <>
+unsigned int matrix<int16_t, ZMM>::compute_nCol_padding(unsigned int nCol) {
+  return ZmmInt64VecSize;
+}
+
+template <>
+unsigned int matrix<int16_t, YMM>::compute_nCol_padding(unsigned int nCol) {
+  if (nCol == lookup(_8) || nCol == lookup(_16)) {
+    return YmmInt16VecSize;
+  } else if (nCol == lookup(_24) || nCol == lookup(_32)) {
+    return YmmInt16VecSize * 2;
+  } else {
+    printf("this should not happen\n"); exit(0); 
+  }
+}
+
+template <>
+unsigned int matrix<int16_t, XMM>::compute_nCol_padding(unsigned int nCol) {
+  if (nCol == lookup(_8)) {
+    return XmmInt16VecSize;
+  } else if (nCol == lookup(_16)) {
+    return XmmInt16VecSize * 2;
+  } else if (nCol == lookup(_24)) {
+    return XmmInt16VecSize * 3;
+  } else if (nCol == lookup(_32)) {
+    return XmmInt16VecSize * 4;
+  } else {
+    printf("this should not happen\n"); exit(0); 
+  }
+}
+
+
+template <typename T, VectorSize vectorSize>
+unsigned int matrix<T, vectorSize>::compute_nCol_padding(unsigned int nCol) {
+  auto vector_size = 4;
   if (nCol % vector_size == 0) 
     return nCol;
   else 
     return nCol + (vector_size -(nCol % vector_size) );
-  // return nCol + (vector_size - (nCol % vector_size)) + 1;
 }
 
-template <typename T>
-void matrix<T>::print() {
+template <typename T, VectorSize vectorSize>
+void matrix<T, vectorSize>::print() {
   printx(INFO, "\n====START==OF==MATRIX====\n");
   for (unsigned i = 0; i < nRow; i += 1) {
     for (unsigned j = 0; j < nCol; j += 1) {
@@ -105,16 +151,16 @@ void matrix<T>::print() {
   printx(INFO, "======END==OF==MATRIX======\n\n");
 }
 
-template <typename T>
-void matrix<T>::negateRow(unsigned int row) {
+template <typename T, VectorSize vectorSize>
+void matrix<T, vectorSize>::negateRow(unsigned int row) {
   unsigned rowSize = nCol;
   for (unsigned int i = 0; i < rowSize; i += 1) {
     set(row, i, -(get(row, i)));
   }
 }
 
-template <typename T>
-void matrix<T>::negateRowVectorized(unsigned int row) {
+template <typename T, VectorSize vectorSize>
+void matrix<T, vectorSize>::negateRowVectorized(unsigned int row) {
   T * rowPtr = getRowPtr(row);
   if constexpr (std::is_same<T, double>::value) {
     for (unsigned colIndex = 0; colIndex < nCol; colIndex += ZmmDoubleVecSize) {
@@ -134,8 +180,8 @@ void matrix<T>::negateRowVectorized(unsigned int row) {
   }
 }
 
-template <typename T>
-void matrix<T>::normalizeRowScalar(unsigned row) {
+template <typename T, VectorSize vectorSize>
+void matrix<T, vectorSize>::normalizeRowScalar(unsigned row) {
   T gcd = (T) 0;
   for (unsigned col = 0; col < nCol; ++col) {
     if (gcd == 1)
@@ -154,8 +200,8 @@ void matrix<T>::normalizeRowScalar(unsigned row) {
   // assert(this->get(row, 0) != 0);
 }
 
-template <typename T>
-void matrix<T>::normalizeRow2(T * rowPtr) {
+template <typename T, VectorSize vectorSize>
+void matrix<T, vectorSize>::normalizeRow2(T * rowPtr) {
   T gcd = (T) 0;
   for (unsigned col = 0; col < nCol; ++col) {
     if (gcd == 1)
@@ -171,12 +217,18 @@ void matrix<T>::normalizeRow2(T * rowPtr) {
   }
 }
 
-template class matrix<double>;
-template class matrix<float>;
-template class matrix<int64_t>;
-template class matrix<int16_t>;
-template class matrix<MPInt>;
-template class matrix<uint64_t>;
+template class matrix<double, XMM>;
+template class matrix<double, YMM>;
+template class matrix<double, ZMM>;
+template class matrix<float, XMM>;
+template class matrix<float, YMM>;
+template class matrix<float, ZMM>;
+template class matrix<int16_t, XMM>;
+template class matrix<int16_t, YMM>;
+template class matrix<int16_t, ZMM>;
+template class matrix<int64_t, scalar>;
+template class matrix<MPInt, scalar>;
+template class matrix<uint64_t, scalar>;
 
 inline int32_t greatestCommonDivisor(int32_t A, int32_t B) {
   while (B) {
