@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+# import proplot
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
@@ -49,7 +50,7 @@ for x in xs:
         if not (bench_name in d):
             d[bench_name] = {}
         if arg in d[bench_name]:
-            cpu_time = 0 if cpu_time == 1 else cpu_time
+            cpu_time = 0 if cpu_time < 2 else cpu_time
             d[bench_name][arg].append(cpu_time)
         else:
             d[bench_name][arg] = [cpu_time]
@@ -59,7 +60,21 @@ print(d.keys())
 print(d['XMMfloat'])
 print(d['ZMMfloat'])
 
-color_iter = iter(['slateblue', 'crimson', 'lightseagreen', 'darkred'])
+# pink 4 6 8 f783ac e64980 c2255c
+# red 4 6 8 ff8787 fa5252 e03131
+# blue 4 6 8 4dabf7 228be6 1971c2
+# grape 4 6 8 da77f2 be4bdb 9c36b5
+# teal 4 6 8 38d9a9 12b886 087f5b
+colors =  [
+ '#38d9a9', '#4dabf7', '#ff8787',  #'#da77f2', '#f783ac', 
+ '#12b886', '#228be6', '#fa5252',  #'#be4bdb', '#e64980', 
+ '#087f5b', '#1971c2', '#e03131',  #'#9c36b5', '#c2255c', 
+]
+
+
+
+
+
 
 fig, ax = plt.subplots(figsize =(16, 9))
 
@@ -79,13 +94,12 @@ for bench_name, bench_vals in d.items():
     yss.append(ys)
     errss.append(errs)
 
-print("================================")
-print(xss)
-print(yss)
+
+color_iter = iter(colors)
 for (xs,ys,errs) in zip(xss,yss,errss):
     print(xs)
     print(ys)
-    ax.bar(xs,ys,width=barWidth)
+    ax.bar(xs,ys,width=barWidth, color=next(color_iter))
     
 rects = ax.patches
 labels = [f"label{i}" for i in range(len(rects))]
@@ -97,14 +111,14 @@ for rect, label in zip(rects, labels):
             rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize='small'
         )
 
+color_iter = iter(colors)
 ax.legend(labels=legends, fontsize=size, loc="upper center")
 ax.set_ylim(ymin=0,ymax=80)
 for (xs,ys,errs) in zip(xss,yss,errss):
-    # color = next(color_iter)
-    ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2)
+    ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2, color=next(color_iter))
 
 
-plt.xticks([ x+0.5*barWidth for x in xss[1]], list(xlabel), fontsize=size)
+plt.xticks([ x for x in xss[4]], list(xlabel), fontsize=size)
 ax.set_ylabel("time (ns), lower is better", fontsize=size)
 ax.set_title(title, fontsize=size)
 plt.show()
