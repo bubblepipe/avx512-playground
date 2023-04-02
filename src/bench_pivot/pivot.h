@@ -1,6 +1,7 @@
 #ifndef PIVOT_H
 #define PIVOT_H
 
+#include "bench_pivot/utils.h"
 #include <cstdint>
 #include <bench_pivot/matrix.h>
 #include <x86intrin.h>
@@ -24,15 +25,45 @@
 #endif
 
 
-inline __attribute__((always_inline)) void copy_row(float * dstRowPtr, float * srcRowPtr , unsigned nCol){
-  *(floatZmm *)(dstRowPtr + 0) = *(floatZmm *)(srcRowPtr + 0);
-  *(floatZmm *)(dstRowPtr + ZmmFloatVecSize) = *(floatZmm *)(srcRowPtr + ZmmFloatVecSize);
-}
+// inline __attribute__((always_inline)) void copy_row(float * dstRowPtr, float * srcRowPtr , unsigned nCol){
+//   #if VECTOR_SIZE == ZMM
+//   const auto step_size = ZmmFloatVecSize;
+//   #elif VECTOR_SIZE == YMM
+//   const auto step_size = YmmFloatVecSize;
+//   #elif VECTOR_SIZE == XMM
+//   const auto step_size = XmmFloatVecSize;
+//   #endif
+
+//   *(floatZmm *)(dstRowPtr + 0) = *(floatZmm *)(srcRowPtr + 0);
+//   *(floatZmm *)(dstRowPtr + step_size) = *(floatZmm *)(srcRowPtr + step_size);
+// }
 
 inline __attribute__((always_inline)) void copy_row(double * dstRowPtr, double * srcRowPtr , unsigned nCol){
+  #if VECTOR_SIZE == ZMM
+  const auto step_size = ZmmDoubleVecSize;
+  #elif VECTOR_SIZE == YMM
+  const auto step_size = YmmDoubleVecSize;
+  #elif VECTOR_SIZE == XMM
+  const auto step_size = XmmInt16VecSize;
+  #endif
+
   *(doubleZmm *)(dstRowPtr + 0) = *(doubleZmm *)(srcRowPtr + 0);
-  *(doubleZmm *)(dstRowPtr + ZmmDoubleVecSize) = *(doubleZmm *)(srcRowPtr + ZmmDoubleVecSize);
+  *(doubleZmm *)(dstRowPtr + step_size) = *(doubleZmm *)(srcRowPtr + step_size);
 }
+
+inline __attribute__((always_inline)) void copy_row(int16_t * dstRowPtr, int16_t * srcRowPtr , unsigned nCol){
+  #if VECTOR_SIZE == ZMM
+  const auto step_size = ZmmInt16VecSize;
+  #elif VECTOR_SIZE == YMM
+  const auto step_size = YmmInt16VecSize;
+  #elif VECTOR_SIZE == XMM
+  const auto step_size = XmmInt16VecSize;
+  #endif
+
+  *(int16Zmm *)(dstRowPtr + 0) = *(int16Zmm *)(srcRowPtr + 0);
+  *(int16Zmm *)(dstRowPtr + step_size) = *(int16Zmm *)(srcRowPtr + step_size);
+}
+
 
 
 template <typename T, MatColSize matColSize, VectorSize vectorSize> 

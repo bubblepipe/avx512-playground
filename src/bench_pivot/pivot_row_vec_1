@@ -1,0 +1,53 @@
+  T * srcPivotRowPtr = mat_src.getRowPtr(pivotRow);
+  T * dstPivotRowPtr = mat_dst.getRowPtr(pivotRow);
+  Vec pivotRowVec = *(Vec *)srcPivotRowPtr;
+  
+  T tmp = pivotRowVec[0];
+  pivotRowVec[0] = -pivotRowVec[pivotCol];
+  pivotRowVec[pivotCol] = -tmp;
+
+  auto pivotRow_pivotCol = -tmp;
+  auto pivotRow_0 = pivotRowVec[0];
+
+  if (pivotRow_0 < 0) {  // negate pivot row
+    pivotRowVec = -pivotRowVec;
+  }
+  *(Vec *)(dstPivotRowPtr) = pivotRowVec;
+
+  T * srcRowPtr = srcPivotRowPtr + nColPadding; // row[0] is pivot row
+  T * dstRowPtr = dstPivotRowPtr + nColPadding; // row[1] is ...
+
+  pivotRowVec[0] = 0;
+  Vec ConstA = pivotRow_0;
+  ConstA[0] = 1;
+  
+  #ifdef UNROLL
+  #pragma clang loop unroll(full)
+  #endif
+  for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
+    T pivotColBackup = srcRowPtr[pivotCol];
+
+    #ifdef SKIP_rowPtr_pivotCol_eq_0
+    if (pivotColBackup == 0) { // skip calculation, cp src dst
+      Vec matRowVec = *(Vec *)(srcRowPtr);
+      *(Vec *)(dstRowPtr) = matRowVec;
+      srcRowPtr += nColPadding; 
+      dstRowPtr += nColPadding; 
+      continue; 
+    }
+    #endif
+    
+    Vec ConstC = pivotColBackup;
+    Vec matRowVec = *(Vec *)(srcRowPtr);
+    matRowVec[0] *= pivotRow_0; // TODO: https://grosser.zulipchat.com/#narrow/stream/240241-Presburger-.26-Polyhedral/topic/vectorized.20pivot/near/339397953
+    Vec result = ConstC * pivotRowVec + matRowVec * ConstA;
+    *(Vec *)(dstRowPtr) = result;
+
+    dstRowPtr[pivotCol] = pivotColBackup * pivotRow_pivotCol;
+    //mat.normalizerow2(rowPtr);
+    srcRowPtr += nColPadding;
+    dstRowPtr += nColPadding;
+  }
+
+  if_fetestexcept_return_false_else
+  return true;

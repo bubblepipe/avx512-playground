@@ -1,0 +1,73 @@
+  T * srcPivotRowPtr = mat_src.getRowPtr(pivotRow);
+  T * dstPivotRowPtr = mat_dst.getRowPtr(pivotRow);
+
+  Vec pivotRow_head = *(Vec *)srcPivotRowPtr;
+  Vec pivotRow_tail = *(Vec *)(srcPivotRowPtr + step_size);
+
+  T tmp = pivotRow_head[0];
+  if (pivotCol < step_size) { // head
+    pivotRow_head[0] = -pivotRow_head[pivotCol];
+    pivotRow_head[pivotCol] = -tmp;
+  } else { // pivotCol in tail
+    pivotRow_head[0] = -pivotRow_tail[pivotCol];
+    pivotRow_tail[pivotCol] = -tmp;
+  }
+
+  auto pivotRow_pivotCol = -tmp;
+  auto pivotRow_0 = pivotRow_head[0];
+
+  if (pivotRow_0 < 0) {
+    Vec pivotRow_head = -pivotRow_head; 
+    Vec pivotRow_tail = -pivotRow_tail; 
+  }  
+  //mat.normalizerow2(pivotRowPtr);
+  *(Vec *)dstPivotRowPtr = pivotRow_head;
+  *(Vec *)(dstPivotRowPtr + step_size) = pivotRow_tail;
+  
+  T * srcRowPtr = srcPivotRowPtr + nColPadding; 
+  T * dstRowPtr = dstPivotRowPtr + nColPadding; 
+   
+  pivotRow_head[0] = 0;
+  Vec ConstA = pivotRow_0;
+  Vec ConstA_head = pivotRow_0;
+  ConstA_head[0] = 1;
+  
+  #ifdef UNROLL
+  #pragma clang loop unroll(full)
+  #endif
+  
+  for (unsigned rowIndex = 1; rowIndex < NROW; rowIndex += 1) {
+    
+    T pivotColBackup = srcRowPtr[pivotCol];
+    
+    #ifdef SKIP_rowPtr_pivotCol_eq_0
+    // copy row
+    if (pivotColBackup == 0) { 
+      *(Vec *)(dstRowPtr + 0) = *(Vec *)(srcRowPtr + 0);
+      *(Vec *)(dstRowPtr + step_size) = *(Vec *)(srcRowPtr + step_size);
+      srcRowPtr += nColPadding; 
+      dstRowPtr += nColPadding;
+      continue; 
+    }
+    #endif
+
+    Vec ConstC = pivotColBackup;
+    Vec rowVec_head = *(Vec *)(srcRowPtr);
+    Vec result_head = ConstC * pivotRow_head + rowVec_head * ConstA_head;
+    rowVec_head[0] *= pivotRow_0;
+    *(Vec *)(dstRowPtr) =  result_head;
+
+    auto colIndex = step_size;
+    Vec rowVec_tail = *(Vec *)(srcRowPtr + colIndex);
+    Vec pivotRow_tail = *(Vec *)(dstPivotRowPtr + colIndex);
+    Vec result_tail = ConstC * pivotRow_tail + rowVec_tail * ConstA;
+    *(Vec *)(dstRowPtr + colIndex) = result_tail;
+
+    dstRowPtr[pivotCol] = pivotColBackup * pivotRow_pivotCol;
+    //mat.normalizerow2(rowPtr);
+    srcRowPtr += nColPadding;
+    dstRowPtr += nColPadding;
+  }
+
+  if_fetestexcept_return_false_else
+  return true;

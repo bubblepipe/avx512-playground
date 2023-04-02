@@ -65,8 +65,14 @@ unsigned int matrix<float, ZMM>::compute_nCol_padding(unsigned int nCol) {
 
 template <>
 unsigned int matrix<float, YMM>::compute_nCol_padding(unsigned int nCol) {
-  if (nCol == lookup(_8) || nCol == lookup(_16) || nCol == lookup(_24) || nCol == lookup(_32)) {
+  if (nCol == lookup(_8)) {
     return YmmFloatVecSize;
+  } else if (nCol == lookup(_16)) {
+    return YmmFloatVecSize * 2;
+  } else if (nCol == lookup(_24)) {
+    return YmmFloatVecSize * 3;
+  } else if (nCol == lookup(_32)) {
+    return YmmFloatVecSize * 4;
   } else {
     printf("this should not happen\n"); exit(0); 
   }
@@ -74,8 +80,14 @@ unsigned int matrix<float, YMM>::compute_nCol_padding(unsigned int nCol) {
 
 template <>
 unsigned int matrix<double, ZMM>::compute_nCol_padding(unsigned int nCol) {
-  if (nCol == lookup(_8) || nCol == lookup(_16) || nCol == lookup(_24) || nCol == lookup(_32)) {
+  if (nCol == lookup(_8)) {
     return ZmmDoubleVecSize;
+  } else if (nCol == lookup(_16)) {
+    return ZmmDoubleVecSize * 2;
+  } else if (nCol == lookup(_24)) {
+    return ZmmDoubleVecSize * 3;
+  } else if (nCol == lookup(_32)) {
+    return ZmmDoubleVecSize * 4;
   } else {
     printf("this should not happen\n"); exit(0); 
   }
