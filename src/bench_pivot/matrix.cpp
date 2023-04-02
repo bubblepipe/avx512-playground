@@ -110,7 +110,7 @@ unsigned int matrix<double, XMM>::compute_nCol_padding(unsigned int nCol) {
 
 template <>
 unsigned int matrix<int16_t, ZMM>::compute_nCol_padding(unsigned int nCol) {
-  return ZmmInt64VecSize;
+  return ZmmInt16VecSize;
 }
 
 template <>

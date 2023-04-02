@@ -68,7 +68,26 @@ inline __attribute__((always_inline)) Vector16x32 add(Vector16x32 x, Vector16x32
   }
   return res;
 }
-
+template <bool isChecked>
+inline __attribute__((always_inline)) int16Ymm add(int16Ymm x, int16Ymm y, bool & overflow_accum) {
+  int16Ymm res = x + y;
+  if constexpr (isChecked) {
+    int16Ymm z = _mm256_adds_epi16(x, y);
+    bool overflow = ~equalMask(z, res);
+    overflow_accum |= overflow;
+  }
+  return res;
+}
+template <bool isChecked>
+inline __attribute__((always_inline)) int16Xmm add(int16Xmm x, int16Xmm y, bool & overflow_accum) {
+  int16Xmm res = x + y;
+  if constexpr (isChecked) {
+    int16Xmm z = _mm_adds_epi16(x, y);
+    bool overflow = ~equalMask(z, res);
+    overflow_accum |= overflow;
+  }
+  return res;
+}
 template <bool isChecked>
 inline __attribute__((always_inline)) Vector16x32 mul(Vector16x32 x, Vector16x32 y, bool & overflow_accum) {
   Vector16x32 lo = _mm512_mullo_epi16(x, y);
@@ -80,4 +99,27 @@ inline __attribute__((always_inline)) Vector16x32 mul(Vector16x32 x, Vector16x32
   return lo;
 }
 
+
+template <bool isChecked>
+inline __attribute__((always_inline)) int16Ymm mul(int16Ymm x, int16Ymm y, bool & overflow_accum) {
+  int16Ymm lo = _mm256_mullo_epi16(x, y);
+  if constexpr (isChecked) {
+    int16Ymm hi = _mm256_mulhi_epi16(x, y);
+    bool overflow = ~equalMask(lo >> 15, hi);
+    overflow_accum |= overflow;
+  }
+  return lo;
+}
+
+
+template <bool isChecked>
+inline __attribute__((always_inline)) int16Xmm mul(int16Xmm x, int16Xmm y, bool & overflow_accum) {
+  int16Xmm lo = _mm_mullo_epi16(x, y);
+  if constexpr (isChecked) {
+    int16Xmm hi = _mm_mulhi_epi16(x, y);
+    bool overflow = ~equalMask(lo >> 15, hi);
+    overflow_accum |= overflow;
+  }
+  return lo;
+}
 #endif

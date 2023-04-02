@@ -14,7 +14,7 @@ template<> bool pivot<float, _16, ZMM>(matrix<float, ZMM> & mat_src, matrix<floa
   typedef floatZmm Vec;
   auto const nColPadding = ZmmFloatVecSize; //mat_src.nColPadding;
 
-  #include <bench_pivot/pivot_row_vec_1>
+  #include <bench_pivot/pivot_floating_row_vec_1>
 
 }
 
@@ -29,7 +29,7 @@ template<> bool pivot<float, _24, ZMM>(matrix<float, ZMM> & mat_src, matrix<floa
   auto const nColPadding = 32;
   auto const nCol = 24;
 
-  #include <bench_pivot/pivot_row_vec_2>
+  #include <bench_pivot/pivot_floating_row_vec_2>
 }
 
 template<> bool pivot<float, _32, ZMM>(matrix<float, ZMM> & mat_src, matrix<float, ZMM> & mat_dst, unsigned pivotRow, unsigned pivotCol) {
@@ -41,7 +41,7 @@ template<> bool pivot<float, _32, ZMM>(matrix<float, ZMM> & mat_src, matrix<floa
   auto const nColPadding = 32;
   auto const nCol = 32;
 
-  #include <bench_pivot/pivot_row_vec_2>
+  #include <bench_pivot/pivot_floating_row_vec_2>
 
 }
 

@@ -1,0 +1,50 @@
+#!/bin/bash
+
+for VECTOR_SIZE in XMM YMM ZMM
+do
+for NCOL in _8 _16 _24 _32
+do
+for overflow in uncheck check 
+do
+for datatype in -DUSE_INT16 -DUSE_INT23 -DUSE_INT52 
+do
+
+        if [ "$VECTOR_SIZE" = "XMM" ] && [ "$datatype" = "-DUSE_INT23" ]; then
+            printf '%s\n' "$VECTOR_SIZE/""$NCOL/""$overflow/""float 0"
+            continue
+        fi
+
+        if [ "$VECTOR_SIZE" = "XMM" ] && [ "$datatype" = "-DUSE_INT52" ]; then
+            printf '%s\n' "$VECTOR_SIZE/""$NCOL/""$overflow/""double 0"
+            continue
+        fi
+
+        if [ "$VECTOR_SIZE" = "YMM" ] && [ "$datatype" = "-DUSE_INT52" ]; then
+            printf '%s\n' "$VECTOR_SIZE/""$NCOL/""$overflow/""double 0"
+            continue
+        fi
+        
+        flags=$datatype 
+        flags+=" -DNCOL=$NCOL"
+        flags+=" -DVECTOR_SIZE=$VECTOR_SIZE"
+        if [ "$overflow" = "check" ]; then
+            flags+=" -DCHECK_OVERFLOW"
+        fi
+        
+        # echo $flags
+       
+        export PIVOT_SETTING=$flags
+        make bench-pivot -j8 > /dev/null 
+        # for x in {1}
+        for x in {1}
+        do
+            printf '%s' "$VECTOR_SIZE/""$NCOL/""$overflow/"
+            OUTPUT=$(./build/pivot 2>/dev/null | tail -1) 
+            echo -n $OUTPUT | cut -d " " -f 1,2
+        done
+done
+done
+done
+done
+
+export PIVOT_SETTING=""
