@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-
+import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
@@ -11,6 +11,9 @@ filename = 'StartFromEmptyPivot-2'
 filename='StartFromEmptyPivot-only-test-no-clear'
 filename='StartFromEmptyPivot-unroll-indexVec'
 filename='DoubleBuffering'
+filename='/tmp/i16_skip0'
+filename='/tmp/check_0_no_copy'
+filename='/tmp/xor'
 
 # title = 'pivot, row 30, col 16, loop empty'
 # title='StartFromEmptyPivot-only-test-no-clear'
@@ -60,6 +63,11 @@ color_iter = iter(['slateblue', 'crimson', 'lightseagreen', 'darkred'])
 
 fig, ax = plt.subplots(figsize =(16, 9))
 
+
+from cycler import cycler
+custom_cycler = (cycler(color=['r','r','r','g']))
+ax.set_prop_cycle(custom_cycler)
+
 barWidth = 0.2
 
 yss = []
@@ -96,7 +104,7 @@ ax.legend(labels=legends, fontsize=size, loc="upper center")
 ax.set_ylim(ymin=0,ymax=40)
 for (xs,ys,errs) in zip(xss,yss,errss):
     color = next(color_iter)
-    ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2)
+    ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2, color=color)
 
 
 plt.xticks([ x-0.5*barWidth for x in xss[1]], list(xlabel), fontsize=size)

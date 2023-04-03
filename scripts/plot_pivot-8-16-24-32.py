@@ -15,12 +15,12 @@ size = "xx-large"
 size = "large"
 
 # xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)', 'Upstream Impl (scalcar)']
-xlabel = ['int16, no', 'float, no' ,'i16 checked', 'float checked']
+xlabel = ['int16, no', 'float, no' ,'i16 checked', 'float checked', 'float Ymm unchecked', 'float Ymm checked']
 
 legends = ['8', '16', '24', '32']
 
 xss = []
-xss.append(np.arange(4))
+xss.append(np.arange(6))
 # xss.append(np.arange(3))
 
 f = open(filename, "r")
