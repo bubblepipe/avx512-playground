@@ -14,8 +14,8 @@
   }
   *(Vec *)(dstPivotRowPtr) = pivotRowVec;
 
-  T * srcRowPtr = srcPivotRowPtr + nColPadding; // row[0] is pivot row
-  T * dstRowPtr = dstPivotRowPtr + nColPadding; // row[1] is ...
+  T * srcRowPtr = srcPivotRowPtr + nColPadding;
+  T * dstRowPtr = dstPivotRowPtr + nColPadding;
 
   pivotRowVec[0] = 0;
   Vec ConstA = pivotRow_0;

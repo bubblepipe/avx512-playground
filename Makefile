@@ -3,7 +3,7 @@ CC=clang++-15
 # CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -Wno-format 
 CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g 
 CFLAGS_no_vec=-O3 -mno-avx -mno-sse -march=native -I src/ -fno-omit-frame-pointer -std=c++17
-# CFLAGS=-O1 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g
+# CFLAGS=-O0 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g
 
 INC_GBENCH=-isystem include/benchmark/include
 INC_LIBSIMDPP=-I ./include/libsimdpp
