@@ -19,6 +19,7 @@ void mat_fma ( unsigned int row, unsigned int col,
         }
     }
 }
+
 void mat_add ( unsigned int row, unsigned int col, 
     matrix<int32_t> & mat_src1, matrix<int32_t> & mat_src2, matrix<int32_t> & mat_src3, matrix<int32_t> & mat_dst ) {
 
@@ -103,16 +104,16 @@ void mat_fma_intrinsic ( unsigned int row, unsigned int col,
     int32_t * src2_ptr = (int32_t *) mat_src2.m.data();
     int32_t * src3_ptr = (int32_t *) mat_src3.m.data();
     int32_t * dst_ptr  = (int32_t *) mat_dst.m.data();
-
+#define AVX512_ENABLED
 #ifdef AVX512_ENABLED
     for (int32_t i = 0; i < size; i += 16 ){
-        __m512 src1 = _mm512_loadu_si512 ((__m256i_u*) (src1_ptr + i));
-        __m512 src2 = _mm512_loadu_si512 ((__m256i_u*) (src2_ptr + i));
+        __m512 src1 = _mm512_loadu_si512 ((__m512i_u*) (src1_ptr + i));
+        __m512 src2 = _mm512_loadu_si512 ((__m512i_u*) (src2_ptr + i));
         __m512 r1 = _mm512_mullo_epi32(src1, src2);
-        __m512 src3 = _mm512_loadu_si512 ((__m256i_u*) (src3_ptr + i));
+        __m512 src3 = _mm512_loadu_si512 ((__m512i_u*) (src3_ptr + i));
         __m512 r2 = _mm512_add_epi32(r1, src3);
         __m512 rx = _mm512_mullo_epi32(r2, src3);
-        _mm512_storeu_si512((__m256i_u*) (dst_ptr + i), rx);
+        _mm512_storeu_si512((__m512i_u*) (dst_ptr + i), rx);
     }
 #else
     for (int32_t i = 0; i < size; i += 8 ){
@@ -124,6 +125,7 @@ void mat_fma_intrinsic ( unsigned int row, unsigned int col,
         _mm256_storeu_si256((__m256i_u*) (dst_ptr + i), r2);
     }
 #endif
+#undef AVX512_ENABLED
 }
 
 void mat_fma_intrinsic_checked ( unsigned int row, unsigned int col, 

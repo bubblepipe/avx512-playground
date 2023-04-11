@@ -1,0 +1,24 @@
+float/fma/vecty       16.5 ns         16.5 ns     42214439
+float/fma/vecty       19.7 ns         16.3 ns     42715055
+float/fma/vecty       16.2 ns         16.2 ns     42912802
+
+float/fma/auto        116 ns          116 ns      6010474
+float/fma/auto        117 ns          117 ns      5988200
+float/fma/auto        116 ns          116 ns      6013698
+
+float/fma/scalar        196 ns          196 ns      3571534
+float/fma/scalar        196 ns          196 ns      3570578
+float/fma/scalar        196 ns          196 ns      3571418
+
+
+int/madd/vecty       19.3 ns         19.3 ns     36481004
+int/madd/vecty       18.9 ns         18.9 ns     37041866
+int/madd/vecty       19.0 ns         19.0 ns     36864447
+
+int/madd/auto        290 ns          290 ns      2416491
+int/madd/auto        289 ns          289 ns      2421402
+int/madd/auto        289 ns          289 ns      2418431
+
+int/madd/scalar        404 ns          404 ns      1730657
+int/madd/scalar        442 ns          442 ns      1587018
+int/madd/scalar        404 ns          404 ns      1730668

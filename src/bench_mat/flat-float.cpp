@@ -9,6 +9,8 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 
+#define AVX512_ENABLED
+
 void mat_fma ( unsigned int row, unsigned int col, 
     matrix<float> & mat_src1, matrix<float> & mat_src2, matrix<float> & mat_src3, matrix<float> & mat_dst ) {
     for (int i = 0; i < row; i += 1) {
@@ -20,7 +22,25 @@ void mat_fma ( unsigned int row, unsigned int col,
         }
     }
 }
+void mat_fma_vecty ( unsigned int row, unsigned int col, 
+    matrix<float> & mat_src1, matrix<float> & mat_src2, matrix<float> & mat_src3, matrix<float> & mat_dst ) {
+    auto size = mat_src1.m.size();
+    float * src1_ptr = (float *) mat_src1.m.data();
+    float * src2_ptr = (float *) mat_src2.m.data();
+    float * src3_ptr = (float *) mat_src3.m.data();
+    float * dst_ptr  = (float *) mat_dst.m.data();
 
+    #define FloatZmmSize 16
+    typedef float floatZmm __attribute__((ext_vector_type(FloatZmmSize), __aligned__));
+    
+    for (int i = 0; i < size; i += 16 ){
+        floatZmm src1 = *(floatZmm* ) (src1_ptr + i);
+        floatZmm src2 = *(floatZmm* ) (src2_ptr + i);
+        floatZmm src3 = *(floatZmm* ) (src3_ptr + i);
+        *(floatZmm *)(dst_ptr + i) = src1 * src2 + src3;
+
+    }
+}
 
 void mat_fma_manual ( unsigned int row, unsigned int col, 
     matrix<float> & mat_src1, matrix<float> & mat_src2, matrix<float> & mat_src3, matrix<float> & mat_dst ) {
