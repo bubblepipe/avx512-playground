@@ -15,7 +15,7 @@ title = 'Performance of The Toy Example when Overflow is Enabled or Disabled\n U
 size = "xx-large"
 
 xlabel = ['int16_t', 'int32_t', 'int64_t', 'float', 'double' ]
-legends = ['Overflow aware', 'Overflow ignored', ]
+legends = ['Overflow ignored', 'Overflow aware']
 
 cluster_count = 5
 
