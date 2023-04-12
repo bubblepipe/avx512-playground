@@ -7,18 +7,20 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import sys
 import numpy as np
 
-filename='bench_vectorization_method'
+filename='bench_datatype_int'
 
-title = 'Performance of Element-wise Multiply-Add \non a 16 by 16 matrix with Different Vectorization Methods' 
-x_axis_label = 'Performance of Element-wise Multiply-Add on a 16 by 16 matrix with Different Vectorization Methods' 
+title = 'Performance of The Toy Example when Overflow is Enabled or Disabled' 
+# x_axis_label = 'Performance of Element-wise Multiply-Add on a 16 by 16 matrix with Different Vectorization Methods' 
 
 size = "xx-large"
 
-xlabel = ['float', 'int', ]
+xlabel = ['int16_t', 'int32_t', 'int64_t']
+legends = ['Overflow aware', 'Overflow ignored', ]
 
+cluster_count = 3
 
 xss = []
-xss.append(np.arange(2))
+xss.append(np.arange(cluster_count))
 
 f = open(filename, "r")
 xs = f.readlines()
@@ -47,12 +49,11 @@ for x in xs:
 
 
 # legends = list(d.keys())
-legends = ['Scalar', 'Automatic vectorization', 'Using vector types']
 print(d.keys()) 
 
 fig, ax = plt.subplots(figsize =(16, 9))
 
-barWidth = 0.1
+barWidth = 0.15
 
 yss = []
 errss = []
@@ -92,8 +93,8 @@ for (xs,ys,errs) in zip(xss,yss,errss):
     ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2,)
 
 
-plt.xticks([ x for x in xss[1]], list(xlabel), fontsize=size)
+plt.xticks([  x-0.5*barWidth for x in xss[1] ], list(xlabel), fontsize=size)
 ax.set_ylabel("CPU Time (ns), lower is better", fontsize=size)
 # ax.set_xlabel(x_axis_label, fontsize=size)
 ax.set_title(title, fontsize=size)
-plt.savefig('plot_vectorization_method.png', dpi=300)
+plt.savefig( filename +'.png', dpi=300)
