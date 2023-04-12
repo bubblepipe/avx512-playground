@@ -122,5 +122,5 @@ for (xs,ys,errs) in zip(xss,yss,errss):
 
 plt.xticks([ x + 0.5 * barWidth for x in xss[1]], list(xlabel), fontsize='large',)
 ax.set_ylabel("time (ns), lower is better", fontsize=size)
-ax.set_title(title, fontsize=size)
+# ax.set_title(title, fontsize=size)
 plt.savefig( filename +'.png', dpi=300)
