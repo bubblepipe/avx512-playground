@@ -110,7 +110,7 @@ for rect, label in zip(rects, labels):
     else:
         txt = 'N/A'
     ax.text(
-        rect.get_x() + rect.get_width() / 2, height + 0.5, txt, ha="center", va="bottom", fontsize='large'
+        rect.get_x() + rect.get_width() / 2, height + 0.5, txt, ha="center", va="bottom", fontsize='x-large'
     )
 
 color_iter = iter(colors)
@@ -120,7 +120,7 @@ for (xs,ys,errs) in zip(xss,yss,errss):
     ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2, color=next(color_iter))
 
 
-plt.xticks([ x + 0.5 * barWidth for x in xss[1]], list(xlabel), fontsize='large',)
+plt.xticks([ x + 0.5 * barWidth for x in xss[1]], list(xlabel), fontsize='xx-large',)
 ax.set_ylabel("time (ns), lower is better", fontsize=size)
 # ax.set_title(title, fontsize=size)
 plt.savefig( filename +'.png', dpi=300)
