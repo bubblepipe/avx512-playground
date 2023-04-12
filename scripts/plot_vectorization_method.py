@@ -50,9 +50,9 @@ for x in xs:
 legends = ['Scalar', 'Automatic vectorization', 'Using vector types']
 print(d.keys()) 
 
-fig, ax = plt.subplots(figsize =(9, 9))
+fig, ax = plt.subplots(figsize =(16, 9))
 
-barWidth = 0.15
+barWidth = 0.1
 
 yss = []
 errss = []
@@ -71,7 +71,7 @@ for bench_name, bench_vals in d.items():
 
 for (xs,ys,errs) in zip(xss,yss,errss):
     print(xs)
-    print(ys)
+    # print(ys)
     ax.bar(xs,ys,width=barWidth, )
     
 rects = ax.patches
@@ -86,7 +86,7 @@ for rect, label in zip(rects, labels):
 
 plt.yticks(fontsize=size)
 
-ax.legend(labels=legends, fontsize=size, loc="upper center")
+ax.legend(labels=legends, fontsize=size, loc="upper left")
 # ax.set_ylim(ymin=0,ymax=80)
 for (xs,ys,errs) in zip(xss,yss,errss):
     ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2,)
