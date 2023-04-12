@@ -16,17 +16,17 @@ size = "xx-large"
 # size = "medium"
 
 # xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)', 'Upstream Impl (scalcar)']
-xlabel = ['col = 8,  ignored', 'col = 8,  aware',
-          'col = 16, ignored', 'col = 16, aware',
-          'col = 24, ignored', 'col = 24, aware',
-          'col = 32, ignored', 'col = 32, aware' ]
+xlabel = ['column <= 8',
+          'column <= 16',
+          'column <= 24',
+          'column <= 32' ]
 
 
 legends = [ "YMM, int16_t",  "YMM, float",  "ZMM, int16_t",  "ZMM, float",]
 # legends = [ "XMM/float",  "XMM/double",  "XMM/int16_t",  "YMM/float",  "YMM/double",  "YMM/int16_t",  "ZMM/float",   "ZMM/double",   "ZMM/int16_t",  ]
 
 xss = []
-xss.append(np.arange(8))
+xss.append(np.arange(4))
 # xss.append(np.arange(3))
 
 f = open(filename, "r")
