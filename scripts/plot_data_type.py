@@ -99,5 +99,5 @@ for (xs,ys,errs) in zip(xss,yss,errss):
 plt.xticks([  x-0.5*barWidth for x in xss[1] ], list(xlabel), fontsize=size)
 ax.set_ylabel("CPU Time (ns), lower is better", fontsize=size)
 # ax.set_xlabel(x_axis_label, fontsize=size)
-ax.set_title(title, fontsize=size)
+# ax.set_title(title, fontsize=size)
 plt.savefig( filename +'.png', dpi=300)
