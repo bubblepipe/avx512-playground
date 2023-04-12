@@ -9,10 +9,10 @@ import numpy as np
 
 filename='bench_vectorization_method'
 
-title = 'Performance of Element-wise Multiply-Add on a 16 by 16 matrix with Different Vectorization Methods' 
+title = 'Performance of Element-wise Multiply-Add \non a 16 by 16 matrix with Different Vectorization Methods' 
 x_axis_label = 'Performance of Element-wise Multiply-Add on a 16 by 16 matrix with Different Vectorization Methods' 
 
-size = "medium"
+size = "xx-large"
 
 xlabel = ['float', 'int', ]
 
@@ -81,8 +81,10 @@ for rect, label in zip(rects, labels):
     txt = height
     if txt != 0:
         ax.text(
-            rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize='small'
+            rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize='x-large'
         )
+
+plt.yticks(fontsize=size)
 
 ax.legend(labels=legends, fontsize=size, loc="upper center")
 # ax.set_ylim(ymin=0,ymax=80)
@@ -91,7 +93,7 @@ for (xs,ys,errs) in zip(xss,yss,errss):
 
 
 plt.xticks([ x for x in xss[1]], list(xlabel), fontsize=size)
-ax.set_ylabel("time (ns), lower is better", fontsize=size)
+ax.set_ylabel("CPU Time (ns), lower is better", fontsize=size)
 # ax.set_xlabel(x_axis_label, fontsize=size)
 ax.set_title(title, fontsize=size)
 plt.savefig('plot_vectorization_method.png', dpi=300)
