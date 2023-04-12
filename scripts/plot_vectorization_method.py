@@ -52,7 +52,7 @@ print(d.keys())
 
 fig, ax = plt.subplots(figsize =(16, 9))
 
-barWidth = 0.1
+barWidth = 0.15
 
 yss = []
 errss = []
