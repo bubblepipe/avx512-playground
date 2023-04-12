@@ -21,3 +21,20 @@ int64_t/madd/ignored       32.0 ns         32.0 ns     21932249
 int64_t/madd/checked        131 ns          131 ns      5368830
 int64_t/madd/checked        130 ns          130 ns      5356388
 int64_t/madd/checked        131 ns          131 ns      5339068
+
+float/fma/ignored       16.5 ns         16.5 ns     42214439
+float/fma/ignored       19.7 ns         16.3 ns     42715055
+float/fma/ignored       16.2 ns         16.2 ns     42912802
+
+float/fma/checked       18.2 ns         18.2 ns     38571253
+float/fma/checked       18.2 ns         18.2 ns     38571253
+float/fma/checked       18.2 ns         18.2 ns     38571253
+
+
+double/fma/ignored       39.3 ns         39.3 ns     18108939
+double/fma/ignored       35.3 ns         35.3 ns     20021085
+double/fma/ignored       35.2 ns         35.2 ns     19991649
+
+double/fma/checked       40.5 ns         40.5 ns     17268197
+double/fma/checked       40.5 ns         40.5 ns     17273679
+double/fma/checked       40.7 ns         40.7 ns     17179457

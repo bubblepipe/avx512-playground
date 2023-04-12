@@ -42,7 +42,8 @@ BENCHMARK_CAPTURE(flat, fma_m, &mat_fma_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_i, &mat_fma_intrinsic)->BMarg;
 BENCHMARK_CAPTURE(flat, add_i, &mat_add_intrinsic)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_iu, &mat_fma_intrinsic_unroll)->BMarg;
-BENCHMARK_CAPTURE(flat, fma_ic, &mat_fma_intrinsic_check)->BMarg;
+
+BENCHMARK_CAPTURE(flat, fma_vecty_check, &mat_fma_vecty_check)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_vecty, &mat_fma_vecty)->BMarg;
 
 BENCHMARK_MAIN();

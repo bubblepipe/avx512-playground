@@ -7,17 +7,17 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import sys
 import numpy as np
 
-filename='bench_datatype_int'
+filename='bench_datatype'
 
 title = 'Performance of The Toy Example when Overflow is Enabled or Disabled\n Using int16_t, int32_t, and int64_t' 
 # x_axis_label = 'Performance of Element-wise Multiply-Add on a 16 by 16 matrix with Different Vectorization Methods' 
 
 size = "xx-large"
 
-xlabel = ['int16_t', 'int32_t', 'int64_t']
+xlabel = ['int16_t', 'int32_t', 'int64_t', 'float', 'double' ]
 legends = ['Overflow aware', 'Overflow ignored', ]
 
-cluster_count = 3
+cluster_count = 5
 
 xss = []
 xss.append(np.arange(cluster_count))
@@ -35,7 +35,7 @@ for x in xs:
     elif x == '\n':
         pass
     else:
-        cpu_time = float(x.split()[1]) # check/double           25.4 ns         25.4 ns     28695205
+        cpu_time = float(x.split()[3]) # check/double           25.4 ns         25.4 ns     28695205
         xx = x.split()[0].split('/') 
         bench_name = f'{xx[2]}'
         arg = f'{xx[0]}'

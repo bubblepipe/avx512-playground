@@ -9,6 +9,47 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 
+void mat_fma_vecty ( unsigned int row, unsigned int col, 
+    matrix<double> & mat_src1, matrix<double> & mat_src2, matrix<double> & mat_src3, matrix<double> & mat_dst ) {
+    auto size = mat_src1.m.size();
+    double * src1_ptr = (double *) mat_src1.m.data();
+    double * src2_ptr = (double *) mat_src2.m.data();
+    double * src3_ptr = (double *) mat_src3.m.data();
+    double * dst_ptr  = (double *) mat_dst.m.data();
+
+    #define DoubleZmmSize 8
+    typedef double doubleZmm __attribute__((ext_vector_type(8), __aligned__));
+    
+    for (int i = 0; i < size; i += 8 ){
+        doubleZmm src1 = *(doubleZmm* ) (src1_ptr + i);
+        doubleZmm src2 = *(doubleZmm* ) (src2_ptr + i);
+        doubleZmm src3 = *(doubleZmm* ) (src3_ptr + i);
+        *(doubleZmm *)(dst_ptr + i) = src1 * src2 + src3;
+    }
+}
+
+void mat_fma_vecty_checked ( unsigned int row, unsigned int col, 
+    matrix<double> & mat_src1, matrix<double> & mat_src2, matrix<double> & mat_src3, matrix<double> & mat_dst ) {
+    auto size = mat_src1.m.size();
+    double * src1_ptr = (double *) mat_src1.m.data();
+    double * src2_ptr = (double *) mat_src2.m.data();
+    double * src3_ptr = (double *) mat_src3.m.data();
+    double * dst_ptr  = (double *) mat_dst.m.data();
+
+    #define DoubleZmmSize 8
+    typedef double doubleZmm __attribute__((ext_vector_type(8), __aligned__));
+    
+    for (int i = 0; i < size; i += 8 ){
+        doubleZmm src1 = *(doubleZmm* ) (src1_ptr + i);
+        doubleZmm src2 = *(doubleZmm* ) (src2_ptr + i);
+        doubleZmm src3 = *(doubleZmm* ) (src3_ptr + i);
+        *(doubleZmm *)(dst_ptr + i) = src1 * src2 + src3;
+    }
+    if (!fetestexcept_mxcsr(FE_INEXACT)) {
+      exit(1);
+    }
+}
+
 void mat_fma ( unsigned int row, unsigned int col, 
     matrix<double> & mat_src1, matrix<double> & mat_src2, matrix<double> & mat_src3, matrix<double> & mat_dst ) {
     for (int i = 0; i < row; i += 1) {
