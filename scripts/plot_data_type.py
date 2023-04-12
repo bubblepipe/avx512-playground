@@ -9,7 +9,7 @@ import numpy as np
 
 filename='bench_datatype'
 
-title = 'Performance of The Toy Example when Overflow is Enabled or Disabled\n Using int16_t, int32_t, and int64_t' 
+title = 'Performance of The Toy Example when Overflow is Enabled or Disabled\n Using int16_t, int32_t, int64_t, float, and double' 
 # x_axis_label = 'Performance of Element-wise Multiply-Add on a 16 by 16 matrix with Different Vectorization Methods' 
 
 size = "xx-large"
