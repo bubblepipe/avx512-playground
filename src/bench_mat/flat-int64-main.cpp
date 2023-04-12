@@ -15,24 +15,27 @@ void overflow_handler()
 void mat_fma_scalar_inacurate_check ( unsigned int row, unsigned int col, 
     matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_src3, matrix<int64_t> & mat_dst ) {
     bool overflow = false;
-    for (int i = 0; i < row; i += 1) {
-        for (int j = 0; j < col; j += 1) {
-            int64_t r1, r2;
-            int64_t src1 = mat_src1.get(i,j);
-            int64_t src2 = mat_src2.get(i,j);
-            int64_t src3 = mat_src3.get(i,j);
+    auto size = mat_src1.m.size();
+    
+    int64_t * src1_ptr = (int64_t *) mat_src1.m.data();
+    int64_t * src2_ptr = (int64_t *) mat_src2.m.data();
+    int64_t * src3_ptr = (int64_t *) mat_src3.m.data();
+    int64_t * dst_ptr  = (int64_t *) mat_dst.m.data();
 
-            overflow |= __builtin_mul_overflow(src1, src2, &r1);
-            overflow |= __builtin_add_overflow(r1, src3, &r2);
-
-            mat_dst.set(i,j,  r2);
-        }
+    for (int i = 0; i < size; i += 1) {
+        int64_t r1, r2;
+        int64_t src1 = src1_ptr[i];
+        int64_t src2 = src2_ptr[i];
+        int64_t src3 = src3_ptr[i];
+        overflow |= __builtin_mul_overflow(src1, src2, &r1);
+        overflow |= __builtin_add_overflow(r1, src3, &r2);
+        dst_ptr[i] = r2;
     }
-    if (overflow) {
-        overflow_handler();
-    } 
-}
 
+    if (overflow) {
+        exit(0);
+    }
+}
 
 void mat_fma ( unsigned int row, unsigned int col, 
     matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_src3, matrix<int64_t> & mat_dst ) {
@@ -58,7 +61,8 @@ void mat_add ( unsigned int row, unsigned int col,
 
 
  
-#undef AVX512_ENABLED
+// #undef AVX512_ENABLED
+#define AVX512_ENABLED
 #ifdef AVX512_ENABLED
 
 void mat_add_manual ( unsigned int row, unsigned int col, 

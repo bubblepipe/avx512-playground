@@ -13,3 +13,11 @@ int32_t/madd/ignored       19.0 ns         19.0 ns     36864447
 int32_t/madd/checked         130 ns          130 ns      5383443
 int32_t/madd/checked         129 ns          129 ns      5387060
 int32_t/madd/checked         129 ns          129 ns      5376398
+
+int64_t/madd/ignored       32.0 ns         32.0 ns     21634658
+int64_t/madd/ignored       31.8 ns         31.8 ns     21831522
+int64_t/madd/ignored       32.0 ns         32.0 ns     21932249
+
+int64_t/madd/checked        131 ns          131 ns      5368830
+int64_t/madd/checked        130 ns          130 ns      5356388
+int64_t/madd/checked        131 ns          131 ns      5339068
