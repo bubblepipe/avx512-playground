@@ -30,13 +30,13 @@ void bench_mat_vecvec(benchmark::State &state,
         (*func_ptr)(row, col, mat_src1, mat_src2, mat_src3, mat_dst);
     }
 
-    for (int i = 0; i < row; i += 1) {
-        for (int j = 0; j < col; j += 1) {
-            fprintf(somefile, "%f, %f, %f -> %f \n", 
-                mat_src1[i][j], mat_src2[i][j], 
-                mat_src3[i][j], mat_dst[i][j]);
-        }
-    }
+    // for (int i = 0; i < row; i += 1) {
+    //     for (int j = 0; j < col; j += 1) {
+    //         fprintf(somefile, "%f, %f, %f -> %f \n", 
+    //             mat_src1[i][j], mat_src2[i][j], 
+    //             mat_src3[i][j], mat_dst[i][j]);
+    //     }
+    // }
 
     fclose(somefile);
 }
@@ -48,6 +48,8 @@ BENCHMARK_CAPTURE(bench_mat_vecvec, add_manual, &mat_add_manual)
 BENCHMARK_CAPTURE(bench_mat_vecvec, fma, &mat_fma)
     ->BMarg;
 BENCHMARK_CAPTURE(bench_mat_vecvec, fma_manual, &mat_fma_manual)
+    ->BMarg;
+BENCHMARK_CAPTURE(bench_mat_vecvec, fma_vecty, &mat_fma_vecty)
     ->BMarg;
 
 BENCHMARK_MAIN();

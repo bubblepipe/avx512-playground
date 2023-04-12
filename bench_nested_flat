@@ -1,0 +1,19 @@
+flat/fma_vecty/16/16       20.0 ns         20.0 ns     35151830
+flat/fma_vecty/16/32       31.1 ns         31.1 ns     22622479
+flat/fma_vecty/16/16       20.2 ns         20.2 ns     34907872
+flat/fma_vecty/16/32       30.7 ns         30.7 ns     22841966
+flat/fma_vecty/16/16       27.6 ns         27.6 ns     25342525
+flat/fma_vecty/16/32       30.7 ns         30.7 ns     22896487
+flat/fma_vecty/16/64       67.5 ns         67.5 ns     10401232
+flat/fma_vecty/16/64       71.9 ns         71.9 ns      9683358
+flat/fma_vecty/16/64       67.3 ns         67.3 ns     10393674
+
+nested/fma_vecty/16/16       34.2 ns         34.2 ns     21453227
+nested/fma_vecty/16/16       32.9 ns         32.9 ns     21062973
+nested/fma_vecty/16/16       33.3 ns         33.3 ns     21232173
+nested/fma_vecty/16/32       50.9 ns         50.9 ns     11931365
+nested/fma_vecty/16/32       50.7 ns         50.7 ns     13688292
+nested/fma_vecty/16/32       50.7 ns         50.7 ns     13672054
+nested/fma_vecty/16/64       84.3 ns         84.3 ns      8042349
+nested/fma_vecty/16/64       83.8 ns         83.8 ns      8277062
+nested/fma_vecty/16/64       84.2 ns         84.2 ns      8119062
