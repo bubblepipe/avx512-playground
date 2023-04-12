@@ -1,47 +1,20 @@
-YMM/_8/check/int16_t 10.5
-YMM/_8/check/float 14.2
-YMM/_16/check/int16_t 11.1
-YMM/_16/check/float 17.7
-YMM/_24/check/int16_t 0
-YMM/_24/check/float 25.6
-YMM/_32/check/int16_t 0
-YMM/_32/check/float 31.5
-ZMM/_8/check/int16_t 20.0
-ZMM/_8/check/float 20.6
-ZMM/_16/check/int16_t 20.0
-ZMM/_16/check/float 20.2
-ZMM/_24/check/int16_t 20.2
-ZMM/_24/check/float 30.1
+
+ZMM/_24/check/int16_t 20.1
+ZMM/_24/check/int16_t 20
+ZMM/_24/check/int16_t 20
 ZMM/_32/check/int16_t 20.1
-ZMM/_32/check/float 30.2
-YMM/_8/check/int16_t 10.6
-YMM/_8/check/float 14.1
-YMM/_16/check/int16_t 10.5
-YMM/_16/check/float 18.3
-YMM/_24/check/int16_t 1.00
-YMM/_32/check/int16_t 1.00
+
+YMM/_24/check/float 25.6
 YMM/_32/check/float 31.5
-ZMM/_8/check/int16_t 20.7
-ZMM/_8/check/float 20.4
-ZMM/_16/check/int16_t 20.0
-ZMM/_16/check/float 24.5
-ZMM/_24/check/int16_t 20.0
-ZMM/_24/check/float 30.0
+ZMM/_24/check/float 0
+ZMM/_32/check/float 30.2
+
+YMM/_32/check/float 31.5
 ZMM/_32/check/int16_t 20.0
 ZMM/_32/check/float 30.0
-YMM/_8/check/int16_t 10.7
-YMM/_8/check/float 14.1
-YMM/_16/check/int16_t 10.6
-YMM/_16/check/float 17.6
-YMM/_24/check/int16_t 1.03
+
 YMM/_24/check/float 25.8
-YMM/_32/check/int16_t 1.00
 YMM/_32/check/float 31.6
-ZMM/_8/check/int16_t 20.3
-ZMM/_8/check/float 20.2
-ZMM/_16/check/int16_t 20.0
-ZMM/_16/check/float 20.9
-ZMM/_24/check/int16_t 20.0
-ZMM/_24/check/float 30.4
 ZMM/_32/check/int16_t 20.0
 ZMM/_32/check/float 30.0
+

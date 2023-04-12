@@ -16,17 +16,17 @@ size = "xx-large"
 # size = "medium"
 
 # xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)', 'Upstream Impl (scalcar)']
-xlabel = ['column <= 8',
-          'column <= 16',
-          'column <= 24',
-          'column <= 32' ]
+xlabel = ['column size <= 24',
+          'column size <= 32',
+          
+           ]
 
 
-legends = [ "YMM, int16_t",  "YMM, float",  "ZMM, int16_t",  "ZMM, float",]
+legends = [ "ZMM int16_t", "YMM float",   "ZMM float",]
 # legends = [ "XMM/float",  "XMM/double",  "XMM/int16_t",  "YMM/float",  "YMM/double",  "YMM/int16_t",  "ZMM/float",   "ZMM/double",   "ZMM/int16_t",  ]
 
 xss = []
-xss.append(np.arange(4))
+xss.append(np.arange(2))
 # xss.append(np.arange(3))
 
 f = open(filename, "r")
@@ -47,7 +47,7 @@ for x in xs:
         cpu_time = float(x.split()[1]) # check/double           25.4 ns         25.4 ns     28695205
         xx = x.split()[0].split('/') 
         bench_name = f'{xx[0]}{xx[3]}'
-        arg = f'{xx[1]}{xx[2]}'
+        arg =  f'{xx[1]}'
         if not (bench_name in d):
             d[bench_name] = {}
         if arg in d[bench_name]:
@@ -56,6 +56,8 @@ for x in xs:
         else:
             d[bench_name][arg] = [cpu_time]
 
+print(d)
+# exit(0)
 # legends = list(d.keys())
 # print(d.keys()) 
 
@@ -64,11 +66,11 @@ for x in xs:
 # blue 4 6 8 4dabf7 228be6 1971c2
 # grape 4 6 8 da77f2 be4bdb 9c36b5
 # teal 4 6 8 38d9a9 12b886 087f5b
-colors =  [
- '#38d9a9', '#4dabf7', # '#ff8787',  #'#da77f2', '#f783ac', 
- '#12b886', '#228be6', # '#fa5252',  #'#be4bdb', '#e64980', 
-#  '#087f5b', '#1971c2',  '#e03131',  #'#9c36b5', '#c2255c', 
-]
+# colors =  [
+#  '#38d9a9', '#4dabf7', # '#ff8787',  #'#da77f2', '#f783ac', 
+#  '#12b886', '#228be6', # '#fa5252',  #'#be4bdb', '#e64980', 
+# #  '#087f5b', '#1971c2',  '#e03131',  #'#9c36b5', '#c2255c', 
+# ]
 
 
 
@@ -77,7 +79,7 @@ colors =  [
 
 fig, ax = plt.subplots(figsize =(16, 9))
 
-barWidth = 0.1
+barWidth = 0.15
 
 yss = []
 errss = []
@@ -94,11 +96,11 @@ for bench_name, bench_vals in d.items():
     errss.append(errs)
 
 
-color_iter = iter(colors)
+# color_iter = iter(colors)
 for (xs,ys,errs) in zip(xss,yss,errss):
     print(xs)
     print(ys)
-    ax.bar(xs,ys,width=barWidth, color=next(color_iter))
+    ax.bar(xs,ys,width=barWidth) #, color=next(color_iter))
     
 rects = ax.patches
 labels = [f"label{i}" for i in range(len(rects))]
@@ -113,14 +115,18 @@ for rect, label in zip(rects, labels):
         rect.get_x() + rect.get_width() / 2, height + 0.5, txt, ha="center", va="bottom", fontsize='x-large'
     )
 
-color_iter = iter(colors)
-ax.legend(labels=legends, fontsize=size, loc="upper left")
+# color_iter = iter(colors)
+ax.legend(labels=legends, fontsize=size, loc="upper center")
 # ax.set_ylim(ymin=0,ymax=80)
 for (xs,ys,errs) in zip(xss,yss,errss):
-    ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2, color=next(color_iter))
+    print('=================')
+    print(xs)
+    print(ys)
+    print(errs)
+    ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2 )#, color=next(color_iter))
 
 
-plt.xticks([ x + 0.5 * barWidth for x in xss[1]], list(xlabel), fontsize='xx-large',)
+plt.xticks([ x  for x in xss[1]], list(xlabel), fontsize='xx-large',)
 ax.set_ylabel("time (ns), lower is better", fontsize=size)
 # ax.set_title(title, fontsize=size)
 plt.savefig( filename +'.png', dpi=300)
