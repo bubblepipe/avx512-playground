@@ -32,8 +32,8 @@ float/fma/checked       18.2 ns         18.2 ns     38571253
 
 
 double/fma/ignored       39.3 ns         39.3 ns     18108939
-double/fma/ignored       35.3 ns         35.3 ns     20021085
-double/fma/ignored       35.2 ns         35.2 ns     19991649
+double/fma/ignored       39.3 ns         39.3 ns     20021085
+double/fma/ignored       39.2 ns         39.2 ns     19991649
 
 double/fma/checked       40.5 ns         40.5 ns     17268197
 double/fma/checked       40.5 ns         40.5 ns     17273679
