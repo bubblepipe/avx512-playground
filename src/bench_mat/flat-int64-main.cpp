@@ -6,6 +6,34 @@
 #include <immintrin.h>
 #include <utils/matrix.cpp>
 
+void overflow_handler()
+{
+    printf("overflow!\n");
+    exit(0);
+}
+
+void mat_fma_scalar_inacurate_check ( unsigned int row, unsigned int col, 
+    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_src3, matrix<int64_t> & mat_dst ) {
+    bool overflow = false;
+    for (int i = 0; i < row; i += 1) {
+        for (int j = 0; j < col; j += 1) {
+            int64_t r1, r2;
+            int64_t src1 = mat_src1.get(i,j);
+            int64_t src2 = mat_src2.get(i,j);
+            int64_t src3 = mat_src3.get(i,j);
+
+            overflow |= __builtin_mul_overflow(src1, src2, &r1);
+            overflow |= __builtin_add_overflow(r1, src3, &r2);
+
+            mat_dst.set(i,j,  r2);
+        }
+    }
+    if (overflow) {
+        overflow_handler();
+    } 
+}
+
+
 void mat_fma ( unsigned int row, unsigned int col, 
     matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_src3, matrix<int64_t> & mat_dst ) {
     for (int i = 0; i < row; i += 1) {
@@ -27,6 +55,12 @@ void mat_add ( unsigned int row, unsigned int col,
     exit(0);
 }
 
+
+
+ 
+#undef AVX512_ENABLED
+#ifdef AVX512_ENABLED
+
 void mat_add_manual ( unsigned int row, unsigned int col, 
     matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_src3, matrix<int64_t> & mat_dst ) {
     
@@ -47,35 +81,6 @@ void mat_add_manual ( unsigned int row, unsigned int col,
         _mm256_storeu_si256((__m256i_u*) (dst_ptr + i), result);
     }
 
-}
-
-void overflow_handler()
-{
-    printf("overflow!\n");
-    exit(0);
-}
- 
-
-
-void mat_fma_scalar_inacurate_check ( unsigned int row, unsigned int col, 
-    matrix<int64_t> & mat_src1, matrix<int64_t> & mat_src2, matrix<int64_t> & mat_src3, matrix<int64_t> & mat_dst ) {
-    auto overflow = 0;
-    for (int i = 0; i < row; i += 1) {
-        for (int j = 0; j < col; j += 1) {
-            int64_t r1, r2;
-            int64_t src1 = mat_src1.get(i,j);
-            int64_t src2 = mat_src2.get(i,j);
-            int64_t src3 = mat_src3.get(i,j);
-
-            overflow += __builtin_mul_overflow(src1, src2, &r1);
-            overflow += __builtin_add_overflow(r1, src3, &r2);
-            
-            if (overflow > 0) {
-                overflow_handler();
-            } 
-            mat_dst.set(i,j,  r2);
-        }
-    }
 }
 
 void mat_fma_manual ( unsigned int row, unsigned int col, 
@@ -121,7 +126,7 @@ void mat_fma_manual_inacurate_check ( unsigned int row, unsigned int col,
         exit(0);
     }
 }
-
+#endif
 static void flat(benchmark::State& state, 
         void (*func_ptr)(unsigned int, unsigned int, matrix<int64_t> &, matrix<int64_t> &, matrix<int64_t> &, matrix<int64_t> & )) {
     FILE* somefile = fopen("/dev/shm/1145141919810", "w");
@@ -137,10 +142,10 @@ static void flat(benchmark::State& state,
     for (int r = 0; r < row; r += 1) {
         for (int c = 0; c < col; c += 1) {
             // mat_src1.set(r,c, 0x7ffffffffffffff0); // rand() );
-            mat_src1.set(r,c, r); // rand() );
-            mat_src2.set(r,c, c); // rand() );
-            mat_src3.set(r,c, c); // rand() );
-            mat_dst. set(r,c, r); // rand() );
+            mat_src1.set(r,c, rand() );
+            mat_src2.set(r,c, rand() );
+            mat_src3.set(r,c, rand() );
+            mat_dst. set(r,c, rand() );
         }
     }
     
@@ -160,10 +165,12 @@ static void flat(benchmark::State& state,
 }
 
 BENCHMARK_CAPTURE(flat, add, &mat_add)->BMarg;
+BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
+BENCHMARK_CAPTURE(flat, fma_s_check, &mat_fma_scalar_inacurate_check)->BMarg;
+
+#ifdef AVX512_ENABLED
 BENCHMARK_CAPTURE(flat, add_m, &mat_add_manual)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_i, &mat_fma_manual)->BMarg;
-BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
-BENCHMARK_CAPTURE(flat, fma_s_acurate, &mat_fma_scalar_inacurate_check)->BMarg;
 BENCHMARK_CAPTURE(flat, fma_m_acurate, &mat_fma_manual_inacurate_check)->BMarg;
-
+#endif
 BENCHMARK_MAIN();

@@ -7,7 +7,7 @@
 #include <immintrin.h>
 #include <bench_pivot/utils.h>
 
-typedef int16_t Vector16x32 __attribute__((ext_vector_type(32)));
+typedef int16_t int16Zmm __attribute__((ext_vector_type(32)));
 
 inline __attribute__((always_inline)) void throwOverflowIf(bool cond) {
   if (cond) {
@@ -15,16 +15,16 @@ inline __attribute__((always_inline)) void throwOverflowIf(bool cond) {
   }
 }
 
-inline __attribute__((always_inline)) __mmask32 equalMask(Vector16x32 x, Vector16x32 y) {
+inline __attribute__((always_inline)) __mmask32 equalMask(int16Zmm x, int16Zmm y) {
   return _mm512_cmp_epi16_mask(x, y, _MM_CMPINT_EQ);
 }
 
-inline __attribute__((always_inline)) __mmask32 negs(Vector16x32 x) {
-  return _mm512_cmp_epi16_mask(x, Vector16x32(0), _MM_CMPINT_LT);
+inline __attribute__((always_inline)) __mmask32 negs(int16Zmm x) {
+  return _mm512_cmp_epi16_mask(x, int16Zmm(0), _MM_CMPINT_LT);
 }
 
 template <bool isChecked>
-inline __attribute__((always_inline)) Vector16x32 negate(Vector16x32 x, bool & overflow_accum) {
+inline __attribute__((always_inline)) int16Zmm negate(int16Zmm x, bool & overflow_accum) {
   if constexpr (isChecked) {
     bool overflow = equalMask(x, std::numeric_limits<int16_t>::min());
     overflow_accum |= overflow;
@@ -59,10 +59,10 @@ inline __attribute__((always_inline)) int16Xmm negate(int16Xmm x, bool & overflo
 }
 
 template <bool isChecked>
-inline __attribute__((always_inline)) Vector16x32 add(Vector16x32 x, Vector16x32 y, bool & overflow_accum) {
-  Vector16x32 res = x + y;
+inline __attribute__((always_inline)) int16Zmm add(int16Zmm x, int16Zmm y, bool & overflow_accum) {
+  int16Zmm res = x + y;
   if constexpr (isChecked) {
-    Vector16x32 z = _mm512_adds_epi16(x, y);
+    int16Zmm z = _mm512_adds_epi16(x, y);
     bool overflow = ~equalMask(z, res);
     overflow_accum |= overflow;
   }
@@ -89,10 +89,10 @@ inline __attribute__((always_inline)) int16Xmm add(int16Xmm x, int16Xmm y, bool 
   return res;
 }
 template <bool isChecked>
-inline __attribute__((always_inline)) Vector16x32 mul(Vector16x32 x, Vector16x32 y, bool & overflow_accum) {
-  Vector16x32 lo = _mm512_mullo_epi16(x, y);
+inline __attribute__((always_inline)) int16Zmm mul(int16Zmm x, int16Zmm y, bool & overflow_accum) {
+  int16Zmm lo = _mm512_mullo_epi16(x, y);
   if constexpr (isChecked) {
-    Vector16x32 hi = _mm512_mulhi_epi16(x, y);
+    int16Zmm hi = _mm512_mulhi_epi16(x, y);
     bool overflow = ~equalMask(lo >> 15, hi);
     overflow_accum |= overflow;
   }
