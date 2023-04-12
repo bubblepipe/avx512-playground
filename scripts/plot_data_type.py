@@ -80,10 +80,13 @@ labels = [f"label{i}" for i in range(len(rects))]
 for rect, label in zip(rects, labels):
     height = rect.get_height()
     txt = height
-    if txt != 0:
-        ax.text(
-            rect.get_x() + rect.get_width() / 2, height + 0.5, str(round(txt,1)), ha="center", va="bottom", fontsize='x-large'
-        )
+    if txt == 0:
+        txt = 'N/A'
+    else:
+        txt =str(round(txt,1))
+    ax.text(
+        rect.get_x() + rect.get_width() / 2, height + 0.5, txt, ha="center", va="bottom", fontsize='x-large'
+    )
 
 plt.yticks(fontsize=size)
 
