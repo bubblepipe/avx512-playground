@@ -19,6 +19,6 @@ int/madd/auto        290 ns          290 ns      2416491
 int/madd/auto        289 ns          289 ns      2421402
 int/madd/auto        289 ns          289 ns      2418431
 
-int/madd/scalar        404 ns          404 ns      1730657
-int/madd/scalar        442 ns          442 ns      1587018
-int/madd/scalar        404 ns          404 ns      1730668
+int/madd/scalar      404 ns          404 ns      1730657
+int/madd/scalar      442 ns          442 ns      1587018
+int/madd/scalar      404 ns          404 ns      1730668

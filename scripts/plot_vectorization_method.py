@@ -47,7 +47,7 @@ for x in xs:
 
 
 # legends = list(d.keys())
-legends = ['Scalar', 'Automatic vectorization', 'Using vector types']
+legends = ['Using vector types',  'Automatic vectorization', 'Scalar']
 print(d.keys()) 
 
 fig, ax = plt.subplots(figsize =(16, 9))
