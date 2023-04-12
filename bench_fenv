@@ -1,0 +1,26 @@
+fetestexcept_local            8.46 ns         8.46 ns     82706581
+fetestexcept_x87              4.81 ns         4.81 ns    145181453
+fetestexcept_mxcsr            5.05 ns         5.05 ns    138702705
+feclearexcept_local           57.9 ns         57.9 ns     12088789
+feclearexcept_local_x87       50.6 ns         50.6 ns     13845539
+feclearexcept_mxcsr           10.5 ns         10.5 ns     66874099
+
+
+
+
+fetestexcept_local            8.46 ns         8.46 ns     82698359
+fetestexcept_x87              4.81 ns         4.81 ns    145281685
+fetestexcept_mxcsr            5.02 ns         5.02 ns    138828989
+feclearexcept_local           57.9 ns         57.9 ns     12088488
+feclearexcept_local_x87       50.6 ns         50.6 ns     13845819
+feclearexcept_mxcsr           10.5 ns         10.5 ns     66875002
+
+
+
+
+fetestexcept_local            8.46 ns         8.46 ns     82698642
+fetestexcept_x87              4.82 ns         4.82 ns    145456762
+fetestexcept_mxcsr            5.05 ns         5.05 ns    138661196
+feclearexcept_local           58.2 ns         58.2 ns     12089132
+feclearexcept_local_x87       50.6 ns         50.6 ns     13846148
+feclearexcept_mxcsr           10.5 ns         10.5 ns     66869472
