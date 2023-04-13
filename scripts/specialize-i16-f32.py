@@ -22,7 +22,10 @@ xlabel = ['column size <= 24',
            ]
 
 
-legends = [ "ZMM int16_t", "YMM float",   "ZMM float",]
+legends = [ "Use 1 int16_t ZMM vector for each row",
+             "Use 3 or 4 float YMM vectors for each row\n according to column size", 
+             "Use 2 float ZMM vectors for each row",]
+# legends = [ "ZMM int16_t", "YMM float",   "ZMM float",]
 # legends = [ "XMM/float",  "XMM/double",  "XMM/int16_t",  "YMM/float",  "YMM/double",  "YMM/int16_t",  "ZMM/float",   "ZMM/double",   "ZMM/int16_t",  ]
 
 xss = []
@@ -116,7 +119,7 @@ for rect, label in zip(rects, labels):
     )
 
 # color_iter = iter(colors)
-ax.legend(labels=legends, fontsize=size, loc="upper center")
+ax.legend(labels=legends, fontsize=size, loc="lower center")
 # ax.set_ylim(ymin=0,ymax=80)
 for (xs,ys,errs) in zip(xss,yss,errss):
     print('=================')
