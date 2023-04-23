@@ -3,7 +3,8 @@ ZMM/_32/uncheck/int16_t 15.5
 ZMM/_32/check/int16_t 20.1
 YMM/_24/uncheck/float 25.5
 YMM/_24/check/float 25.6
-
+x/x/uncheck/MPInt 0
+x/x/check/MPInt 550
 
 YMM/_24/uncheck/float 25.4
 

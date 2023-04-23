@@ -18,6 +18,7 @@ size = "xx-large"
 # xlabel = ['int16 (vectorized)', 'float (vectorized)', 'double (vectorized)', 'Upstream Impl (scalcar)']
 xlabel = ['int16_t',
           'float',
+          'MLIR upstream int64_t',
            ]
 
 
@@ -27,7 +28,7 @@ legends = [
              ]
 
 xss = []
-xss.append(np.arange(2))
+xss.append(np.arange(3))
 
 f = open(filename, "r")
 xs = f.readlines()
@@ -63,6 +64,7 @@ print(d)
 
 
 fig, ax = plt.subplots(figsize =(12, 9))
+ax.set_yscale('log')
 
 barWidth = 0.15
 
@@ -101,8 +103,8 @@ for rect, label in zip(rects, labels):
     )
 
 # color_iter = iter(colors)
-ax.legend(labels=legends, fontsize=size, loc="lower center")
-ax.set_ylim(ymin=0,ymax=30)
+ax.legend(labels=legends, fontsize=size, loc="upper left")
+ax.set_ylim(ymin=0,ymax=800)
 for (xs,ys,errs) in zip(xss,yss,errss):
     print('=================')
     print(xs)
@@ -112,6 +114,6 @@ for (xs,ys,errs) in zip(xss,yss,errss):
 
 
 plt.xticks([ x  - 0.5 * barWidth for x in xss[1]], list(xlabel), fontsize='xx-large',)
-ax.set_ylabel("time (ns), lower is better", fontsize=size)
+ax.set_ylabel("time (ns), log scale, lower is better", fontsize=size)
 # ax.set_title(title, fontsize=size)
 plt.savefig( filename +'.png', dpi=300)
