@@ -66,9 +66,27 @@ static void PivotCol16Bench(benchmark::State& state) {
   auto pivotCol = input_mat_pivot_col;
 
 #ifdef USE_INT64
-  BENCH(int64_t)
+  matrix<int64_t, VECTOR_SIZE> mat(NROW,lookup(NCOL));                            
+  matrix<int64_t, VECTOR_SIZE> mat_dst(NROW,lookup(NCOL));                        
+  prepare_mat(mat);                                       
+  if (pivot<int64_t, NCOL, VECTOR_SIZE>(mat, mat_dst, pivotRow, pivotCol)) {                  
+    if (!compare(mat, expected_out_mat_arr)) { mat.print(); exit(0); } 
+    // if (!compare(mat_dst, expected_out_mat_arr)) {mat_dst.print(); exit(0);} 
+  }                         
+  for (auto _ : state) {                                  
+    pivot<int64_t, NCOL, VECTOR_SIZE>(mat, mat_dst, pivotRow, pivotCol);                 
+  } 
 #elif defined USE_MPInt
-  BENCH(MPInt)
+  matrix<MPInt, VECTOR_SIZE> mat(NROW,lookup(NCOL));                            
+  matrix<MPInt, VECTOR_SIZE> mat_dst(NROW,lookup(NCOL));                        
+  prepare_mat(mat);                                       
+  if (pivot<MPInt, NCOL, VECTOR_SIZE>(mat, mat_dst, pivotRow, pivotCol)) {                  
+    if (!compare(mat, expected_out_mat_arr)) { mat.print(); exit(0); } 
+    // if (!compare(mat_dst, expected_out_mat_arr)) {mat_dst.print(); exit(0);} 
+  }                         
+  for (auto _ : state) {                                  
+    pivot<MPInt, NCOL, VECTOR_SIZE>(mat, mat_dst, pivotRow, pivotCol);                 
+  }      
 #elif defined USE_INT16
   BENCH(int16_t)
 # elif defined USE_INT52

@@ -14,10 +14,10 @@
 
 // #define PIVOT_DEFAULT
 // #define NO_LOG
-// #define USE_INT64
+#define USE_INT64
 // #define USE_MPInt
 // #define USE_INT16
-#define USE_INT23
+// #define USE_INT23
 // #define USE_INT52
 
 // #define EMPTY_PIVOT
@@ -26,11 +26,12 @@
 
 // #define NCOL _8
 // #define NCOL _16
-#define NCOL _24
-// #define NCOL _32
+// #define NCOL _24
+#define NCOL _32
 
+#define VECTOR_SIZE scalar
 // #define VECTOR_SIZE XMM
-#define VECTOR_SIZE YMM
+// #define VECTOR_SIZE YMM
 // #define VECTOR_SIZE ZMM
 
 #define UNROLL
