@@ -14,7 +14,8 @@ x_axis_label = 'Performance of Element-wise Multiply-Add on a 16 by 16 matrix wi
 
 size = "xx-large"
 
-xlabel = ['float', 'int', ]
+xlabel = ['Using vector type', 'Auto vectorized', ]
+# xlabel = ['float', 'int', ]
 
 
 xss = []
@@ -35,8 +36,8 @@ for x in xs:
     else:
         cpu_time = float(x.split()[1]) # check/double           25.4 ns         25.4 ns     28695205
         xx = x.split()[0].split('/') 
-        bench_name = f'{xx[2]}'
-        arg = f'{xx[0]}'
+        bench_name = f'{xx[0]}'
+        arg = f'{xx[2]}'
         if not (bench_name in d):
             d[bench_name] = {}
         if arg in d[bench_name]:
@@ -47,10 +48,10 @@ for x in xs:
 
 
 # legends = list(d.keys())
-legends = ['Using vector types',  'Automatic vectorization', 'Scalar']
+# legends = ['Using vector types',  'Automatic vectorization', 'Scalar']
 print(d.keys()) 
-
-fig, ax = plt.subplots(figsize =(16, 9))
+print(d)
+fig, ax = plt.subplots(figsize =(9, 9))
 
 barWidth = 0.15
 
@@ -86,13 +87,15 @@ for rect, label in zip(rects, labels):
 
 plt.yticks(fontsize=size)
 
-ax.legend(labels=legends, fontsize=size, loc="upper left")
+# ax.legend(labels=legends, fontsize=size, loc="upper left")
 # ax.set_ylim(ymin=0,ymax=80)
 for (xs,ys,errs) in zip(xss,yss,errss):
+    print(xs)
+    print(ys)
     ax.errorbar(xs,ys,yerr=errs,fmt="|",elinewidth=2,)
 
 
-plt.xticks([ x for x in xss[1]], list(xlabel), fontsize=size)
+plt.xticks([ x for x in xss[0]], list(xlabel), fontsize=size)
 ax.set_ylabel("CPU Time (ns), lower is better", fontsize=size)
 # ax.set_xlabel(x_axis_label, fontsize=size)
 # ax.set_title(title, fontsize=size)
