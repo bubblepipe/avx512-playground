@@ -7,14 +7,20 @@
 #include <immintrin.h>
 #include <utils/int32_utils.cpp>
 
+#define AVX512_ENABLED
 
-void mat_fma ( unsigned int row, unsigned int col, 
+void mat_fma_auto ( unsigned int row, unsigned int col, 
     matrix<int32_t> & mat_src1, matrix<int32_t> & mat_src2, matrix<int32_t> & mat_src3, matrix<int32_t> & mat_dst ) {
+    float * dst_ptr  = (float *) mat_dst.m.data();
+    #pragma clang loop unroll(disable)
+
     for (int i = 0; i < row; i += 1) {
+        #pragma clang loop unroll(disable)
         for (int j = 0; j < col; j += 1) {
             int32_t src1 = mat_src1.get(i,j);
             int32_t src2 = mat_src2.get(i,j);
             int32_t src3 = mat_src3.get(i,j);
+            // dst_ptr[i * col + j] = (src1 * src2) + src3;
             mat_dst.set(i,j,  (src1 * src2) + src3);
         }
     }
@@ -106,13 +112,13 @@ void mat_fma_intrinsic ( unsigned int row, unsigned int col,
 
 #ifdef AVX512_ENABLED
     for (int32_t i = 0; i < size; i += 16 ){
-        __m512 src1 = _mm512_loadu_si512 ((__m256i_u*) (src1_ptr + i));
-        __m512 src2 = _mm512_loadu_si512 ((__m256i_u*) (src2_ptr + i));
+        __m512 src1 = _mm512_loadu_si512 ((__m512i_u*) (src1_ptr + i));
+        __m512 src2 = _mm512_loadu_si512 ((__m512i_u*) (src2_ptr + i));
         __m512 r1 = _mm512_mullo_epi32(src1, src2);
-        __m512 src3 = _mm512_loadu_si512 ((__m256i_u*) (src3_ptr + i));
+        __m512 src3 = _mm512_loadu_si512 ((__m512i_u*) (src3_ptr + i));
         __m512 r2 = _mm512_add_epi32(r1, src3);
-        __m512 rx = _mm512_mullo_epi32(r2, src3);
-        _mm512_storeu_si512((__m256i_u*) (dst_ptr + i), rx);
+        // __m512 rx = _mm512_mullo_epi32(r2, src3);
+        _mm512_storeu_si512((__m512i_u*) (dst_ptr + i), r2);
     }
 #else
     for (int32_t i = 0; i < size; i += 8 ){
@@ -135,14 +141,14 @@ void mat_fma_intrinsic_checked ( unsigned int row, unsigned int col,
     int32_t * dst_ptr  = (int32_t *) mat_dst.m.data();
 
 #ifdef AVX512_ENABLED
-    for (int32_t i = 0; i < size; i += 16 ){
-        __m512 src1 = _mm512_loadu_si512((int32_t *)(src1_ptr + i));
-        __m512 src2 = _mm512_loadu_si512((int32_t *)(src2_ptr + i));
-        __m512 mul_result = mul<true>(src1, src2);
-        __m512 src3 = _mm512_loadu_si512((int32_t *)(src3_ptr + i));
-        __m512 result = add<true>(mul_result, src3);
-        _mm512_storeu_si512((int32_t *)(dst_ptr + i), result);
-    }
+    // for (int32_t i = 0; i < size; i += 16 ){
+    //     __m512 src1 = _mm512_loadu_si512((int32_t *)(src1_ptr + i));
+    //     __m512 src2 = _mm512_loadu_si512((int32_t *)(src2_ptr + i));
+    //     __m512 mul_result = mul<true>(src1, src2);
+    //     __m512 src3 = _mm512_loadu_si512((int32_t *)(src3_ptr + i));
+    //     __m512 result = add<true>(mul_result, src3);
+    //     _mm512_storeu_si512((int32_t *)(dst_ptr + i), result);
+    // }
 #endif
 }
 

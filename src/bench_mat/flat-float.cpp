@@ -9,14 +9,19 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 
-void mat_fma ( unsigned int row, unsigned int col, 
+#define AVX512_ENABLED
+
+
+void mat_fma_auto ( unsigned int row, unsigned int col, 
     matrix<float> & mat_src1, matrix<float> & mat_src2, matrix<float> & mat_src3, matrix<float> & mat_dst ) {
+    float * dst_ptr  = (float *) mat_dst.m.data();
+    
     for (int i = 0; i < row; i += 1) {
         for (int j = 0; j < col; j += 1) {
             float src1 = mat_src1.get(i,j);
             float src2 = mat_src2.get(i,j);
             float src3 = mat_src3.get(i,j);
-            mat_dst.set(i,j,  (src1 * src2) + src3);
+            dst_ptr[i * col + j] = (src1 * src2) + src3;
         }
     }
 }
@@ -46,7 +51,6 @@ void mat_fma_clang_builtin ( unsigned int row, unsigned int col,
     float * src3_ptr = (float *) mat_src3.m.data();
     float * dst_ptr  = (float *) mat_dst.m.data();
 
-#define AVX512_ENABLED
 
     typedef float FloatZmm __attribute__((ext_vector_type(32)));
     typedef float FloatYmm __attribute__((ext_vector_type(16)));
@@ -84,8 +88,8 @@ void mat_fma_intrinsic ( unsigned int row, unsigned int col,
         __m512 src2 = _mm512_loadu_ps ((const float *) (src2_ptr + i));
         __m512 src3 = _mm512_loadu_ps ((const float *) (src3_ptr + i));
         __m512 result = _mm512_fmadd_ps(src1, src2, src3);
-        __m512 rx = _mm512_mul_ps(result, src3);
-        _mm512_storeu_ps((float *) (dst_ptr + i), rx);
+        // __m512 rx = _mm512_mul_ps(result, src3);
+        _mm512_storeu_ps((float *) (dst_ptr + i), result);
     }
 #else
     for (int i = 0; i < size; i += 8 ){

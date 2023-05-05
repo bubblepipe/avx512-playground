@@ -38,7 +38,7 @@ static void flat(benchmark::State& state,
 
 
 BENCHMARK_CAPTURE(flat, add, &mat_add)->BMarg;
-BENCHMARK_CAPTURE(flat, fma, &mat_fma)->BMarg;
+BENCHMARK_CAPTURE(flat, fma, &mat_fma_auto)->BMarg;
 
 #ifndef SCALAR_ONLY
 BENCHMARK_CAPTURE(flat, add_m, &mat_add_manual)->BMarg;

@@ -1,7 +1,7 @@
 CC=clang++-17
 
 # CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -Wno-format 
-CFLAGS=-O3 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g 
+CFLAGS=-O3 -march=icelake-server -I src/ -fno-omit-frame-pointer -std=c++17 -g 
 CFLAGS_no_vec=-O3 -mno-avx -mno-sse -march=native -I src/ -fno-omit-frame-pointer -std=c++17
 # CFLAGS=-O1 -march=native -I src/ -fno-omit-frame-pointer -std=c++17 -g
 
